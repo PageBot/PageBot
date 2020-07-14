@@ -32,8 +32,8 @@ from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
 from pagebot.contexts.basecontext.beziercontour import BezierContour
 
 class BezierPath:
-    """Implements a wrapper around BaseBezierPath wich has the same interface as the DrawBot
-    Bézier path, adding knowledge of units and the context.
+    """Implements a wrapper around BaseBezierPath wich has the same interface
+    as the DrawBot Bézier path, adding knowledge of units and the context.
 
     >>> from pagebot import getContext
     >>> from pagebot.fonttoolbox.objects.font import findFonts
@@ -88,8 +88,8 @@ class BezierPath:
     #   Path as pen drawing
 
     def beginPath(self, identifier=None):
-        """Starts a new path / polygon in self.path. Sets the self.isOpenPath flag
-        to True.
+        """Starts a new path / polygon in self.path. Sets the self.isOpenPath
+        flag to True.
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
@@ -105,8 +105,8 @@ class BezierPath:
         self.bp.beginPath(identifier)
 
     def addPoints(self, *args, **kwargs):
-        """Adds one or multiple points to the current self.path. Creates the path
-        if it does not exist.
+        """Adds one or multiple points to the current self.path. Creates the
+        path if it does not exist.
 
         >>> from pagebot import getContext
         >>> context = getContext('Flat')
@@ -242,8 +242,8 @@ class BezierPath:
 
     def arc(self, center=None, radius=None, startAngle=None, endAngle=None, clockwise=False):
         """Arc with center and a given radius, from `startAngle` to `endAngle`,
-        going clockwise if clockwise is `True` and counter clockwise if clockwise
-        is `False`.
+        going clockwise if clockwise is `True` and counter clockwise if
+        clockwise is `False`.
 
         >>> from pagebot.toolbox.units import mm, pt
         >>> from pagebot import getContext

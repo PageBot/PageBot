@@ -5364,7 +5364,7 @@ class Element:
     #   V A L I D A T I O N
 
     def evaluate(self, score=None):
-        """Evaluate the content of element e with the total sum of conditions."""
+        """Evaluates the content of element `e` with all the conditions."""
         if score is None:
             score = Score()
 
@@ -5382,10 +5382,10 @@ class Element:
         return score
 
     def solve(self, score=None):
-        """Evaluate the content of element e with the total sum of conditions.
-        The view is passed, as it (or its builder) may be needed to solve
-        specific text conditions, such as run length of text and overflow of
-        text boxes."""
+        """Evaluates the content of element e with the all the conditions.
+        The view is passed as an argument because it (or its builder) may be
+        needed to solve specific text conditions, such as run length of text
+        and overflow of text boxes."""
         if score is None:
             score = Score()
 

@@ -28,6 +28,8 @@ from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.toolbox.units import pt, em, units, BASELINE_GRID, U, degrees
 from pagebot.toolbox.color import color, noColor, blackColor
 
+DEFAULTS = ['leading', 'fontSize', 'font']
+
 def newStyle(**kwargs):
     return dict(**kwargs)
 
@@ -70,9 +72,10 @@ def makeStyle(style=None, raiseError=True, **kwargs):
         # AttributeError: 'NSNull' object has no attribute 'numberOfComponents'
         #
         # Add missing as defaults from root style.
-        #for name, v in rs.items():
-        #    if name not in new and v is not None:
-        #        new[name] = v
+        for name in DEFAULTS:
+            v = rs[name]
+            if name not in new and v is not None:
+                new[name] = v
 
     return new
 
@@ -766,7 +769,6 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
     # style,
     for name, value in kwargs.items():
         rs[name] = value
-
     return rs
 
 def css(name, e=None, styles=None, default=None):

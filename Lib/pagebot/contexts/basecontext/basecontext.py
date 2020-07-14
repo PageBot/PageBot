@@ -950,15 +950,12 @@ class BaseContext(AbstractContext):
         ($ABCD$, 'BabelString')
         """
         style = makeStyle(style=style)
-
         if not bs:
             bs = ''
         if not isinstance(bs, BabelString):
             # Otherwise convert bs into a BabelString, from whatever it is now.
             # Set the babelString.context as self.
             bs = BabelString(bs, style=style, w=w, h=h, context=self)
-
-
         assert isinstance(bs, BabelString)
         return bs
 
