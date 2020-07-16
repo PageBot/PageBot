@@ -52,8 +52,14 @@ python3 $PWD/contributions/filibuster/blurbwriter.py
 #python3 $PWD/contributions/markdown/inline.py
 #python3 $PWD/contributions/markdown/literature.py
 python3 $PWD/document.py
+python3 $PWD/elements/alignment.py
+python3 $PWD/elements/clippath.py
+python3 $PWD/elements/conditions.py
 python3 $PWD/elements/element.py
+python3 $PWD/elements/flow.py
+python3 $PWD/elements/imaging.py
 python3 $PWD/elements/paths/glyphpath.py
+python3 $PWD/elements/pbartboard.py
 python3 $PWD/elements/pbcodeblock.py
 python3 $PWD/elements/pbgalley.py
 python3 $PWD/elements/pbgroup.py
@@ -68,6 +74,9 @@ python3 $PWD/elements/pbrect.py
 python3 $PWD/elements/pbruler.py
 python3 $PWD/elements/pbtable.py
 python3 $PWD/elements/pbtext.py
+python3 $PWD/elements/shrinking.py
+python3 $PWD/elements/template.py
+python3 $PWD/elements/textconditions.py
 # TODO: add more.
 python3 $PWD/elements/variablefonts/variablecircle.py
 python3 $PWD/elements/variablefonts/variablecube.py

@@ -743,15 +743,17 @@ class Text(Element):
         view.drawElementFrame(self, p, **kwargs)
 
         if self.bs.hasWidth or self.bs.hasHeight:
-            '''
-            Forces set width and / or height, behave as a textbox.  Only if
-            there is content.
-            '''
+            '''Forces set width and / or height, behave as a textbox. Only if
+            there is content.'''
             if self.bs.lines:
-                frameY = py - self.h + self.bs.lines[0].y
+                baseline0 = self.bs.lines[0].y
+                frameY = py - self.h + baseline0
                 # Draw optional background, frame or borders.
                 # Width is padded width of self.
-                self.buildFrame(view, (px, frameY, self.pw or self.bs.tw, self.bs.th))
+                w = self.pw or self.bs.tw
+                h = self.h or self.bs.th
+
+                self.buildFrame(view, (px, frameY, w, h))
 
                 if self.showMargin:
                     view.drawMargin(self, (px, frameY))
@@ -760,17 +762,15 @@ class Text(Element):
 
                 # Draw text as box
 
-                y = py - self.pt - self.h + self.bs.lines[0].y
+                y = py - self.pt - self.h + baseline0
                 w = self.w or self.bs.w
                 h = self.h or self.bs.h
                 context.drawText(self.bs, (x, y, w, h))
 
         else:
-            '''
-            No width or height defined; draws as string using its own width
-            (there may be embedded newlines).
-            '''
-            frameY = py - self.bs.th+self.bs.topLineAscender
+            '''No width or height defined; draws as string using its own width
+            (there may be embedded newlines).'''
+            frameY = py - self.bs.th + self.bs.topLineAscender
             # Draw optional background, frame or borders.
             self.buildFrame(view, (px, frameY, self.bs.tw, self.h))
 

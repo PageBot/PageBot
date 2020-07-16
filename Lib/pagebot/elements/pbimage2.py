@@ -15,6 +15,7 @@
 #     imagedata.py
 #
 #     (New version separating the Image-frame and the Image-pixelmap)
+#     TODO: not used anywhere, needs to be finished?
 #
 import os
 from pagebot.elements.element import Element
