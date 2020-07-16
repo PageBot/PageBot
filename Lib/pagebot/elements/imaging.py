@@ -15,6 +15,8 @@
 #     imaging.py
 #
 
+from pagebot.constants import DEFAULT_RESOLUTION_FACTORS
+
 class Imaging:
 
     def _get_showImageReference(self):

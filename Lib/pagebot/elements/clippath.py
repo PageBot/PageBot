@@ -186,4 +186,3 @@ class ClipPath:
 
         # Answer the unlinked elements.
         return e
-

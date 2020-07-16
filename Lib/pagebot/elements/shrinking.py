@@ -57,4 +57,3 @@ class Shrinking:
     def shrink2BlockSideTop(self):
         self.h += self.parent.h - self.mTop
         return True
-
