@@ -14,8 +14,8 @@
 #
 #     flow.py
 #
-from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
-        asFormatted, isUnit, degrees)
+from pagebot.constants import DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH
+from pagebot.toolbox.units import units
 
 class Flow:
     """If the element is part of a flow, then answer the sequence."""
@@ -26,6 +26,7 @@ class Flow:
         indicated page.
 
         >>> from pagebot.document import Document
+        >>> from pagebot.element import Element
         >>> doc = Document(autoPages=3)
         >>> page = doc[1]
         >>> e1_1 = Element(parent=page, name='e1', nextElement='e2')
@@ -86,6 +87,7 @@ class Flow:
         """Answers if self is part of a flow, which means that
         either self.prevElement or self.nextElement is not None.
 
+        >>> from pagebot.element import Element
         >>> e = Element()
         >>> e.isFlow
         False
@@ -103,6 +105,7 @@ class Flow:
         >>> from pagebot.document import Document
         >>> doc = Document(autoPages=3)
         >>> page = doc[1]
+        >>> from pagebot.element import Element
         >>> e1_1 = Element(parent=page, name='e1', nextElement='e2')
         >>> e1_2 = Element(parent=page, name='e2', nextElement='e1', nextPage=2)
         >>> page = doc[2]
@@ -173,6 +176,7 @@ class Flow:
         """Answers the baseline grid distance, as defined in the (parent)style.
 
         >>> from pagebot.toolbox.units import mm, p
+        >>> from pagebot.element import Element
         >>> e = Element()
         >>> # Undefined without style or parent style.
         >>> e.baselineGrid is None
@@ -199,6 +203,7 @@ class Flow:
     def _get_baselineGridStart(self):
         """Answers the baseline grid startf, as defined in the (parent)style.
 
+        >>> from pagebot.element import Element
         >>> e = Element()
         >>> # Undefined without style or parent style.
         >>> e.baselineGridStart is None
@@ -225,6 +230,7 @@ class Flow:
         from the overall settings, as the baseline grid always
         runs from top of the element or page.
 
+        >>> from pagebot.element import Element
         >>> e = Element(baselineGrid=pt(12), baselineGridStart=pt(22))
         >>> e.baselineGrid, e.baselineGridStart
         (12pt, 22pt)

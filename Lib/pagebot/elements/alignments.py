@@ -14,8 +14,6 @@
 #
 #     alignments.py
 #
-from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
-        asFormatted, isUnit, degrees)
 
 class Alignments:
 
