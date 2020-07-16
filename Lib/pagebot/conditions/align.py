@@ -799,7 +799,8 @@ class Top2MiddleSides(Condition):
             self.addScore(e.top2MiddleSides(), e, score)
 
 class Bottom2Middle(Condition):
-    """Align bottom of e bounding box on vertical middle between parent margins."""
+    """Align bottom of e bounding box on vertical middle between parent
+    margins."""
     def test(self, e):
         return e.isBottomOnMiddle(self.tolerance)
 
@@ -808,7 +809,8 @@ class Bottom2Middle(Condition):
             self.addScore(e.bottom2Middle(), e, score)
 
 class Bottom2MiddleSides(Condition):
-    """Align right of e bounding box on vertical middle between parent sides."""
+    """Align right of e bounding box on vertical middle between parent
+    sides."""
     def test(self, e):
         return e.isBottomOnMiddleSides(self.tolerance)
 
@@ -817,7 +819,8 @@ class Bottom2MiddleSides(Condition):
             self.addScore(e.bottom2MiddleSides(), e, score)
 
 class Origin2Middle(Condition):
-    """Align origin of e bounding box to vertical middle between parent margin."""
+    """Align origin of e bounding box to vertical middle between parent
+    margin."""
     def test(self, e):
         return e.isOriginOnMiddle(self.tolerance)
 
@@ -826,7 +829,8 @@ class Origin2Middle(Condition):
             self.addScore(e.origin2Middle(), e, score)
 
 class Origin2MiddleSides(Condition):
-    """Align origin of e bounding box to vertical middle between parent sides."""
+    """Align origin of e bounding box to vertical middle between parent
+    sides."""
     def test(self, e):
         return e.isOriginOnMiddleSides(self.tolerance)
 
@@ -880,7 +884,8 @@ class Top2SideTop(Condition):
             self.addScore(e.top2SideTop(), e, score)
 
 class Top2BleedTop(Condition):
-    """Align top of e bounding box on parent top side, overshooting by bleed."""
+    """Align top of e bounding box on parent top side, overshooting by
+    bleed."""
     def test(self, e):
         return e.isTopOnBleedTop(self.tolerance)
 
@@ -909,7 +914,8 @@ class Origin2SideTop(Condition):
             self.addScore(e.origin2SideTop(), e, score)
 
 class Middle2Bottom(Condition):
-    """Move middle (vertical center) of e bounding box on parent bottom margin."""
+    """Move middle (vertical center) of e bounding box on parent bottom
+    margin."""
     def test(self, e):
         return e.isMiddleOnBottom(self.tolerance)
 
@@ -967,7 +973,8 @@ class Bottom2SideBottom(Condition):
             self.addScore(e.bottom2SideBottom(), e, score)
 
 class Bottom2BleedBottom(Condition):
-    """Align bottom of e bounding box on parent bottom side, overshooting by the vertical bleed value."""
+    """Align bottom of e bounding box on parent bottom side, overshooting by
+    the vertical bleed value."""
     def text(self, e):
         return e.isBottomOnBleedBottom(self.tolerance)
 
