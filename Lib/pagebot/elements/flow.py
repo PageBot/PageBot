@@ -16,7 +16,7 @@
 #
 from pagebot.constants import DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH
 from pagebot.toolbox.units import units
-from pagebot.element import Element
+from pagebot.elements import Element
 
 class Flow:
     """If the element is part of a flow, then answer the sequence."""
