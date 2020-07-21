@@ -742,9 +742,9 @@ class Text(Element):
         # Let the view draw frame info for debugging, in case view.showFrame == True.
         view.drawElementFrame(self, p, **kwargs)
 
+        """Forces width and / or height, behave as a textbox. Only if
+        there is content."""
         if self.bs.hasWidth or self.bs.hasHeight:
-            '''Forces set width and / or height, behave as a textbox. Only if
-            there is content.'''
             if self.bs.lines:
                 baseline0 = self.bs.lines[0].y
                 frameY = py - self.h + baseline0
@@ -768,8 +768,8 @@ class Text(Element):
                 context.drawText(self.bs, (x, y, w, h))
 
         else:
-            '''No width or height defined; draws as string using its own width
-            (there may be embedded newlines).'''
+            """No width or height are defined; draws as string using its own
+            width (there may be embedded newlines)."""
             frameY = py - self.bs.th + self.bs.topLineAscender
             # Draw optional background, frame or borders.
             self.buildFrame(view, (px, frameY, self.bs.tw, self.h))
@@ -822,6 +822,7 @@ class Text(Element):
         # Vertical alignment if handled by the text element, where the type comes
         # either from self.yAlign or self.bs.yTextAlign
         yAlign = self.yAlign or self.bs.yTextAlign
+
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
 

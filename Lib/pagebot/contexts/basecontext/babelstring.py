@@ -363,12 +363,11 @@ class BabelString:
         """
         Also see doctests/string-*.txt.
         """
-        if w == self.w and h == self.h:
-            if self._lines is None:
-                self._lines = self.context.getTextLines(self, w=w, h=h)
-            return self._lines
-
-        return self.context.getTextLines(self, w=w, h=h)
+        #if w == self.w and h == self.h:
+        if self._lines is None:
+            self._lines = self.context.getTextLines(self, w=w, h=h)
+        return self._lines
+        #return self.context.getTextLines(self, w=w, h=h)
 
     def _get_topLineAscender(self):
         """Answers the largest ascender height in the first line.
@@ -619,7 +618,7 @@ class BabelString:
     def _get_textSize(self):
         """Answers the text size of self, rendered by the defined context.
         Raise an error if the context is not defined.
->>> from pagebot.toolbox.units import pt, em
+        >>> from pagebot.toolbox.units import pt, em
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))

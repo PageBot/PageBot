@@ -742,7 +742,9 @@ class FlatContext(BaseContext):
         """Determines text size based on placed text value."""
         tw = 0
         th = 0
+        lastDescender = 0
         placedText = bs.cs.pt
+
 
         if placedText.width != w or placedText.height != h:
             # Make reflow on this new (w, h). Otherwise use the layout.runs as
@@ -750,8 +752,6 @@ class FlatContext(BaseContext):
             w = w or bs.w or math.inf
             h = h or bs.h or math.inf
             placedText.frame(0, 0, w, h)
-
-        lastDescender = 0
 
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             style = None
@@ -764,6 +764,7 @@ class FlatContext(BaseContext):
                 th += style.ascender()
             else:
                 th += height
+
             lastDescender = style.descender()
 
         # NOTE: Descender is a negative value.

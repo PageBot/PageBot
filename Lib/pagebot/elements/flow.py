@@ -60,14 +60,15 @@ class Flow:
         nextElement = None
 
         # If there is a next element reference defined.
+        from pagebot.elements import Element
         if self.nextElement is not None:
-            if isinstance(self.nextPage, self):
+            if isinstance(self.nextPage, Element):
                 page = self.nextPage
             elif self.nextPage:
                 # then check if we also make reference to a another page.
                 page = self.doc[self.nextPage]
             else:
-                # If no next page reference, then refoer to the page of self.
+                # If no next page reference, then refer to the page of self.
                 page = self.page
 
             # Only if a page was found for this element.

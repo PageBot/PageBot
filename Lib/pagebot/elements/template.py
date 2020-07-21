@@ -83,4 +83,3 @@ class Template:
                 self.appendElement(e.copy(parent=self))
 
     template = property(_get_template, _set_template)
-
