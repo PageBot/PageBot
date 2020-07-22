@@ -738,40 +738,50 @@ class FlatContext(BaseContext):
         s = fs.textOverflow(self.page, box, align=align)
         return s
 
-    def textSize(self, bs, w=None, h=None):
+    def textSize(self, bs, w=None, h=None, align=None, ascDesc=True):
         """Determines text size based on placed text value."""
-        tw = 0
-        th = 0
+        textWidth = 0
+        textHeight = 0
         lastDescender = 0
         placedText = bs.cs.pt
 
 
+        # Reflow to new (w, h). Otherwise use the layout.runs as already stored
+        # by placedText.
         if placedText.width != w or placedText.height != h:
-            # Make reflow on this new (w, h). Otherwise use the layout.runs as
-            # already cached by placedText.
             w = w or bs.w or math.inf
             h = h or bs.h or math.inf
             placedText.frame(0, 0, w, h)
 
+        flatRuns = placedText.layout.runs()
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             style = None
-            rw = 0
+            runWidth = 0
+            runHeight = 0
 
             for style, s in run:
-                rw += style.width(s)
-            tw = max(tw, rw)
-            if rIndex == 0 and style:
-                th += style.ascender()
+                runWidth += style.width(s)
+                runHeight = max(runHeight, style.leading)
+
+            textWidth = max(textWidth, runWidth)
+
+            if ascDesc:
+                if rIndex == 0 and style:
+                    textHeight += style.ascender()
+                else:
+                    textHeight += height
             else:
-                th += height
+                textHeight += runHeight
 
             lastDescender = style.descender()
 
-        # NOTE: Descender is a negative value.
-        th -= lastDescender
-        return pt(tw, th)
+        if ascDesc:
+            # NOTE: Descender is a negative value.
+            textHeight -= lastDescender
 
-    def getTextLines(self, bs, w=None, h=None):
+        return pt(textWidth, textHeight)
+
+    def getTextLines(self, bs, w=None, h=None, ascDesc=False):
         """Answer a list of BabeLineInfo instances
 
         >>> from pagebot.toolbox.units import pt
@@ -814,7 +824,6 @@ class FlatContext(BaseContext):
                 lineHeight = max(lineHeight, height)
             lines.append(babelLineInfo)
             y += lineHeight
-
 
         return lines
 
