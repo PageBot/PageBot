@@ -1075,7 +1075,7 @@ class Font:
         if self._kerning is None: # Lazy read.
             self._kerning = OTFKernReader(self.path).kerningPairs
         return self._kerning
-    kerning =  property(_get_kerning)
+    kerning = property(_get_kerning)
 
     def _get_groups(self):
         """Answers the groups dictionary of the font.
@@ -1111,23 +1111,35 @@ class Font:
         """
         return self.info.ascender # From self.ttFont['hhea'] table
 
+    ascender = property(getAscender)
+
     def getDescender(self): # DrawBot compatible
         return self.info.descender # From self.ttFont['hhea'] table
 
+    descender = property(getDescender)
+
     def getUpem(self): # DrawBot compatible
         return self.info.unitsPerEm
+
+    upem = property(getUpem)
 
     def getXHeight(self):
         table = self.ttFont['OS/2']
         return getattr(table, 'sxHeight', None)
 
+    xHeight = property(getXHeight)
+
     def getCapHeight(self):
         table = self.ttFont['OS/2']
         return getattr(table, 'sCapHeight', None)
 
+    capHeight = property(getCapHeight)
+
     def getItalicAngle(self):
         table = self.ttFont['post']
         return getattr(table, 'italicAngle', None)
+
+    italicAngle = property(getItalicAngle)
 
 if __name__ == '__main__':
     import doctest

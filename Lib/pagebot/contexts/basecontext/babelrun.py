@@ -42,6 +42,7 @@ class BabelRun:
         if style is None:
             style = {}
         self.style = style
+
         self._cr = None # Optional cache of native context run (e.g. CTRun or FlatRunData)
 
     def __len__(self):
@@ -158,11 +159,11 @@ class BabelRun:
         return fsStyle, hyphenation
 
 class BabelLineInfo:
-    """BabelLineInfo is information decompiled from a native context text line run.
-    It resembles as close a possible to original source that generated the
-    the text line/run, but it will never be the same. E.g. any OT-feature
-    glyph replacement cannot be reconstructed to the original string.
-    """
+    """BabelLineInfo is information decompiled from a native context text line
+    run.  It resembles as close a possible to original source that generated
+    the the text line/run, but it will never be the same. E.g. any OT-feature
+    glyph replacement cannot be reconstructed to the original string."""
+
     def __init__(self, x, y, context, cLine=None):
         """Container for line info, after text wrapping by context."""
         self.x = units(x)
@@ -179,14 +180,15 @@ class BabelLineInfo:
 
 class BabelRunInfo:
     """BabelRunInfo is information decompiled from a native context text line.
-    It resembles as close a possible to original source that generated the
-    the text line/run, but it will never be the same. E.g. any OT-feature
-    glyph replacement cannot be reconstructed to the original string.
-    """
+    It resembles as close a possible to original source that generated the the
+    text line/run, but it will never be the same. E.g. any OT-feature glyph
+    replacement cannot be reconstructed to the original string."""
+
     def __init__(self, s, style, context, cRun=None):
         assert isinstance(s, str)
         self.s = s # Reconstructed string, may not be input for e.g. OT-features
         self.style = style # Reconstructed style of the run.
+        #print(style)
         self.context = context # Just in case it is needed
         # Optional native "context run"
         # (e.g. DrawBot-->CTRun instance. Flat-->)
