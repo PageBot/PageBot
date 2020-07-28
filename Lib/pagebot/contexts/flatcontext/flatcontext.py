@@ -599,7 +599,7 @@ class FlatContext(BaseContext):
         xTextAlign = bs.xTextAlign
 
         if xTextAlign == CENTER:
-            x -= bs.tw/2
+            x -= bs.tw / 2
         elif xTextAlign == RIGHT:
             x -= bs.tw
 
@@ -609,8 +609,9 @@ class FlatContext(BaseContext):
 
         x = x.pt
         y = y.pt
-        w = w or bs.tw.pt
-        h = h or bs.th.pt
+        tw, th = self.textSize(bs, w=w, h=h, ascDesc=True)
+        w = w or tw
+        h = h or th
         placedText.frame(x, y - h, w, h)
 
     def _asFlatColor(self, pbColor):
@@ -642,6 +643,7 @@ class FlatContext(BaseContext):
         if isinstance(s, str):
             s = self.newString(s)
         assert isinstance(s, BabelString)
+        print(s.style)
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
         #xpt, ypt = self.translatePoint(p)
         #x, y = self.getTransformed(x, y)

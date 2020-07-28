@@ -73,10 +73,10 @@ class Text(Element):
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
 
-        # Combine rootStyle, optional self.style and **kwargs attributes.
-        # Note that the final style is stored in the BabelString instance
-        # self.bs. self.style is used as template, in the content is defined
-        # as plain string.
+        # Combine rootStyle, optional self.style and **kwargs attributes. Note
+        # that the final style is stored in the BabelString instance self.bs.
+        # self.style is used as template, in the content is defined as plain
+        # string.
         if style is not None:
             self.style = makeStyle(style, **kwargs)
 
@@ -765,7 +765,8 @@ class Text(Element):
                 y = py - self.pt - self.h + baseline0
                 w = self.w or self.bs.w
                 h = self.h or self.bs.h
-                context.drawText(self.bs, (x, y, w, h))
+
+                context.drawText(self.bs, (x, y, w*2, h*2))
 
         else:
             """No width or height are defined; draws as string using its own

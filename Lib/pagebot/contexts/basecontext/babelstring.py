@@ -98,6 +98,7 @@ class BabelString:
         if s is not None or style is not None:
             self.runs.append(BabelRun(s, style))
         self.context = context # Store optional as weakref property. Clears cache.
+        assert self.context
         self._w = units(w) # Set source value of the properties, not need clear cache again.
         self._h = units(h) # Set to points, if not already a Unit instance.
         # Cache is initialize by the self.context-->self.reset() property call.
@@ -193,9 +194,11 @@ class BabelString:
         height defined, so not overlap checking done and `self.th` will just
         answer the natural height of the string."""
         return self._h
+
     def _set_h(self, h):
         self._h = units(h)
         self.reset() # Force context wrapping to be recalculated.
+
     h = property(_get_h, _set_h)
 
     def _get_hasWidth(self):
@@ -245,9 +248,6 @@ class BabelString:
         >>> bs.w, bs.tw, bs.h, bs.th # Difference between given height and text height.
         (None, 250.9pt, 500pt, 100pt)
         """
-        if self.context is None: # Required context to be defined.
-            return None
-
         if self._twh is None:
             self._twh = self.getTextSize() # Same as self.textSize
 
@@ -275,9 +275,6 @@ class BabelString:
         >>> bs.w, bs.tw, bs.h, bs.th # Width defined, real with by bs.tw
         (1000pt, 250.9pt, 500pt, 100pt)
         """
-        if self.context is None: # Required context to be defined
-            return None
-
         if self._twh is None:
             self._twh = self.getTextSize() # Same as self.textSize
 
@@ -610,9 +607,10 @@ class BabelString:
             # Want something different than defined requested bs.w or bs.h.
             if w != self.w or h != self.h:
                 # Different indeed? Reflow in temporary lines.
-                return self.context.textSize(self, w=w, h=h)
+                return self.context.textSize(self, w=w, h=h, ascDesc=False)
 
-        self._twh = twh = self.context.textSize(self)
+        # FIXME: probably needs a w, h.
+        self._twh = twh = self.context.textSize(self, ascDesc=False)
         return twh
 
     def _get_textSize(self):
