@@ -280,10 +280,67 @@ Newspaper_Berliner = inch(12.4, 18.5)
 
 # Instagram
 InstagramHires = px(2048, 2048)
-Instagram = px(1080, 1080)
+InstagramSquare = px(1080, 1080)
 InstagramLegacy = px(640, 640) # Standard before July 6, 2015
 InstagramLandscape = px(1080, 566)
 InstagramPortrait = px(1080, 1350)
+
+# Twitter
+TwitterPhoto = px(400, 400)
+TwitterHeader = px(1500, 500)
+Twitter = px(1024, 512)
+TwitterSummaryCard = px(280, 150)
+TwitterCard = px(800, 418)
+TwitterAppCardSquare = px(800, 800)
+TwitterAppCard = px(800, 418)
+
+# LinkedIn
+LinkedInProfile = px(400, 400) # Or larger
+LinkedInProfileCover = px(1584, 396)
+LinkedInCoverPhoto = px(1536, 768)
+LinkedInCompanyLogo = px(300, 300)
+LinkedInOverviewTab = px(360, 120)
+LinkedInOverviewTabCover = px(1192, 220)
+LinkedInLifeTabHero = px(1128, 376)
+LinkedInLifeTabCustomModules = px(502, 282)
+LinkedInLifeTabCompany = px(900, 600)
+LinkedInSquareLogo = px(60, 60)
+LinkedInBlogPost = px(1200, 628)
+LinkedInBlogPostLink = px(1200, 627)
+LinkedInAdCompanyLogo = LinkedInAdSpotlight = px(100, 100)
+LinkedInAdSpotlightBackground = px(300, 250)
+LinkedInAdSponsoredContent = px(1200, 627) # 1.91:1 aspect ratio
+
+# Pinterest
+# Tumblr
+# https://blog.hootsuite.com/social-media-image-sizes-guide/#twitter
+
+# Snapchat
+SnapchatAd = px(1280, 1920)
+SnapchatGeoFilter = px(1080, 1920)
+
+# TikTok
+TikTokProfile = px(100, 100)
+TikTokVideo = px(1080, 1920)
+
+# YouTube
+YouTube = px(800, 800)
+YouTubePhoto = px(2560, 1440)
+# Minimum area for text and logos without being cut off: 1546 x 423 pixels
+# Minimum dimension for upload: 2048 x 1152 pixels
+YouTubeVideo = px(1280, 720)
+
+# Facebook
+FacebookProfile = px(170, 170)
+FacebookProfilePhone = px(128, 128)
+FacebookCover = px(720, 315) # Minimum (400, 150)
+FacebookCoverDesktop = px(820, 312) 
+FacebookCoverPhone = px(640, 360)
+FacebookTimeLine = px(1200, 630) # Minimum (600, 315)
+
+# Eventbrite
+EvenbriteBanner = px(2160, 1080)
+EvenbriteBannerSmall = px(1200, 400)
 
 # Standard size of online printing sites.
 # TODO: Add more online services and adapt other parameters/preferences for
@@ -398,7 +455,9 @@ PAGE_SIZES = dict(
     Newspaper_Broadsheet=Newspaper_Broadsheet,
     Newspaper_Berliner=Newspaper_Berliner,
     # Websites offering document services
-    InstagramHires=InstagramHires, Instagram=Instagram,
+    # (TODO: Add other social media sizes here)
+    InstagramHires=InstagramHires, 
+    InstagramSquare=InstagramSquare,
     InstagramLegacy=InstagramLegacy,
     InstagramLandscape=InstagramLandscape,
     InstagramPortrait=InstagramPortrait,
