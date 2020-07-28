@@ -612,7 +612,8 @@ class FlatContext(BaseContext):
         tw, th = self.textSize(bs, w=w, h=h, ascDesc=True)
         w = w or tw
         h = h or th
-        placedText.frame(x, y - h, w, h)
+        r = 1.01 # Counter rounding error.
+        placedText.frame(x, y - h, w * r, h * r)
 
     def _asFlatColor(self, pbColor):
         # Make this dependent on type of export.

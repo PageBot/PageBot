@@ -731,8 +731,10 @@ class Text(Element):
         """
         #context = self.context
         p = pointOffset(self.origin, origin)
+        print(p)
         x, _, _, = p = self._applyScale(view, p) # Text is already aligned
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        print(px, py)
 
         context = view.context # Get current context
         self._applyRotation(view, p)
@@ -766,14 +768,14 @@ class Text(Element):
                 w = self.w or self.bs.w
                 h = self.h or self.bs.h
 
-                context.drawText(self.bs, (x, y, w*2, h*2))
+                context.drawText(self.bs, (x, y, w, h))
 
         else:
             """No width or height are defined; draws as string using its own
             width (there may be embedded newlines)."""
             frameY = py - self.bs.th + self.bs.topLineAscender
             # Draw optional background, frame or borders.
-            self.buildFrame(view, (px, frameY, self.bs.tw, self.h))
+            self.buildFrame(view, (px, py, self.bs.tw, self.h))
 
             if self.showMargin:
                 view.drawMargin(self, (px, frameY))
@@ -783,7 +785,14 @@ class Text(Element):
             # No size defined, just draw the string with it's own (bs.tw, bs.th)
             # Note that there still can be multiple lines in the string if
             # it contains '\n' characters.
-            context.drawString(self.bs, (x - self.pt, py))
+            #context.drawString(self.bs, (x - self.pt, py))
+            context.drawString(self.bs, (px, py))
+
+            # Baseline for string.
+            #p1 = (px, py)
+            #p2 = (px + self.bs.tw, py)
+            #context.stroke((0, 1, 0))
+            #context.line(p1, p2)
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
@@ -823,6 +832,7 @@ class Text(Element):
         # Vertical alignment if handled by the text element, where the type comes
         # either from self.yAlign or self.bs.yTextAlign
         yAlign = self.yAlign or self.bs.yTextAlign
+        print(yAlign)
 
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
@@ -844,7 +854,8 @@ class Text(Element):
         elif yAlign == DESCENDER: # Position of /p descender
             y += self.h - self.bs.topLineAscender - self.bs.bottomLineDescender_p + self.bs.bottomLineDescender
         elif yAlign == BOTTOM:
-            y += self.h - self.bs.topLineAscender
+            pass
+            #y += self.h - self.bs.topLineAscender
         elif yAlign == BASE_BOTTOM:
             y += self.h + self.bs.bottomLineDescender - self.bs.topLineAscender
 
