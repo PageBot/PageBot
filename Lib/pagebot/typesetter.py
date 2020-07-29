@@ -68,17 +68,17 @@ class Typesetter:
     # Some ugly colors to show that we're in default mode here, for the user to
     # supply a better set.
     DEFAULT_STYLES = dict(
-        document=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
-        dropcap=dict(fontSize=pt(64), leading=em(1.2), textFill=color(1, 0, 0)),
-        h1=dict(fontSize=pt(18), leading=em(1.2), textFill=color(1, 0, 0)),
-        h2=dict(fontSize=pt(16), leading=em(1.2), textFill=color(1, 0, 0.5)),
-        h3=dict(font='Georgia', fontSize=pt(14), leading=em(1.2), textFill=color(1, 0.5, 0.5)),
-        h4=dict(font='Georgia', fontSize=pt(12), leading=em(1.2), textFill=color(0, 1, 1)),
-        h5=dict(font='Georgia-Bold', fontSize=pt(10), leading=em(1.2), textFill=(1, 0, 1)),
-        p=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
-        bullet=dict(font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
-        li=dict(fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
-        em=dict(font='Georgia-Bold'),
+        document=dict(name='document', font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=blackColor),
+        dropcap=dict(name='dropcap', fontSize=pt(64), leading=em(1.2), textFill=color(1, 0, 0)),
+        h1=dict(name='h1', fontSize=pt(18), leading=em(1.2), textFill=color(1, 0, 0)),
+        h2=dict(name='h2', fontSize=pt(16), leading=em(1.2), textFill=color(1, 0, 0.5)),
+        h3=dict(name='h3', font='Georgia', fontSize=pt(14), leading=em(1.2), textFill=color(1, 0.5, 0.5)),
+        h4=dict(name='h4', font='Georgia', fontSize=pt(12), leading=em(1.2), textFill=color(0, 1, 1)),
+        h5=dict(name='h5', font='Georgia-Bold', fontSize=pt(10), leading=em(1.2), textFill=(1, 0, 1)),
+        p=dict(name='p', font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
+        bullet=dict(name='bullet', font='Georgia', fontSize=pt(10), leading=em(1.2), textFill=(0.5, 1, 0.5)),
+        li=dict(name='li', fontSize=pt(10), leading=em(1.2), textFill=color(0.5)),
+        em=dict(name='em', font='Georgia-Bold'),
     )
 
     # These extension are needed to make PageBot markdown compatible with
@@ -435,7 +435,7 @@ class Typesetter:
     def node_code(self, node, e):
         """Creates a NodeBlock element that contains the code source, to be
         executed by the Composer in sequence of composition."""
-        self.CODEBLOCK_CLASS(node.text, parent=self.galley)
+        self.CODEBLOCK_CLASS(node.text, parent=self.galley, context=self.context)
 
     def pushStyle(self, style):
         """Pushes the cascaded style on the gState stack. Makes sure that the

@@ -45,18 +45,20 @@ from pagebot.publications.portfolios import PORTFOLIO_CLASSES
 from pagebot.publications.posters import POSTER_CLASSES
 from pagebot.publications.typespecimens import TYPE_SPECIMEN_CLASSES
 from pagebot.publications.websites import WEBSITE_CLASSES
+from pagebot.publications.instagram import INSTAGRAM_CLASSES
 
 PublicationCategories = dict(
 	Ad=AD_CLASSES,
 	Book=BOOK_CLASSES,
 	Brochure=BROCHURE_CLASSES,
-	Calendars=CALENDAR_CLASSES,
+	Calendar=CALENDAR_CLASSES,
 	Catalog=CATALOG_CLASSES,
 	#Collection=COLLEDCTION_CLASSES,
 	Identity=IDENTITY_CLASSES,
 	Magazine=MAGAZINE_CLASSES,
 	Manual=MANUAL_CLASSES,
 	Newspaper=NEWSPAPER_CLASSES,
+	InstagramPost = INSTAGRAM_CLASSES,
 	#Newsletter=NEWSLETTER_CLASSES,
 	#Paper=SCIENTIFIC_PAPER
 	Portfolio=PORTFOLIO_CLASSES,
