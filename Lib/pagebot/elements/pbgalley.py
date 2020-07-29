@@ -48,7 +48,7 @@ class Galley(Element):
             conditions = [Fit(), Overflow2Next()]
         self.conditions = conditions
 
-        e = self.TEXTBOX_CLASS(conditions=[Fit()]) # First textbox on the Galley
+        e = self.TEXTBOX_CLASS(conditions=[Fit()], parent=self) # First textbox on the Galley
         self.appendElement(e) # Attach it to the galley self.
 
     def append(self, bs):

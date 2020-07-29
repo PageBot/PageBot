@@ -447,9 +447,16 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             doc = self.doc
             if doc is not None and doc.view is not None:
                 return doc.view.context
+
+        for ancestor in self.ancestors:
+            if ancestor.context:
+                return ancestor.context
+
         return self._context
+
     def _set_context(self, context):
         self._context = context # Can be None to reset the search tree.
+
     context = property(_get_context)
 
     def _get_view(self):
@@ -1452,6 +1459,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         if self._parent is not None:
             return self._parent()
         return None
+
     def _set_parent(self, parent):
         # Note that the caller must add self to its elements.
         if parent is not None:
@@ -1481,6 +1489,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             ancestors.append(parent)
             parent = parent.parent
         return ancestors
+
     ancestors = property(_get_ancestors)
 
     # Orientation of elements (and pages)

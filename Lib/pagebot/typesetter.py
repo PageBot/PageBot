@@ -435,7 +435,7 @@ class Typesetter:
     def node_code(self, node, e):
         """Creates a NodeBlock element that contains the code source, to be
         executed by the Composer in sequence of composition."""
-        self.CODEBLOCK_CLASS(node.text, parent=self.galley, context=self.context)
+        self.CODEBLOCK_CLASS(node.text, parent=self.galley)
 
     def pushStyle(self, style):
         """Pushes the cascaded style on the gState stack. Makes sure that the
