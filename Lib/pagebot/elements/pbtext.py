@@ -46,11 +46,14 @@ class Text(Element):
     similar output.
 
     >>> from pagebot.contexts import getContext
+        >>> from pagebot.document import Document
     >>> context = getContext()
-    >>> t = Text('ABCD', context=context)
+    >>> doc = Document(w=300, h=400, autoPages=1, context=context)
+    >>> page = doc[1]
+    >>> t = Text('ABCD', parent=page)
     >>> t
     <Text $ABCD$>
-    >>> t = Text('ABCD')
+    >>> t = Text('ABCD', parent=page)
     >>> t
     <Text $ABCD$>
     """
@@ -137,10 +140,10 @@ class Text(Element):
             bs = ''
         if isinstance(bs, str):
             # FIXME: take font size if w or h are None?
-            bs = BabelString(bs, self.style, w=self.w, h=self.h)
+            bs = BabelString(bs, self.style, w=self.w, h=self.h, context=self.context)
         assert isinstance(bs, BabelString)
         self._bs = bs
-        bs.context = self.context
+        #bs.context = self.context
 
     bs = property(_get_bs, _set_bs)
 
@@ -231,7 +234,12 @@ class Text(Element):
     def _get_indent(self):
         """DrawBot-compatible indent of text. Equivalent to padding-left `pl`.
 
-        >>> t = Text('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, context=context)
+        >>> page = doc[1]
+        >>> t = Text('ABCD', parent=page)
         >>> t.indent, t.pl, t.bs.indent
         (0pt, 0pt, 0pt)
         >>> t.indent = mm(5)
@@ -256,7 +264,12 @@ class Text(Element):
     def _get_tailIndent(self):
         """DrawBot-compatible indent of text. Equivalent to padding-right `pr`.
 
-        >>> t = Text('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.document import Document
+        >>> context = getContext()
+        >>> doc = Document(w=300, h=400, context=context)
+        >>> page = doc[1]
+        >>> t = Text('ABCD', parent=page)
         >>> t.tailIndent, t.pr, t.bs.tailIndent
         (0pt, 0pt, 0pt)
         >>> t.tailIndent = mm(5)
@@ -402,7 +415,7 @@ class Text(Element):
         >>> context = getContext()
         >>> doc = Document(context=context)
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
-        >>> bs = BabelString('ABC', style)
+        >>> bs = BabelString('ABC', style, context=context)
         >>> t = Text(bs, parent=doc[1], w=500)
         >>> t.bs
         $ABC$
@@ -626,7 +639,7 @@ class Text(Element):
         >>> page1 = doc[1]
         >>> page1
         <Page #1 default (1000pt, 1000pt)>
-        >>> bs = BabelString('AAA ' * 1000, style=dict(font='Roboto', fontSize=pt(20), leading=pt(12)))
+        >>> bs = BabelString('AAA ' * 1000, style=dict(font='Roboto', fontSize=pt(20), leading=pt(12)), context=context)
         >>> # Fix h to lock elastic height. Overflow is now defined.
         >>> t1 = Text(bs, name="T1", w=100, h=200, nextElement='T2', parent=page1)
         >>> #t1.isOverflow()
@@ -731,10 +744,8 @@ class Text(Element):
         """
         #context = self.context
         p = pointOffset(self.origin, origin)
-        print(p)
         x, _, _, = p = self._applyScale(view, p) # Text is already aligned
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        print(px, py)
 
         context = view.context # Get current context
         self._applyRotation(view, p)
@@ -832,7 +843,6 @@ class Text(Element):
         # Vertical alignment if handled by the text element, where the type comes
         # either from self.yAlign or self.bs.yTextAlign
         yAlign = self.yAlign or self.bs.yTextAlign
-        print(yAlign)
 
         if yAlign == MIDDLE:
             y += self.h/2 - self.bs.topLineAscender
