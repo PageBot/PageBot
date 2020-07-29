@@ -784,26 +784,22 @@ class Text(Element):
         else:
             """No width or height are defined; draws as string using its own
             width (there may be embedded newlines)."""
-            frameY = py - self.bs.th + self.bs.topLineAscender
+            frameX = px
+            frameY = py + self.bs.topLineDescender
+            frameW, frameH = self.context.textSize(self.bs, ascDesc=True)
             # Draw optional background, frame or borders.
-            self.buildFrame(view, (px, py, self.bs.tw, self.h))
+            #self.buildFrame(view, (px, py, self.bs.tw, self.h))
+            self.buildFrame(view, (frameX, frameY, frameW, frameH))
 
             if self.showMargin:
                 view.drawMargin(self, (px, frameY))
             if self.showPadding:
                 view.drawPadding(self, (px, frameY))
 
-            # No size defined, just draw the string with it's own (bs.tw, bs.th)
-            # Note that there still can be multiple lines in the string if
-            # it contains '\n' characters.
-            #context.drawString(self.bs, (x - self.pt, py))
-            context.drawString(self.bs, (px, py))
-
-            # Baseline for string.
-            #p1 = (px, py)
-            #p2 = (px + self.bs.tw, py)
-            #context.stroke((0, 1, 0))
-            #context.line(p1, p2)
+            # No size defined, just draw the string with it's own (bs.tw,
+            # bs.th) Note that there still can be multiple lines in the string
+            # if it contains '\n' characters.
+            context.drawString(self.bs, (x - self.pt, py))
 
         self._restoreRotation(view, p)
         self._restoreScale(view)

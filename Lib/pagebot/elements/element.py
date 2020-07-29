@@ -4473,7 +4473,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         # Drawing element fill and/or frame
         if eGradient: # Gradient overwrites setting of fill.
             # TODO: Make bleed work here too.
-            c.setGradient(eGradient, p, self.w, self.h) # Add self.w and self.h to define start/end from relative size.
+            # Add self.w and self.h to define start/end from relative size.
+            c.setGradient(eGradient, p, self.w, self.h)
         elif eFill is None or eFill is noColor:
             c.fill(None)
         else:
@@ -4486,8 +4487,23 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
         if self.framePath is not None: # In case defined, use instead of bounding box.
             c.drawPath(self.framePath)
+
+        w = None
+        h = None
+        if len(p) == 4:
+            x, y, w, h = p
+        elif len(p) == 2:
+            x, y = p
+        else:
+            msg = 'Element.buildFrame(): Badly formatted position argument p'
+            print(msg)
+            # TODO: raise error.
+
+        w = w or self.w
+        h = h or self.h
+
         # Then draw the rectangle with the defined color/stroke/strokeWidth
-        c.rect(p[0], p[1], self.w, self.h) # Ignore bleed, should already have been applied on position and size.
+        c.rect(x, y, w, h) # Ignore bleed, should already have been applied on position and size.
 
         c.fill(None)
         c.stroke(None, 0)
@@ -4528,7 +4544,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             else:
                 oTop = 0
 
-            c.line((p[0]-oLeft, p[1]+self.h+oTop), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            c.line((x-oLeft, y+h+oTop), (x+w+oRight, y+h+oTop))
             c.restoreGraphicState()
 
         if borderBottom is not None:
@@ -4557,7 +4573,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             else:
                 oBottom = 0
 
-            c.line((p[0]-oLeft, p[1]-oBottom), (p[0]+self.w+oRight, p[1]-oBottom))
+            c.line((x-oLeft, y-oBottom), (x+w+oRight, y-oBottom))
             c.restoreGraphicState()
 
         if borderRight is not None:
@@ -4586,7 +4602,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             else:
                 oRight = 0
 
-            c.line((p[0]+self.w+oRight, p[1]-oBottom), (p[0]+self.w+oRight, p[1]+self.h+oTop))
+            c.line((x+w+oRight, y-oBottom), (x+w+oRight, y+h+oTop))
             c.restoreGraphicState()
 
         if borderLeft is not None:
@@ -4615,7 +4631,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             else:
                 oLeft = 0
 
-            c.line((p[0]-oLeft, p[1]-oBottom), (p[0]-oLeft, p[1]+self.h+oTop))
+            c.line((x-oLeft, y-oBottom), (x-oLeft, y+h+oTop))
             c.restoreGraphicState()
 
     #   D R A W B O T / F L A T  S U P P O R T
