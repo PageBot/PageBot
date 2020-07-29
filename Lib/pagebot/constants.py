@@ -334,7 +334,7 @@ YouTubeVideo = px(1280, 720)
 FacebookProfile = px(170, 170)
 FacebookProfilePhone = px(128, 128)
 FacebookCover = px(720, 315) # Minimum (400, 150)
-FacebookCoverDesktop = px(820, 312) 
+FacebookCoverDesktop = px(820, 312)
 FacebookCoverPhone = px(640, 360)
 FacebookTimeLine = px(1200, 630) # Minimum (600, 315)
 
@@ -456,7 +456,7 @@ PAGE_SIZES = dict(
     Newspaper_Berliner=Newspaper_Berliner,
     # Websites offering document services
     # (TODO: Add other social media sizes here)
-    InstagramHires=InstagramHires, 
+    InstagramHires=InstagramHires,
     InstagramSquare=InstagramSquare,
     InstagramLegacy=InstagramLegacy,
     InstagramLandscape=InstagramLandscape,
