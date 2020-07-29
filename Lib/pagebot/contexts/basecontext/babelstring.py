@@ -57,7 +57,9 @@ class BabelString:
     - Attribute properties refer to the style of the last run.
 
     >>> from pagebot.toolbox.units import pt, mm
-    >>> bs = BabelString('ABCD', style=dict(fontSize=12))
+    >>> from pagebot.contexts import getContext
+    >>> context = getContext()
+    >>> bs = BabelString('ABCD', style=dict(fontSize=12), context=context)
     >>> bs.fontSize
     12pt
     >>>
@@ -80,7 +82,9 @@ class BabelString:
         Some methods only work if context is defined (e.g. self.textSize,
         self.lines and self.overflow)
 
-        >>> bs = BabelString()
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString(context=context)
         >>> len(bs.runs)
         0
         >>> bs.add('ABCD')
@@ -89,9 +93,9 @@ class BabelString:
         >>> bs.add('EFGH') # Without style, adding to the last run
         >>> len(bs), len(bs.runs)
         (8, 1)
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
         >>> bs = context.newString('ABCD')
+        >>> bs
+        $ABCD$
         """
         # Context instance @context is used for text size rendering methods.
         self.runs = [] # List of BabelRun instances.
@@ -205,7 +209,9 @@ class BabelString:
         """Answers if self has a defined width (True) or gets its width from the
         rendered self.tw text width.
 
-        >>> bs = BabelString('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', context=context)
         >>> bs.hasWidth
         False
         >>> bs.w = pt(500)
@@ -219,7 +225,9 @@ class BabelString:
         """Answers if self has a defined height (True) or gets its height from
         the rendered self.th text height.
 
-        >>> bs = BabelString('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', context=context)
         >>> bs.hasHeight
         False
         >>> bs.h = pt(500)
@@ -234,9 +242,6 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
-        >>> bs = BabelString('ABCD') # No context, cannot render.
-        >>> bs.th is None
-        True
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
@@ -263,9 +268,6 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import em
         >>> from pagebot.contexts import getContext
-        >>> bs = BabelString('ABCD') # No context, cannot render.
-        >>> bs.th is None
-        True
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(100), leading=em(1))
         >>> bs = context.newString('ABCD', style, h=500)
@@ -718,9 +720,11 @@ class BabelString:
         difference with the actual string. Abbreviate with ... if the
         concatenated string is longer than 10 characers.
 
-        >>> BabelString('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> BabelString('ABCD', context=context)
         $ABCD$
-        >>> BabelString('ANCDEFGHIJKLM')
+        >>> BabelString('ANCDEFGHIJKLM', context=context)
         $ANCDEFGHIJ...$
         """
         s = self.s[:10]
@@ -735,7 +739,9 @@ class BabelString:
         >>> style0 = dict(fontSize=pt(12))
         >>> style1 = dict(fontSize=pt(12))
         >>> style2 = dict(fontSize=pt(18))
-        >>> bs = BabelString('AB', style0)
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('AB', style0, context=context)
         >>> bs.style
         {'fontSize': 12pt}
         >>> bs.add('CD') # No style, adds to the last run
@@ -767,7 +773,9 @@ class BabelString:
         """Answers total string length.
 
         >>> from pagebot.toolbox.units import pt
-        >>> bs = BabelString('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', context=context)
         >>> len(bs), len(bs.runs)
         (4, 1)
         >>> bs.add('EFGH') # Without style, add to the last run
@@ -783,8 +791,8 @@ class BabelString:
         """If pbs is a plain string, just adds it to the last run. Otherwise
         creates a new BabelString and copy all runs there.
 
-        >>> from pagebot.contexts import getContext
         >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> bs1 = context.newString('ABCD', dict(fontSize=pt(18)))
         >>> bs2 = context.newString('EFGH', dict(fontSize=pt(24)))
@@ -813,9 +821,11 @@ class BabelString:
         """Compares @bs with self.
 
         >>> from pagebot.toolbox.units import pt
-        >>> bs1 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(18)))
-        >>> bs2 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(18)))
-        >>> bs3 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(20)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs1 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(18)), context=context)
+        >>> bs2 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(18)), context=context)
+        >>> bs3 = BabelString('ABCD', style=dict(font='Verdana', fontSize=pt(20)), context=context)
         >>> bs1 == bs2 # Compares True, even for identical, but not the same styles.
         True
         >>> bs1 is bs2 # Although equal, they are not the same instance.
@@ -838,7 +848,9 @@ class BabelString:
     def _get_s(self):
         """Set / get the last run.
 
-        >>> bs = BabelString('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', context=context)
         >>> bs, bs.runs[0].s
         ($ABCD$, 'ABCD')
         >>> bs.s = 'XYZ'
@@ -880,7 +892,9 @@ class BabelString:
         """Answers the langauge value of the current style.
 
         >>> from pagebot.constants import LANGUAGE_NL
-        >>> bs = BabelString('ABCD', dict(font='Roboto'))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(font='Roboto'), context=context)
         >>> bs.language == DEFAULT_LANGUAGE
         True
         >>> bs.language = LANGUAGE_NL
@@ -896,7 +910,9 @@ class BabelString:
     def _get_hyphenation(self):
         """Answers the hyphenation value of the current style.
 
-        >>> bs = BabelString('ABCD', dict(font='Roboto'))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(font='Roboto'), context=context)
         >>> bs.hyphenation
         False
         >>> bs.hyphenation = DEFAULT_LANGUAGE
@@ -915,13 +931,15 @@ class BabelString:
         is just a string, then find the font and answer it. Answers the default
         font, if the font name cannot be found.
 
-        >>> bs = BabelString('ABCD', dict(font='PageBot-Regular'))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(font='PageBot-Regular'), context=context)
         >>> bs.font
         <Font PageBot-Regular>
         >>> bs.font = 'Roboto-Regular'
         >>> bs.font # Answer the new defined Font instance
         <Font Roboto-Regular>
-        >>> bs = BabelString('ABCD')
+        >>> bs = BabelString('ABCD', context=context)
         >>> bs.font, isinstance(bs.font, Font) # Default font instance
         (<Font PageBot-Regular>, True)
         """
@@ -945,13 +963,15 @@ class BabelString:
         """Answers the fontSize that is defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
-        >>> bs = BabelString('ABCD', dict(fontSize=12))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(fontSize=12), context=context)
         >>> bs.fontSize # Converts to units
         12pt
         >>> bs.fontSize = mm(24)
         >>> bs.fontSize
         24mm
-        >>> bs = BabelString()
+        >>> bs = BabelString(context=context)
         >>> bs.fontSize # Answer default font size
         12pt
         """
@@ -968,7 +988,9 @@ class BabelString:
         refers to the leading of the last run.
 
         >>> from pagebot.toolbox.units import pt, em
-        >>> bs = BabelString('ABCD', dict(leading=em(1), fontSize=pt(100)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(leading=em(1), fontSize=pt(100)), context=context)
         >>> bs.leading, pt(bs.leading) # Render relative unit with fontSize as base.
         (1em, 100pt)
         >>> bs.leading = em(1.2)
@@ -991,7 +1013,9 @@ class BabelString:
         only refers to the tracking of the last run.
 
         >>> from pagebot.toolbox.units import pt, em
-        >>> bs = BabelString('ABCD', dict(tracking=em(0.1), fontSize=pt(100)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(tracking=em(0.1), fontSize=pt(100)), context=context)
         >>> bs.tracking, pt(bs.tracking) # Render relative unit with fontSize as base.
         (0.1em, 10pt)
         >>> bs.tracking = em(0.2)
@@ -1013,10 +1037,12 @@ class BabelString:
         that this only refers to the alignments of the last run.
 
         >>> from pagebot.constants import CENTER, RIGHT, XHEIGHT
-        >>> bs = BabelString('ABCD', dict(xTextAlign=CENTER))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(xTextAlign=CENTER), context=context)
         >>> bs.xAlign
         'center'
-        >>> bs = BabelString('ABCD', dict(xAlign=XHEIGHT))
+        >>> bs = BabelString('ABCD', dict(xAlign=XHEIGHT), context=context)
         >>> bs.xAlign
         'xHeight'
         >>> bs.xAlign = RIGHT
@@ -1036,10 +1062,12 @@ class BabelString:
         that this only refers to the alignments of the last run.
 
         >>> from pagebot.constants import CENTER, RIGHT
-        >>> bs = BabelString('ABCD')
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', context=context)
         >>> bs.yAlign
         'baseline'
-        >>> bs = BabelString('ABCD', dict(yAlign=CENTER))
+        >>> bs = BabelString('ABCD', dict(yAlign=CENTER), context=context)
         >>> bs.yAlign
         'center'
         >>> bs.yAlign = RIGHT
@@ -1058,7 +1086,9 @@ class BabelString:
         run.
 
         >>> from pagebot.toolbox.units import em, pt
-        >>> bs = BabelString('ABCD', dict(baselineShift=em(0.2), fontSize=pt(100)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(baselineShift=em(0.2), fontSize=pt(100)), context=context)
         >>> bs.baselineShift, pt(bs.baselineShift)
         (0.2em, 20pt)
         >>> bs.baselineShift = em(0.3)
@@ -1078,7 +1108,9 @@ class BabelString:
         style. Note that this only refers to the openTypeFeatures of the last
         run.
 
-        >>> bs = BabelString('ABCD', dict(openTypeFeatures=dict(smcp=True)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(openTypeFeatures=dict(smcp=True)), context=context)
         >>> bs.openTypeFeatures
         {'smcp': True}
         >>> bs.openTypeFeatures = dict(onum=True)
@@ -1097,7 +1129,9 @@ class BabelString:
         """Answers the underline attribute, as defined in the current style.
         Note that this only refers to the underline of the last run.
 
-        >>> bs = BabelString('ABCD', dict(underline=True))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(underline=True), context=context)
         >>> bs.underline
         True
         >>> bs.underline = False
@@ -1115,7 +1149,9 @@ class BabelString:
         that this only refers to the indent of the last run.
 
         >>> from pagebot.toolbox.units import em, pt
-        >>> bs = BabelString('ABCD', dict(indent=em(0.2), fontSize=pt(100)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(indent=em(0.2), fontSize=pt(100)), context=context)
         >>> bs.indent, pt(bs.indent)
         (0.2em, 20pt)
         >>> bs.indent = em(0.3)
@@ -1135,7 +1171,9 @@ class BabelString:
         Note that this only refers to the tailIndent of the last run.
 
         >>> from pagebot.toolbox.units import em, pt
-        >>> bs = BabelString('ABCD', dict(tailIndent=em(0.2), fontSize=pt(100)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(tailIndent=em(0.2), fontSize=pt(100)), context=context)
         >>> bs.tailIndent, pt(bs.tailIndent)
         (0.2em, 20pt)
         >>> bs.tailIndent = em(0.3)
@@ -1155,7 +1193,9 @@ class BabelString:
         Note that this only refers to the tailIndent of the last run.
 
         >>> from pagebot.toolbox.units import em, pt
-        >>> bs = BabelString('ABCD', dict(firstLineIndent=em(0.2), fontSize=pt(100)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(firstLineIndent=em(0.2), fontSize=pt(100)), context=context)
         >>> bs.firstLineIndent, pt(bs.firstLineIndent)
         (0.2em, 20pt)
         >>> bs.firstLineIndent = em(0.3)
@@ -1174,7 +1214,9 @@ class BabelString:
         """Answers the textFill as defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
-        >>> bs = BabelString('ABCD', dict(textFill=color(1, 0, 0)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(textFill=color(1, 0, 0)), context=context)
         >>> bs.textFill
         Color(r=1, g=0, b=0)
         >>> bs.textFill = color(0, 0.5, 0) # Set the current style color
@@ -1193,7 +1235,9 @@ class BabelString:
         """Answers the textStroke as defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
-        >>> bs = BabelString('ABCD', dict(textStroke=color(1, 0, 0)))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(textStroke=color(1, 0, 0)), context=context)
         >>> bs.textStroke
         Color(r=1, g=0, b=0)
         >>> bs.textStroke = color(0, 0.5, 0) # Set the current style color
@@ -1212,7 +1256,9 @@ class BabelString:
         """Answers the textStrokeWidth as defined in the current style.
 
         >>> from pagebot.toolbox.units import mm
-        >>> bs = BabelString('ABCD', dict(textStrokeWidth=2))
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', dict(textStrokeWidth=2), context=context)
         >>> bs.runs[0].style
         {'textStrokeWidth': 2}
         >>> bs.textStrokeWidth
@@ -1233,7 +1279,9 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import mm
         >>> style = dict(font='PageBot-Regular', fontSize=12)
-        >>> bs = BabelString('ABCD', style=style)
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', style=style, context=context)
         >>> bs.capHeight # Converts to absolute units
         7.9pt
         >>> bs.fontSize = 100
@@ -1254,7 +1302,9 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import mm
         >>> style = dict(font='PageBot-Regular', fontSize=12)
-        >>> bs = BabelString('ABCD', style=style)
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', style=style, context=context)
         >>> bs.xHeight # Converts to absolute units
         5.59pt
         >>> bs.fontSize = 100
@@ -1276,8 +1326,10 @@ class BabelString:
         the self.info.ascender (which some from the [hhea] table.)
 
         >>> from pagebot.toolbox.units import mm
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=1000)
-        >>> bs = BabelString('ABCD', style=style)
+        >>> bs = BabelString('ABCD', style=style, context=context)
         >>> bs.ascender # Converts to absolute units
         748pt
         >>> bs.fontSize = 100
@@ -1302,7 +1354,9 @@ class BabelString:
 
         >>> from pagebot.toolbox.units import mm
         >>> style = dict(font='PageBot-Regular', fontSize=1000)
-        >>> bs = BabelString('ABCD', style=style)
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', style=style, context=context)
         >>> bs.descender # Converts to absolute units
         -252pt
         >>> bs.fontSize = 100
@@ -1324,7 +1378,9 @@ class BabelString:
         >>> style1 = dict(font='Verdana', fontSize=pt(12))
         >>> style2 = dict(font='Georgia', fontSize=pt(18))
         >>> style3 = dict(font='Verdana', fontSize=pt(10))
-        >>> bs = BabelString('ABCD', style1)
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> bs = BabelString('ABCD', style1, context=context)
         >>> bs.add('EFGH', style2)
         >>> bs.add('IJKL') # Will find style2
         >>> bs.add('XYZ', style3)
