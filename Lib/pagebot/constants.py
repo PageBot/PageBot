@@ -342,6 +342,12 @@ FacebookTimeLine = px(1200, 630) # Minimum (600, 315)
 EvenbriteBanner = px(2160, 1080)
 EvenbriteBannerSmall = px(1200, 400)
 
+# Movie and video sizes
+Cinema = px(1920, int(1920/1.85)) # Aspect ratio 1.85:1
+CinemaWide = px(1920, int(1920/2.39)) # Aspect ratio 2.29:1
+VideoUniversal = px(1920, int(1920*3/4)) # Aspect ratio 4:3 (1.3:1)
+VideoHiresEurope = px(1920, int(1920*9/16)) # Aspect ratio 16:9 (1.7:1)
+
 # Standard size of online printing sites.
 # TODO: Add more online services and adapt other parameters/preferences for
 # these PDF's.
