@@ -53,10 +53,11 @@ class NanoElement(Column):
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
         >>> context = getContext('Html')
-        >>> doc = Document(context=context)
+        >>> doc = Document(viewId='Mamp', context=context)
+        >>> doc.view
+        <MampView "Mamp" w=1000pt h=1000pt>
         >>> page = doc[1]
-        >>> e = NanoElement(fill='red')
-        >>> 
+        >>> e = NanoElement(fill=color(rgb=0xFCCBB8), parent=page)
         """
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
@@ -64,8 +65,8 @@ class NanoElement(Column):
         if self.fill in (None, noColor):
             style = None
         else:
-            style = 'background-color:%s' % color(self.fill).css
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+            style = 'background-color:%s;' % color(self.fill).css
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass, style=style)
         self.showCssIdClass(view)
         for e in self.elements:
             e.build_html(view, path, **kwargs)
