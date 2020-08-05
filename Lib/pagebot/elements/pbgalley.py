@@ -19,7 +19,7 @@ from pagebot.elements.element import Element
 from pagebot.elements.pbtext import Text
 from pagebot.elements.pbruler import Ruler
 from pagebot.toolbox.units import pointOffset
-from pagebot.toolbox.color import color
+from pagebot.toolbox.color import color, noColor
 from pagebot.conditions import *
 
 class Galley(Element):
@@ -40,9 +40,9 @@ class Galley(Element):
         # Make sure that this is a formatted string. Otherwise create it with
         # the current style.
 
-        if fill is None: # Set default Galley color if not defined.
-            fill = self.OLD_PAPER_COLOR
-        self.fill = fill
+        #if fill is None: # Set default Galley color if not defined.
+        #    fill = self.OLD_PAPER_COLOR
+        self.fill = fill or noColor
 
         if conditions is None:
             conditions = [Fit(), Overflow2Next()]
