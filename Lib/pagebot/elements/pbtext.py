@@ -702,6 +702,14 @@ class Text(Element):
 
     #   B U I L D
 
+
+    def getPosition(self, view, origin):
+        p = pointOffset(self.origin, origin)
+        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        self._applyRotation(view, p)
+        return x, p
+
     def build(self, view, origin, drawElements=True, **kwargs):
         """Draws the text on position (x, y). Draws a background rectangle and
         / or frame if fill and / or stroke are defined.
@@ -742,13 +750,9 @@ class Text(Element):
         True
         >>> doc.export('_export/Text-build2.pdf')
         """
-        #context = self.context
-        p = pointOffset(self.origin, origin)
-        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         context = view.context # Get current context
-        self._applyRotation(view, p)
+        x, p = self.getPosition(view, origin)
+        px, py, _ = p
 
         # TODO: Add Element clipping stuff here
 
@@ -774,11 +778,9 @@ class Text(Element):
                     view.drawPadding(self, (px, frameY))
 
                 # Draw text as box
-
                 y = py - self.pt - self.h + baseline0
                 w = self.w or self.bs.w
                 h = self.h or self.bs.h
-
                 context.drawText(self.bs, (x, y, w, h))
 
         else:
