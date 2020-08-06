@@ -4495,8 +4495,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         elif len(p) == 2:
             x, y = p
         else:
-            msg = 'Element.buildFrame(): Badly formatted position argument p'
-            print(msg)
+            x = y = 0
+            #msg = 'Element.buildFrame(): Badly formatted position argument p'
+            #print(msg)
             # TODO: raise error.
 
         w = w or self.w

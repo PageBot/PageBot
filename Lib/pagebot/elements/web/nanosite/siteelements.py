@@ -17,7 +17,7 @@
 from pagebot.publications.publication import Publication
 from pagebot.elements import *
 from pagebot.elements.web.barebonesslider.siteelements import SlideShow, SlideSide, SlideShowGroup
-from pagebot.toolbox.color import noColor
+from pagebot.toolbox.color import noColor, color
 
 class Site(Publication):
     """Build a website, simplest responsive structure, using CSS Grid.
@@ -48,9 +48,25 @@ class NanoElement(Column):
             b._div()
 
     def build_html(self, view, path, drawElements=True, **kwargs):
+        """Build the HTML representation of the element.
+
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.document import Document
+        >>> context = getContext('Html')
+        >>> doc = Document(viewId='Mamp', context=context)
+        >>> doc.view
+        <MampView "Mamp" w=1000pt h=1000pt>
+        >>> page = doc[1]
+        >>> e = NanoElement(fill=color(rgb=0xFCCBB8), parent=page)
+        """
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
-        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
+        # In case there is a background color define, then overwrite CSS class
+        if self.fill in (None, noColor):
+            style = None
+        else:
+            style = 'background-color:%s;' % color(self.fill).css
+        b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass, style=style)
         self.showCssIdClass(view)
         for e in self.elements:
             e.build_html(view, path, **kwargs)
@@ -515,7 +531,7 @@ class Cropped(NanoElement):
             imagePath = image.path or '' # Image probably does not exist. Not the moment here to report the error.
             style = "background-image:url('%s');background-position:%s %s;background-size:%s;" % \
                 (imagePath.lower(), image.xAlign or 'center', image.yAlign or 'top', image.cssSize or 'cropped')
-            if self.fill is not noColor:
+            if not self.fill in (None, noColor):
                 style += 'background-color:#%s;' % self.fill.hex
             if image.cssRepeat:
                 style += 'background-repeat:%s;' % image.cssRepeat
