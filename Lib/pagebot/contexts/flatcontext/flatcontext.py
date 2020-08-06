@@ -644,7 +644,6 @@ class FlatContext(BaseContext):
         if isinstance(s, str):
             s = self.newString(s)
         assert isinstance(s, BabelString)
-        print(s.style)
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
         #xpt, ypt = self.translatePoint(p)
         #x, y = self.getTransformed(x, y)
@@ -785,7 +784,7 @@ class FlatContext(BaseContext):
         return pt(textWidth, textHeight)
 
     def getTextLines(self, bs, w=None, h=None, ascDesc=False):
-        """Answer a list of BabeLineInfo instances
+        """Answer a list of BabeLineInfo instances.
 
         >>> from pagebot.toolbox.units import pt
         >>> context = FlatContext()
@@ -812,6 +811,7 @@ class FlatContext(BaseContext):
 
         for height, flatLine in flatRuns:
             height = round(height)
+            #print(height)
             if y is None:
                 y = height
 
