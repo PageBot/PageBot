@@ -435,17 +435,15 @@ class Introduction(NanoElement):
     pass
 
 class Mains(NanoElement):
-    """Grouping Main elements together, so CSS grid can define the
-    behavior of multiple, occupying a single main grid slot.
-    """
+    """Grouping Main elements together, so CSS grid can define the behavior of
+    multiple, occupying a single main grid slot."""
 
 class Main(NanoElement):
     pass
 
 class Sides(NanoElement):
-    """Grouping Side elements together, so CSS grid can define the
-    behavior of multiple, occupying a single side grid slot.
-    """
+    """Grouping Side elements together, so CSS grid can define the behavior of
+    multiple, occupying a single side grid slot."""
 
 class Side(NanoElement):
     pass
@@ -453,8 +451,7 @@ class Side(NanoElement):
 # ELements floating in main/side text
 
 class Info(NanoElement):
-    """An Info element has content that can be hidden under a button.
-    """
+    """An Info element has content that can be hidden under a button."""
     INFO_OPEN = '▾' # '˅', '▼', '◄', '▶', 'More', '...', #'?'
     INFO_CLOSE = '×' #'x'
 
@@ -505,11 +502,12 @@ class Info(NanoElement):
 
 
 class Cropped(NanoElement):
-    """The Cropped element takes any amount of content elements. The first Image element in the
-    list of child elements will be used as background for the Cropped element.
-    And then that image will be skipped while processing the other child elements.
-    This way the Picture element can be used as growing background container. But is also can
-    be used for normal content, that should be positions on a background image.
+    """The Cropped element takes any amount of content elements. The first
+    Image element in the list of child elements will be used as background for
+    the Cropped element. And then that image will be skipped while processing
+    the other child elements. This way the Picture element can be used as
+    growing background container. But is also can be used for normal content,
+    that should be positions on a background image.
     """
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b
@@ -531,7 +529,7 @@ class Cropped(NanoElement):
             imagePath = image.path or '' # Image probably does not exist. Not the moment here to report the error.
             style = "background-image:url('%s');background-position:%s %s;background-size:%s;" % \
                 (imagePath.lower(), image.xAlign or 'center', image.yAlign or 'top', image.cssSize or 'cropped')
-            if not self.fill in (None, noColor):
+            if self.fill not in (None, noColor):
                 style += 'background-color:#%s;' % self.fill.hex
             if image.cssRepeat:
                 style += 'background-repeat:%s;' % image.cssRepeat

@@ -106,4 +106,3 @@ class Imaging:
         assert isinstance(resolutionFactors, dict)
         self.style['resolutionFactors'] = resolutionFactors
     resolutionFactors = property(_get_resolutionFactors, _set_resolutionFactors)
-
