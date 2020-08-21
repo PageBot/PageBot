@@ -609,10 +609,12 @@ class BabelString:
             # Want something different than defined requested bs.w or bs.h.
             if w != self.w or h != self.h:
                 # Different indeed? Reflow in temporary lines.
-                return self.context.textSize(self, w=w, h=h, ascDesc=False)
+                #return self.context.textSize(self, w=w, h=h, ascDesc=False) <-- Not here
+                return self.context.textSize(self, w=w, h=h)
 
         # FIXME: probably needs a w, h.
-        self._twh = twh = self.context.textSize(self, ascDesc=False)
+        #self._twh = twh = self.context.textSize(self, ascDesc=False)
+        self._twh = twh = self.context.textSize(self)
         return twh
 
     def _get_textSize(self):

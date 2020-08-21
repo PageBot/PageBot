@@ -788,7 +788,8 @@ class Text(Element):
             width (there may be embedded newlines)."""
             frameX = px
             frameY = py + self.bs.topLineDescender
-            frameW, frameH = self.context.textSize(self.bs, ascDesc=True)
+            #frameW, frameH = self.context.textSize(self.bs, ascDesc=True) <-- not here.
+            frameW, frameH = self.context.textSize(self.bs)
             # Draw optional background, frame or borders.
             #self.buildFrame(view, (px, py, self.bs.tw, self.h))
             self.buildFrame(view, (frameX, frameY, frameW, frameH))
