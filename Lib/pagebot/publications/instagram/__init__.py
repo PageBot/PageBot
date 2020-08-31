@@ -21,4 +21,5 @@ INSTAGRAM_CLASSES = {
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()[0]
+    import sys
+    sys.exit(doctest.testmod()[0])

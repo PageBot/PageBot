@@ -561,8 +561,8 @@ class Dating:
                             year, month, day = date.split('-')
                             if int(day) > int(year):    # If notation 25-03-2007, then swap day and year
                                 year, day = day, year
-                        except:
-                            raise ValueError('[datetime] Wrong date format "%s"' % date)
+                        except Exception as exc:
+                            raise ValueError('[datetime] Wrong date format "%s"' % date) from exc
                 else:
                     # If date is an integer .... format: YYYYMMDD
                     d = str(date)

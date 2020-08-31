@@ -452,8 +452,8 @@ def getUnicodeRangesByScriptTag(scriptTag):
     for rangeName in _openTypeScriptToUnicodeRangeNameMapping.get(script, [script]):
         try:
             bit, rangeMinimum, rangeMaximum  = getUnicodeRangeByName(rangeName)
-        except KeyError:
-            raise KeyError("no unicode ranges equivalent for '%s' script found" % scriptTag)
+        except KeyError as exc:
+            raise KeyError("no unicode ranges equivalent for '%s' script found" % scriptTag) from exc
         bits.add(bit)
 
     ranges = []
