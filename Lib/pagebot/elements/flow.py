@@ -60,11 +60,15 @@ class Flow:
         nextElement = None
 
         # If there is a next element reference defined.
-        from pagebot.elements import Element
+
         if self.nextElement is not None:
-            if isinstance(self.nextPage, Element):
-                page = self.nextPage
-            elif self.nextPage:
+
+            # FIXME: causes cyclical import.
+            #from pagebot.elements import Element
+            #if isinstance(self.nextPage, Element):
+            #    page = self.nextPage
+
+            if self.nextPage:
                 # then check if we also make reference to a another page.
                 page = self.doc[self.nextPage]
             else:

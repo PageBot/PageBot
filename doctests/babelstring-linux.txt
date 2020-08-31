@@ -17,7 +17,7 @@ ABCD
 >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
 >>> bs = context.newString(loremipsum(), style, w=pt(400))
 >>> bs.style
-{'font': 'PageBot-Regular', 'fontSize': 24pt}
+{'font': 'PageBot-Regular', 'fontSize': 24pt, 'leading': 1.4em}
 >>> # Box width and height.
 >>> bs.w, bs.h
 (400pt, None)

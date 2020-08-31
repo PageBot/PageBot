@@ -568,14 +568,14 @@ class Movie(NanoElement):
         if params:
             url += '?' + '&'.join(params)
         '''
-        b.addHtml("""<iframe width="100%" 
-            src="https://www.youtube.com/embed/d9s0-HzOsYo" 
-            frameborder="0" 
-            allow="accelerometer; 
-            autoplay; 
-            encrypted-media; 
-            gyroscope; 
-            picture-in-picture" 
+        b.addHtml("""<iframe width="100%"
+            src="https://www.youtube.com/embed/d9s0-HzOsYo"
+            frameborder="0"
+            allow="accelerometer;
+            autoplay;
+            encrypted-media;
+            gyroscope;
+            picture-in-picture"
             allowfullscreen></iframe>""")
         '''
         images = self.findAll(cls=Image) # Find all child images inside the tree
@@ -588,20 +588,20 @@ class Movie(NanoElement):
             }\n\n""", name=self.__class__.__name__)
 
             imagePath = image.path or '' # Image probably does not exist. Not the moment here to report the error.
-            b.addHtml("""<iframe id="%(eid)siframe" style="display:none;" 
-                width="100%%" height="400px" 
-                src="%(url)s" 
-                frameborder="0" 
-                allow="accelerometer; encrypted-media; gyroscope;" 
+            b.addHtml("""<iframe id="%(eid)siframe" style="display:none;"
+                width="100%%" height="400px"
+                src="%(url)s"
+                frameborder="0"
+                allow="accelerometer; encrypted-media; gyroscope;"
                 allowfullscreen="1"></iframe>
                 <div id="%(eid)scover" style="display:block;" onclick="hideVideoCover('%(eid)siframe', '%(eid)scover')">
                 <img width="100%%" height="400px" src="%(cover)s"/></div>""" % dict(eid=self.eId, url=url, cover=imagePath))
         else:
-            b.addHtml("""<iframe id="%(eid)siframe" style="display:block;" 
-                width="100%%" height="400px" 
-                src="%(url)s" 
-                frameborder="0" 
-                allow="accelerometer; encrypted-media; gyroscope;" 
+            b.addHtml("""<iframe id="%(eid)siframe" style="display:block;"
+                width="100%%" height="400px"
+                src="%(url)s"
+                frameborder="0"
+                allow="accelerometer; encrypted-media; gyroscope;"
                 allowfullscreen="1"></iframe>""" % dict(url=url, eid=self.eId))
 
         #b.iframe_(src=url, width_html=self.frameW or '100%', height_html=self.frameH)
