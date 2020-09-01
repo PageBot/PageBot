@@ -313,8 +313,8 @@ class FlatContext(BaseContext):
         return units(w), units(h)
 
     def setSize(self, w=None, h=None):
-        """Set the initial page size of the context, in case something is drawn before
-        a document or page is created.
+        """Set the initial page size of the context, in case something is drawn
+        before a document or page is created.
 
         >>> from pagebot.toolbox.units import mm, cm
         >>> context = FlatContext()
@@ -377,13 +377,13 @@ class FlatContext(BaseContext):
 
         if self.drawing is None:
             self.newDrawing(w=W, h=H)
-            #return None
         if self._numberOfPages == 0:
             self.newPage(w=W, h=H)
 
         assert self.drawing
         assert self.drawing.pages
         return self.drawing.pages[-1]
+
     page = property(_get_page)
 
     def _get_height(self):

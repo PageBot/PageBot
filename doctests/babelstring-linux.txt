@@ -22,7 +22,7 @@ ABCD
 >>> bs.w, bs.h
 (400pt, None)
 >>> # Text width and height.
-# FIXME: should be identical to OSX.
+>>> # FIXME: should be identical to OSX.
 >>> #bs.tw, bs.th
 #(404.88pt, 4113.6pt)
 >>> len(bs.lines)
@@ -34,7 +34,7 @@ ABCD
 >>> keys = sorted(baselines.keys())
 >>> len(keys)
 4
-# FIXME: should be identical to OSX.
+>>> # FIXME: should be identical to OSX.
 >>> #keys
 #[0, 18, 47, 76]
 >>> # TODO: add test font measures.
