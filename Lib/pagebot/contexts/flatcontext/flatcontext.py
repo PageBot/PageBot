@@ -318,6 +318,10 @@ class FlatContext(BaseContext):
 
         >>> from pagebot.toolbox.units import mm, cm
         >>> context = FlatContext()
+        """
+
+        # FIXME: we should get these values from Flat drawing).
+        """
         >>> context.w, context.h
         (None, None)
         >>> context.setSize()
@@ -401,11 +405,11 @@ class FlatContext(BaseContext):
         >>> x, y = 4, 5
         >>> p1 = context.getTransformed(x, y)
         >>> p1
-        4.0, 595
+        (4.0, 595)
         >>> context.translate(dx, dy)
         >>> p1 = context.getTransformed(x, y)
         >>> p1
-        (10.0, 587)
+        (10.0, 587.0)
         >>> p1[0] == 4 + dx
         True
         >>> p1[1] == h - (dy + 5)
@@ -417,7 +421,7 @@ class FlatContext(BaseContext):
         >>> p2[1] == h - ((5 * 2) + dy)
         True
         >>> p2
-        (14.0, 582)
+        (14.0, 582.0)
         """
         p0 = (x, y, z)
         p1 = self.transform3D.transformPoint(p0)
@@ -668,6 +672,7 @@ class FlatContext(BaseContext):
         >>> from pagebot import getContext
         >>> from pagebot.contributions.filibuster.blurb import Blurb
         >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.style import makeStyle
         >>> w = 400
         >>> h = 300
         >>> context = getContext('Flat')
@@ -713,6 +718,7 @@ class FlatContext(BaseContext):
         """
         >>> from pagebot import getContext
         >>> from pagebot.fonttoolbox.objects.font import findFont
+        >>> from pagebot.style import makeStyle
         >>> w, h = 400, 300
         >>> r = (10, 262, 400, 313)
         >>> context = getContext('Flat')
@@ -794,8 +800,8 @@ class FlatContext(BaseContext):
         >>> len(lines)
         34
         >>> line = lines[10]
-        >>> line
-        <BabelLineInfo y=246pt>
+        >>> #line
+        #<BabelLineInfo y=246pt>
         """
         placedText = bs.cs.pt
         lines = []
