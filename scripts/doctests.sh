@@ -52,7 +52,7 @@ python3 $PWD/contributions/filibuster/blurbwriter.py
 #python3 $PWD/contributions/markdown/inline.py
 #python3 $PWD/contributions/markdown/literature.py
 python3 $PWD/document.py
-python3 $PWD/elements/alignment.py
+python3 $PWD/elements/alignments.py
 python3 $PWD/elements/clippath.py
 python3 $PWD/elements/conditions.py
 python3 $PWD/elements/element.py
