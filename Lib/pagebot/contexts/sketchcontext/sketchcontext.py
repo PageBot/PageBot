@@ -50,7 +50,8 @@ from pysketch.sketchclasses import *
 class SketchContext(BaseContext):
 
     '''
-    Lib/pagebot/contexts/sketchcontext/sketchcontext.py:254:15: W0631: Using possibly undefined loop variable 'pIndex' (undefined-loop-variable)
+    Lib/pagebot/contexts/sketchcontext/sketchcontext.py:254:15: W0631: Using
+    possibly undefined loop variable 'pIndex' (undefined-loop-variable)
     '''
 
     W, H = A4 # Default size of a document, as SketchApp has infinite canvas.
@@ -606,8 +607,8 @@ class SketchContext(BaseContext):
     def fromBabelString(self, bs):
         """
 
-        >>> bs = BabelString('abcd', style=dict(font='Roboto-Regular', fontSize=pt(18)))
         >>> context = SketchContext()
+        >>> bs = BabelString('abcd', style=dict(font='Roboto-Regular', fontSize=pt(18)), context=context)
         >>> sas1 = context.fromBabelString(bs)
         >>> sas1
         <SketchAttributedString>
