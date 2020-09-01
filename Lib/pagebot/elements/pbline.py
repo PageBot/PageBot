@@ -57,8 +57,6 @@ class Line(Element):
 
     h = property(_get_h, _set_h)
 
-    #   D R A W B O T / F L A T  S U P P O R T
-
     def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Draw a line on the current context canvas.
 
@@ -67,12 +65,14 @@ class Line(Element):
         >>> from pagebot.document import Document
         >>> c = getContext()
         >>> w, h = pt(300, 400)
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
+        >>> doc = Document(w=w, h=h, padding=30, context=c)
+        >>> c.newDrawing(doc=doc)
         >>> page = doc[1]
         >>> e = Line(parent=page, x=0, y=20, w=page.w, h=0)
         >>> e.x, e.y, e.w, e.h
         (0pt, 20pt, 300pt, 0pt)
-        >>> e.build(doc.getView(), pt(0, 0))
+        >>> view = doc.getView()
+        >>> e.build(view, pt(0, 0))
         >>> #e.build(doc, pt(0, 0))
         >>> e.xy
         (0pt, 20pt)
@@ -82,7 +82,7 @@ class Line(Element):
         >>> e.build(view, pt(0, 0))
         >>> from pagebot.document import Document
         >>> c = getContext()
-        >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
+        >>> doc = Document(w=w, h=h, padding=30, context=c)
         >>> page = doc[1]
         >>> e = Line(parent=page, x=0, y=20, w=page.w, h=3)
         >>> # Allow the context to create a new document and page canvas. Normally view does it.
