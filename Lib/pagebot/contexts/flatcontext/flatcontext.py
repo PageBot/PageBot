@@ -405,7 +405,7 @@ class FlatContext(BaseContext):
         >>> x, y = 4, 5
         >>> p1 = context.getTransformed(x, y)
         >>> p1
-        (4.0, 595)
+        (4.0, 595.0)
         >>> context.translate(dx, dy)
         >>> p1 = context.getTransformed(x, y)
         >>> p1
