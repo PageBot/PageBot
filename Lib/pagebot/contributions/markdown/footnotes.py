@@ -55,7 +55,7 @@ class FootnoteExtension(Extension):
                  "The text string that links from the footnote "
                  "to the reader's place."]
         }
-        super(FootnoteExtension, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # In multiple invocations, emit links that don't get tangled.
         self.unique_prefix = 0
@@ -270,7 +270,7 @@ class FootnotePattern(Pattern):
     """ InlinePattern for footnote markers in a document's body text. """
 
     def __init__(self, pattern, footnotes):
-        super(FootnotePattern, self).__init__(pattern)
+        super().__init__(pattern)
         self.footnotes = footnotes
 
     def handleMatch(self, m):

@@ -266,7 +266,7 @@ class LiteraturePattern(Pattern):
     """ InlinePattern for literature markers in a document's body text. """
 
     def __init__(self, pattern, literatures):
-        super(LiteraturePattern, self).__init__(pattern)
+        super().__init__(pattern)
         self.literatures = literatures
 
     def handleMatch(self, m):

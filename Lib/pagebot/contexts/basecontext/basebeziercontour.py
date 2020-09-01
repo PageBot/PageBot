@@ -21,7 +21,7 @@ class BaseBezierContour(list):
     """A Bézier contour object."""
 
     def __init__(self, *args, **kwargs):
-        super(BaseBezierContour, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.open = True
 
     def __repr__(self):
