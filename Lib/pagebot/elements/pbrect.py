@@ -29,6 +29,7 @@ class Rect(Element):
     >>> c = getContext()
     >>> w, h = pt(300, 400)
     >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
+    >>> c.newDrawing(doc=doc)
     >>> page = doc[1]
     >>> e = Rect(parent=page, xy=(0, 20), size=(page.w, '3p2'), fill=color(1, 0, 0))
     >>> e.build(doc.getView(), (0, 0))

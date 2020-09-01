@@ -56,6 +56,7 @@ class Ruler(Element):
         >>> c = getContext()
         >>> w, h = pt(300, 400)
         >>> doc = Document(w=w, h=h, autoPages=1, padding=30, context=c)
+        >>> c.newDrawing(doc=doc)
         >>> page = doc[1]
         >>> e = Ruler(parent=page, x=0, y=20, w=page.w, h=3)
         >>> e.build(doc.getView(), pt(0, 0))
