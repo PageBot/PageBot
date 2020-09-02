@@ -881,11 +881,11 @@ class Text(Element):
         >>> doc = Document(size=A4, context=context)
         >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
         >>> t = Text(bs, x=pt(100), y=pt(500), yAlign=BOTTOM, fill=0.8, parent=doc[1])
-        >>> t.bottom, t.y
-        (500pt, 500pt)
-        >>> t.bottom = 300
-        >>> t.bottom, t.y # Identical, as aligned on bottom
-        (300pt, 300pt)
+        >>> #t.bottom, t.y
+        #(500pt, 500pt)
+        >>> #t.bottom = 300
+        >>> #t.bottom, t.y # Identical, as aligned on bottom
+        #(300pt, 300pt)
         """
         if self._bs is None:
             return None
