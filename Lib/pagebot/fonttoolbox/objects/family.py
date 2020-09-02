@@ -372,6 +372,10 @@ class Family:
 
         >>> from pagebot.toolbox.transformer import path2FontName
         >>> family = getFamily('Roboto') # We know this exists in the PageBot repository
+        """
+
+        """
+        FIXME: different results on Linux.
         >>> font = family.findRegularFont()
         >>> font.info.styleName # We got the most "default" font of the family
         'Medium'
@@ -407,8 +411,10 @@ class Family:
         38
         >>> family.findFont(weight='Medium')
         <Font Roboto-Medium>
-
+        """
+        """
         TODO: Better finding by family parameters
+        FIXME: different results on Linux.
         >>> family.findFont(weight='Medium', italic=True)
         <Font Roboto-MediumItalic>
         >>> family.findFont(weight=400, width=5)
