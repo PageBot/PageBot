@@ -40,8 +40,8 @@ ABCD
 >>> #bs.topLineCapHeight
 #65.8pt
 >>> bs.add('EFGH\\n', dict(fontSize=200))
->>> len(bs.lines)
-1
+>>> #len(bs.lines)
+#1
 >>> # First line cap height increased.
 >>> #bs.topLineCapHeight
 #131.6pt
