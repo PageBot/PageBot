@@ -423,7 +423,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return len(self.elements)
 
     def _get_context(self):
-        """Answer the self._context if it is defined. Otherwise search
+        """Answers the self._context if it is defined. Otherwise search
         for the doc.view.context if it exists.
 
         >>> from pagebot.document import Document
@@ -460,7 +460,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     context = property(_get_context)
 
     def _get_view(self):
-        """Answer the doc.view if it exists.
+        """Answers the doc.view if it exists.
 
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
@@ -474,8 +474,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     view = property(_get_view)
 
     def _get_theme(self):
-        """Answer the theme of this element. If undefined, answer the theme of self.parent.
-        If no parent is defined, then answer None.
+        """Answers the theme of this element. If undefined, answer the theme of
+        self.parent. If no parent is defined, then answer None.
 
         >>> from pagebot.themes import BaseTheme, BackToTheCity
         >>> theme1 = BaseTheme()
@@ -1091,7 +1091,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
 
     def isTopOnGrid(self, tolerance=0):
-        """Answer True if self.top is on the parent grid.
+        """Answers True if self.top is on the parent grid.
         >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isTopOnGrid()
@@ -1103,7 +1103,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return abs(self.getDistance2Grid(self.top)) <= tolerance
 
     def isBottomOnGrid(self, tolerance=0):
-        """Answer True if self.bottom is on the parent grid.
+        """Answers True if self.bottom is on the parent grid.
         >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isBottomOnGrid()
@@ -1115,7 +1115,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return abs(self.getDistance2Grid(self.bottom)) <= tolerance
 
     def isMiddleOnGrid(self, tolerance=0):
-        """Answer True if self.middle is on the parent grid.
+        """Answers True if self.middle is on the parent grid.
         >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=100, h=200, parent=e1)
         >>> e2.isMiddleOnGrid()
@@ -1369,7 +1369,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     tracking = property(_get_tracking, _set_tracking)
 
     def _get_lib(self):
-        """Answer the local element.lib dictionary by property, used for custom
+        """Answers the local element.lib dictionary by property, used for custom
         application value storage. Always make sure it is a dictionary.
         """
         return self._lib
@@ -2123,7 +2123,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     left = property(_get_left, _set_left)
 
     def _get_mLeft(self):
-        """Answer left position, including left margin of self
+        """Answers left position, including left margin of self
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(x=mm(100), w=248, xAlign=LEFT, margin=mm(15))
@@ -2674,7 +2674,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return yAlign
 
     def _get_xTextAlign(self):
-        """Answer the type of x-alignment for text strings. Mostly used for elements that support text.
+        """Answers the type of x-alignment for text strings. Mostly used for elements that support text.
 
         >>> e = Element()
         >>> e.xTextAlign is None
@@ -3890,7 +3890,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     #   S H A D O W   &  G R A D I E N T
 
     def _get_shadow(self):
-        """Answer the Shadow instance of self.
+        """Answers the Shadow instance of self.
 
         >>> from pagebot.gradient import Shadow
         >>> e = Element()
@@ -4204,7 +4204,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     scaleZ = property(_get_scaleZ, _set_scaleZ)
 
     def _get_scale(self):
-        """Answer the 2-tuple of (self.scaleX, self.scaleY)
+        """Answers the 2-tuple of (self.scaleX, self.scaleY)
         If scale it set this way, self.proportional will reset to False.
 
         >>> e = Element(scale=2)
@@ -5027,58 +5027,58 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
 
     def _get_viewFrameStroke(self):
-        """Answer local setting of frame stroke color, used if self.showFrame is True.
-        Note that this is independent from the element border showing.
-        """
+        """Answers local setting of frame stroke color, used if self.showFrame
+        is True. Note that this is independent from the element border
+        showing."""
         return self.style.get('viewFrameStroke') # Not inherited
     def _set_viewFrameStroke(self, stroke):
         self.style['viewFrameStroke'] = stroke
     viewFrameStroke = property(_get_viewFrameStroke, _set_viewFrameStroke)
 
     def _get_viewFrameStrokeWidth(self):
-        """Answer local setting of frame stroke width, used if self.showFrame is True.
-        Note that this is independent from the element border showing.
-        """
+        """Answers local setting of frame stroke width, used if self.showFrame
+        is True. Note that this is independent from the element border
+        showing."""
         return self.style.get('viewFrameStrokeWidth') # Not inherited
     def _set_viewFrameStrokeWidth(self, strokeWidth):
         self.style['viewFrameStrokeWidth'] = strokeWidth
     viewFrameStrokeWidth = property(_get_viewFrameStrokeWidth, _set_viewFrameStrokeWidth)
 
     def _get_viewPaddingStroke(self):
-        """Answer local setting of padding stroke color, used if self.showPadding is True.
-        """
+        """Answers local setting of padding stroke color, used if
+        self.showPadding is True."""
         return self.style.get('viewPaddingStroke') # Not inherited
     def _set_viewPaddingStroke(self, stroke):
         self.style['viewPaddingStroke'] = stroke
     viewPaddingStroke = property(_get_viewPaddingStroke, _set_viewPaddingStroke)
 
     def _get_viewPaddingStrokeWidth(self):
-        """Answer local setting of padding stroke width, used if self.showFrame is True.
-        """
+        """Answers local setting of padding stroke width, used if
+        self.showFrame is True."""
         return self.style.get('viewPaddingStrokeWidth') # Not inherited
     def _set_viewPaddingStrokeWidth(self, strokeWidth):
         self.style['viewPaddingStrokeWidth'] = strokeWidth
     viewPaddingStrokeWidth = property(_get_viewPaddingStrokeWidth, _set_viewPaddingStrokeWidth)
 
     def _get_viewMarginStroke(self):
-        """Answer local setting of margin stroke color, used if self.showMargin is True.
-        """
+        """Answers local setting of margin stroke color, used if
+        self.showMargin is True."""
         return self.style.get('viewMarginStroke') # Not inherited
     def _set_viewMarginStroke(self, stroke):
         self.style['viewMarginStroke'] = stroke
     viewMarginStroke = property(_get_viewMarginStroke, _set_viewMarginStroke)
 
     def _get_viewMarginStrokeWidth(self):
-        """Answer local setting of margin stroke width, used if self.showMargin is True.
-        """
+        """Answers local setting of margin stroke width, used if
+        self.showMargin is True."""
         return self.style.get('viewMarginStrokeWidth') # Not inherited
     def _set_viewMarginStrokeWidth(self, strokeWidth):
         self.style['viewMarginStrokeWidth'] = strokeWidth
     viewMarginStrokeWidth = property(_get_viewMarginStrokeWidth, _set_viewMarginStrokeWidth)
 
     def _get_showColorBars(self):
-        """Set value, containing the selection of color bars that should be shown.
-        See pagebot.constants for the names of the options."""
+        """Sets value, containing the selection of color bars that should be
+        shown. See pagebot.constants for the names of the options."""
         return set(self.style.get('showColorBars') or []) # Not inherited
     def _set_showColorBars(self, showColorBars):
         if not showColorBars:
@@ -5117,24 +5117,24 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     showMargin = property(_get_showMargin, _set_showMargin)
 
     def _get_showFrame(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
-        frame of the page or other elements as self.size."""
+        """Boolean value. If True and enough space by self.viewMinInfoPadding,
+        show frame of the page or other elements as self.size."""
         return self.style.get('showFrame', False) # Not inherited
     def _set_showFrame(self, showFrame):
         self.style['showFrame'] = bool(showFrame)
     showFrame = property(_get_showFrame, _set_showFrame)
 
     def _get_showNameInfo(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
-        the name of the page or other elements."""
+        """Boolean value. If True and enough space by self.viewMinInfoPadding,
+        show the name of the page or other elements."""
         return self.style.get('showNameInfo', False) # Not inherited
     def _set_showNameInfo(self, showNameInfo):
         self.style['showNameInfo'] = bool(showNameInfo)
     showNameInfo = property(_get_showNameInfo, _set_showNameInfo)
 
     def _get_showElementInfo(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
-        the meta info of the page or other elements."""
+        """Boolean value. If True and enough space by self.viewMinInfoPadding,
+        show the meta info of the page or other elements."""
         return self.style.get('showElementInfo', False) # Not inherited
     def _set_showElementInfo(self, showElementInfo):
         self.style['showElementInfo'] = bool(showElementInfo)
@@ -5158,15 +5158,16 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     showDimensions = property(_get_showDimensions, _set_showDimensions)
 
     def _get_showMissingElement(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
-        the MissingElement of the page or other elements."""
+        """Boolean value. If True and enough space by self.viewMinInfoPadding,
+        show the MissingElement of the page or other elements."""
         return self.style.get('showMissingElement', False) # Not inherited
     def _set_showMissingElement(self, showMissingElement):
         self.style['showMissingElement'] = bool(showMissingElement)
     showMissingElement = property(_get_showMissingElement, _set_showMissingElement)
 
     def _get_showSourceCode(self):
-        """Boolean value. If True elements can show their source code on export."""
+        """Boolean value. If True elements can show their source code on
+        export."""
         return self.style.get('showSourceCode', False) # Not inherited
     def _set_showSourceCode(self, showSourceCode):
         self.style['showSourceCode'] = bool(showSourceCode)
@@ -5223,7 +5224,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     #   Flow stuff
 
     def _get_showFlowConnections(self):
-        """Boolean value. If True show connection between elements the overflow text lines."""
+        """Boolean value. If True show connection between elements the overflow
+        text lines."""
         return self.style.get('showFlowConnections', False) # Not inherited
     def _set_showFlowConnections(self, showFlowConnections):
         self.style['showFlowConnections'] = bool(showFlowConnections)

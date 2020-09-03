@@ -89,8 +89,8 @@ class Flow:
     next = property(_get_next)
 
     def _get_isFlow(self):
-        """Answers if self is part of a flow, which means that
-        either self.prevElement or self.nextElement is not None.
+        """Answers if self is part of a flow, which means that either
+        self.prevElement or self.nextElement is not None.
 
         >>> from pagebot.elements import Element
         >>> e = Element()
@@ -137,9 +137,8 @@ class Flow:
         return flow
 
     def _get_flow(self):
-        """Answers the list of flow element sequences starting on self.
-        As property identical to calling self.getFlow()
-        """
+        """Answers the list of flow element sequences starting on self. As
+        property identical to calling self.getFlow()"""
         return self.getFlow()
     flow = property(_get_flow)
 
@@ -177,7 +176,7 @@ class Flow:
     baselineWidth = property(_get_baselineWidth, _set_baselineWidth)
 
     def _get_baselineGrid(self):
-        """Answers the baseline grid distance, as defined in the (parent)style.
+        """Answers the baseline grid distance, as defined in the (parent) style.
 
         >>> from pagebot.toolbox.units import mm, p
         >>> from pagebot.elements import Element
@@ -205,7 +204,7 @@ class Flow:
     baselineGrid = property(_get_baselineGrid, _set_baselineGrid)
 
     def _get_baselineGridStart(self):
-        """Answers the baseline grid startf, as defined in the (parent)style.
+        """Answers the baseline grid startf, as defined in the (parent) style.
 
         >>> from pagebot.elements import Element
         >>> e = Element()
@@ -230,9 +229,9 @@ class Flow:
 
     def baseY(self, lineIndex=0):
         """Answer the vertical position of line by lineIndex, starting at the
-        top of the element. Note that this top-down measure is independent
-        from the overall settings, as the baseline grid always
-        runs from top of the element or page.
+        top of the element. Note that this top-down measure is independent from
+        the overall settings, as the baseline grid always runs from top of the
+        element or page.
 
         >>> from pagebot.elements import Element
         >>> e = Element(baselineGrid=pt(12), baselineGridStart=pt(22))

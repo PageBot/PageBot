@@ -231,7 +231,8 @@ class Conditions:
         return self.mTop - self.pt - (boxY + boxH) <= tolerance
 
     def isShrunkOnBlockBottom(self, tolerance):
-        """Test if the bottom of self is shrunk to the bottom position of the block."""
+        """Test if the bottom of self is shrunk to the bottom position of the
+        block."""
         _, boxY, _, boxH = self.marginBox
         return abs(self.pb - boxY) <= tolerance
 
@@ -254,19 +255,23 @@ class Conditions:
     # Unimplemented here for text operations.
 
     def isShrunkOnTextHeight(self, tolerance=0):
-        """For non-text elements, this is always True to satisfy the calling condition."""
+        """For non-text elements, this is always True to satisfy the calling
+        condition."""
         return True
 
     def shrink2TextHeight(self, tolerance=0):
-        """For non-text elements, this is always True to satisfy the calling condition."""
+        """For non-text elements, this is always True to satisfy the calling
+        condition."""
         return True
 
     def isShrunkOnTextWidth(self, tolerance=0):
-        """For non-text elements, this is always True to satisfy the calling condition."""
+        """For non-text elements, this is always True to satisfy the calling
+        condition."""
         return True
 
     def shrink2TextWidth(self, tolerance=0):
-        """For non-text elements, this is always True to satisfy the calling condition."""
+        """For non-text elements, this is always True to satisfy the calling
+        condition."""
         return True
 
     # Float conditions to page padding.
@@ -314,8 +319,8 @@ class Conditions:
         return False # row is not in range of gridColumns
 
     def isFitOnColSpan(self, col, colSpan, tolerance):
-        """Answer if the self.w is the same as the total of column widths
-        between col and col+colSpan
+        """Answers if the self.w is the same as the total of column widths
+        between col and col+colSpan.
 
         >>> from pagebot.toolbox.units import pt
         >>> gridX = (pt(100, 10), pt(200, 20), pt(300, 30), pt(400, 40), pt(500, 50))
