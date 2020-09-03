@@ -366,7 +366,7 @@ class Page(Element):
     pn = pageNumber = property(_get_pn, _set_pn)
 
     def _get_index(self):
-        """Answer the index number of this page compared with all pages as
+        """Answers the index number of this page compared with all pages as
         linear list. This ignores any spread or left/right settings in the document.
         Answer None if there is not parent document.
 

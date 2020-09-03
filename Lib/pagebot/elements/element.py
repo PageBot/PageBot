@@ -474,8 +474,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     view = property(_get_view)
 
     def _get_theme(self):
-        """Answers the theme of this element. If undefined, answer the theme of
-        self.parent. If no parent is defined, then answer None.
+        """Answers the theme of this element. If undefined, answers the theme of
+        self.parent. If no parent is defined, then answers None.
 
         >>> from pagebot.themes import BaseTheme, BackToTheCity
         >>> theme1 = BaseTheme()
@@ -537,7 +537,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     #   to its own behavior.
 
     def __getitem__(self, eIdOrName):
-        """Answers the element with eIdOrName. Answer None if the element does
+        """Answers the element with eIdOrName. Answers None if the element does
         not exist. Elements behave as a semi-dictionary for child elements.
         For retrieval by index, use e.elements[index]
 
@@ -566,7 +566,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     eId = property(_get_eId)
 
     def _get_elements(self):
-        """Property to get/set elements to parent self. Answer a copy of the
+        """Property to get/set elements to parent self. Answers a copy of the
         list, not self._elements itself, to avoid problems if iterations on the
         children is changing the parent. E.g. if elements of a Typesetter
         galley are composed on a page.
@@ -590,7 +590,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     elements = property(_get_elements, _set_elements)
 
-    # Answer the x-ref dictionary with elements by their e.eIds
+    # Answers the x-ref dictionary with elements by their e.eIds
     def _get_elementIds(self):
         """Answers the list with child.eId
 
@@ -603,8 +603,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     elementIds = property(_get_elementIds)
 
     def get(self, eIdOrName, default=None):
-        """Answers the element by eId or name. Answer the same selection for
-        default, if the element cannot be found. Answer None if it does not
+        """Answers the element by eId or name. Answers the same selection for
+        default, if the element cannot be found. Answers None if it does not
         exist.
 
         >>> e = Element(name='Parent')
@@ -634,7 +634,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return None
 
     def getElement(self, eId):
-        """Answers the page element, if it has a unique element Id. Answer None
+        """Answers the page element, if it has a unique element Id. Answers None
         if the eId does not exist as child.
 
         >>> e1 = Element(name='Child')
@@ -648,9 +648,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return self._eIds.get(eId)
 
     def getElementPage(self):
-        """Recursively answer the page of this element. This can be several
+        """Recursively answers the page of this element. This can be several
         layers above self. If there element has not a parent in the line of
-        parents, then answer None.
+        parents, then answers None.
 
         >>> from pagebot.elements.pbpage import Page
         >>> eb = Element(name='Bottom')
@@ -669,7 +669,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         True
         """
         if self.isPage:
-            # Answer if self is a page.
+            # Answers if self is a page.
             return self
         if self.parent is not None:
             return self.parent.getElementPage()
@@ -677,7 +677,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_page(self):
         """Answers the page somewhere in the parent tree, if it exists.
-        Answer None otherwise.
+        Answers None otherwise.
 
         >>> from pagebot.elements.pbpage import Page
         >>> page = Page()
@@ -706,7 +706,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def getElementByName(self, name):
         """Answers the first element in the offspring list that fits the name.
-        Answer None if it cannot be found.
+        Answers None if it cannot be found.
 
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
@@ -737,7 +737,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Perform a dynamic recursive deep find for all elements with the name.
         Don't include self. Either *name* or *pattern* should be defined,
         otherwise an error is raised. Return the collected list of matching child
-        elements. Answer an empty list if no elements can be found.
+        elements. Answers an empty list if no elements can be found.
 
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
@@ -755,7 +755,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         >>> elements = e.deepFindAll(pattern='Child')
         >>> len(elements)
         3
-        >>> # Answer empty list if no element can be found
+        >>> # Answers empty list if no element can be found
         >>> elements = e.deepFindAll(pattern='XYZ')
         >>> len(elements)
         0
@@ -776,7 +776,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the collected list of matching child
-        elements. Answer an empty list if no elements can be found.
+        elements. Answers an empty list if no elements can be found.
 
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
@@ -794,7 +794,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         >>> elements = e.findAll(pattern='Child')
         >>> len(elements)
         3
-        >>> # Answer empty list if no element can be found
+        >>> # Answers empty list if no element can be found
         >>> elements = e.findAll(pattern='XYZ')
         >>> len(elements)
         0
@@ -817,7 +817,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Perform a dynamic recursive deep find for all elements with the
         name. Don't include self. Either *name* or *pattern* should be
         defined, otherwise an error is raised. Return the first matching child
-        element. Answer None if no elements can be found.
+        element. Answers None if no elements can be found.
 
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
@@ -845,7 +845,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         >>> element = e.deepFind(pattern='Deepest')
         >>> element is e4
         True
-        >>> # Answer None if element does not exist
+        >>> # Answers None if element does not exist
         >>> element = e.deepFind(pattern='XYZ')
         >>> element is None
         True
@@ -874,7 +874,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Perform a dynamic find for the named element(s) in self.elements.
         Don't include self. Either name or pattern should be defined, otherwise
         an error is raised. Return the first element that fist the criteria.
-        Answer None if no element can be found.
+        Answers None if no element can be found.
 
         Note that the result of the search depends on where in the tree self is.
         If self.isPage there probably is a different set of elements found than
@@ -923,7 +923,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def findBysId(self, sId):
         """If defined, the system self.sId can be used to recursively find self
-        or a child. Answer None if nothing can be found that is exactly
+        or a child. Answers None if nothing can be found that is exactly
         matching."""
         if sId is not None:
             if self.sId == sId:
@@ -1086,7 +1086,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         gy = gridTopY - y
         dy = gy - round(gy/self.baselineGrid) * self.baselineGrid
 
-        # Now we can answer the difference of y to the nearest grid line
+        # Now we can answers the difference of y to the nearest grid line
         return dy
 
 
@@ -1203,7 +1203,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     #   S T Y L E
 
-    # Answer the cascaded style value, looking up the chain of ancestors, until style value is defined.
+    # Answers the cascaded style value, looking up the chain of ancestors, until style value is defined.
 
     def css(self, name, default=None):
         """In case we are looking for a plain css value, cascading from the
@@ -1416,7 +1416,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_page(self):
         """Answers the Page that this element is part of, looking upward in the
-        anscestor tree. Answer None, if no Page ascenstor can be found.
+        anscestor tree. Answers None, if no Page ascenstor can be found.
 
         >>> from pagebot.document import Document
         >>> from pagebot.elements import newRect
@@ -1454,7 +1454,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_parent(self):
         """Answers the parent of the element, if it exists, by weakref
-        reference. Answer None of there is not parent defined or if the parent
+        reference. Answers None of there is not parent defined or if the parent
         not longer exists."""
         if self._parent is not None:
             return self._parent()
@@ -1715,7 +1715,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_parentW(self):
         """Answers the width if the parent element. If there is not parent,
-        answer DEFAULT_WIDTH.
+        answers DEFAULT_WIDTH.
 
         >>> e0 = Element(w=500)
         >>> e1 = Element()
@@ -1727,12 +1727,12 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """
         if self.parent is None:
             return DEFAULT_WIDTH
-        return self.parent.w # Answer total width as reference for relative units.
+        return self.parent.w # Answers total width as reference for relative units.
     parentW = property(_get_parentW)
 
     def _get_parentH(self):
         """Answers the height if the parent element. If there is no parent,
-        answer DEFAULT_HEIGHT.
+        answers DEFAULT_HEIGHT.
 
         >>> e0 = Element(h=500)
         >>> e1 = Element()
@@ -1744,16 +1744,16 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """
         if self.parent is None:
             return DEFAULT_HEIGHT
-        return self.parent.h # Answer total height as reference for relative units.
+        return self.parent.h # Answers total height as reference for relative units.
     parentH = property(_get_parentH)
 
     def _get_parentD(self):
         """Answers the depth if the parent element. If there is no parent,
-        answer DEFAULT_DEPTH.
+        answers DEFAULT_DEPTH.
 
         >>> e0 = Element(d=502)
         >>> e1 = Element()
-        >>> e1.parentD # No parent, answer default value
+        >>> e1.parentD # No parent, answers default value
         100pt
         >>> e1.parent = e0 # Set parent, now width of parent is answered.
         >>> e1.parentD
@@ -1761,7 +1761,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """
         if self.parent is None:
             return DEFAULT_DEPTH
-        return self.parent.d # Answer total depth as reference for relative units.
+        return self.parent.d # Answers total depth as reference for relative units.
     parentD = property(_get_parentD)
 
     # Plain coordinates
@@ -2543,7 +2543,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             dash=None, border=None):
         """Internal method to create a dictionary with border info. If no valid
         border dictionary is defined, then use optional stroke and strokeWidth
-        to create one. Otherwise answer *None*."""
+        to create one. Otherwise answers *None*."""
         if border is False:
             return {}
 
@@ -2565,7 +2565,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             line = ONLINE
 
         # Dash can be None
-        # If 0, then answer an empty dict.
+        # If 0, then answers an empty dict.
         if not strokeWidth:
             return {}
         return dict(stroke=stroke, strokeWidth=units(strokeWidth), line=line, dash=dash)
@@ -2636,29 +2636,29 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     # Alignment types, defines where the origin of the element is located.
 
-    def _validateXAlign(self, xAlign): # Check and answer value
+    def _validateXAlign(self, xAlign): # Check and answers value
         assert xAlign in XALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)
         return xAlign
-    def _validateYAlign(self, yAlign): # Check and answer value
+    def _validateYAlign(self, yAlign): # Check and answers value
         assert yAlign in YALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
         return yAlign
-    def _validateZAlign(self, zAlign): # Check and answer value
+    def _validateZAlign(self, zAlign): # Check and answers value
         assert zAlign in ZALIGNS, '[%s.zAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, zAlign, ZALIGNS)
         return zAlign
 
-    def _get_xAlign(self): # Answer the type of x-alignment. For compatibility allow align and xAlign as equivalents.
+    def _get_xAlign(self): # Answers the type of x-alignment. For compatibility allow align and xAlign as equivalents.
         return self._validateXAlign(self.css('xAlign'))
     def _set_xAlign(self, xAlign):
         self.style['xAlign'] = self._validateXAlign(xAlign) # Save locally, blocking CSS parent scope for this param.
     xAlign = property(_get_xAlign, _set_xAlign)
 
-    def _get_yAlign(self): # Answer the type of y-alignment.
+    def _get_yAlign(self): # Answers the type of y-alignment.
         return self._validateYAlign(self.css('yAlign'))
     def _set_yAlign(self, yAlign):
         self.style['yAlign'] = self._validateYAlign(yAlign) # Save locally, blocking CSS parent scope for this param.
     yAlign = property(_get_yAlign, _set_yAlign)
 
-    def _get_zAlign(self): # Answer the type of z-alignment.
+    def _get_zAlign(self): # Answers the type of z-alignment.
         return self._validateZAlign(self.css('zAlign'))
     def _set_zAlign(self, zAlign):
         self.style['zAlign'] = self._validateZAlign(zAlign) # Save locally, blocking CSS parent scope for this param.
@@ -2666,10 +2666,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
 
     # Validation to be used by text supporting subclasses
-    def _validateXTextAlign(self, xAlign): # Check and answer value
+    def _validateXTextAlign(self, xAlign): # Check and answers value
         assert xAlign in XTEXTALIGNS, '[%s.xAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, xAlign, XALIGNS)
         return xAlign
-    def _validateYTextAlign(self, yAlign): # Check and answer value
+    def _validateYTextAlign(self, yAlign): # Check and answers value
         assert yAlign in YTEXTALIGNS, '[%s.yAlign] Alignment "%s" not valid in %s' % (self.__class__.__name__, yAlign, YALIGNS)
         return yAlign
 
@@ -3787,7 +3787,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     pw = property(_get_pw)
 
     def _get_ph(self):
-        """Padded height (space between the vertical paddings) read-only property of the element block.
+        """Padded height (space between the vertical paddings) read-only
+        property of the element block.
 
         >>> e = Element(h=400, pb=22, pt=33)
         >>> e.ph
@@ -3802,7 +3803,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     ph = property(_get_ph)
 
     def _get_pd(self):
-        """Padded depth read-only property of the element block. Answer the distance between depth padding.
+        """Padded depth read-only property of the element block. Answers the
+        distance between depth padding.
 
         >>> e = Element(d=400, pzf=22, pzb=33)
         >>> e.pd
@@ -3826,7 +3828,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     radius = property(_get_radius, _set_radius)
 
     def _get_frameDuration(self):
-        """Property answer the element frameDuration parameters, used for speed
+        """Property answers the element frameDuration parameters, used for speed
         when exporting animated gifs. Normally only set in page or document."""
         return self.css('frameDuration')
     def _set_frameDuration(self, frameDuration):
@@ -4059,7 +4061,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
         if not self.elements:
-            # No element, answer vacuum block (x, y, z), (w, h, d)
+            # No element, answers vacuum block (x, y, z), (w, h, d)
             return pt(0, 0, 0), pt(0, 0, 0)
         for e in self.elements:
             x1 = min(x1, e.left)
@@ -4093,7 +4095,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         x1 = y1 = z1 = XXXL
         x2 = y2 = z2 = -XXXL
         if not self.elements:
-            # No element, answer vacuum block (x, y, z), (w, h, d)
+            # No element, answers vacuum block (x, y, z), (w, h, d)
             return pt(0, 0, 0), pt(0, 0, 0)
         for e in self.elements:
             x1 = max(x1, e.left + e.pl)
@@ -4399,7 +4401,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def spellCheck(self, languages=None, unknown=None, minLength=3):
         """Recursively spellchecks all child elements for the given languages.
-        Answer a list with unknown words. Default is to do nothing and just
+        Answers a list with unknown words. Default is to do nothing and just
         pass the call on to child elements. Inheriting classes can redefine
         _spellCheckWords to check on their on text content. Words with a
         length smaller than minLength are skipped."""

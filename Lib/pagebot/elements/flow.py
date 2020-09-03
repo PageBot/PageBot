@@ -158,7 +158,7 @@ class Flow:
         return False
 
     def _get_baselineColor(self):
-        """Answer the current setting of the baseline color for this element."""
+        """Answers the current setting of the baseline color for this element."""
         return self.css('baselineColor', DEFAULT_BASELINE_COLOR)
 
     def _set_baselineColor(self, baselineColor):
@@ -167,7 +167,7 @@ class Flow:
     baselineColor = property(_get_baselineColor, _set_baselineColor)
 
     def _get_baselineWidth(self):
-        """Answer the current setting of the baseline width for this element."""
+        """Answers the current setting of the baseline width for this element."""
         return self.css('baselineWidth', DEFAULT_BASELINE_WIDTH)
 
     def _set_baselineWidth(self, baselineWidth):
@@ -228,7 +228,7 @@ class Flow:
     baselineGridStart = property(_get_baselineGridStart, _set_baselineGridStart)
 
     def baseY(self, lineIndex=0):
-        """Answer the vertical position of line by lineIndex, starting at the
+        """Answers the vertical position of line by lineIndex, starting at the
         top of the element. Note that this top-down measure is independent from
         the overall settings, as the baseline grid always runs from top of the
         element or page.

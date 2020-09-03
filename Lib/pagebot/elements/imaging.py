@@ -86,7 +86,7 @@ class Imaging:
     maxImageHeight = property(_get_maxImageHeight, _set_maxImageHeight)
 
     def _get_resolution(self):
-        """Answer the style value self.css('resolution') for the amount of
+        """Answers the style value self.css('resolution') for the amount of
         DPI."""
         return self.css('resolution')
     def _set_resolution(self, resolution):
@@ -94,7 +94,7 @@ class Imaging:
     resolution = property(_get_resolution, _set_resolution)
 
     def _get_resolutionFactors(self):
-        """Answer the style value self.css('resolutionFactors') for image
+        """Answers the style value self.css('resolutionFactors') for image
         cacheing size factors. If set to None, the resolutionFactor defaults
         to DEFAULT_RESOLUTION_FACTORS. This will indicate, e.g. value 2, to
         write a thumbnail png twice the size it will be used in.

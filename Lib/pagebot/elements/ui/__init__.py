@@ -61,7 +61,7 @@ from pagebot.elements.pbcodeblock import CodeBlock
 from pagebot.elements.variablefonts.variablecircle import VariableCircle
 
 def elementFromPath(path, name=None, **kwargs):
-    """Answer the element that is best suitable to hold the data in the path.
+    """Answers the element that is best suitable to hold the data in the path.
     """
     extension = path2Extension(path).lower()
     if extension in IMAGE_TYPES:
@@ -106,7 +106,7 @@ def newPlacer(**kwargs):
     return Placer(**kwargs)
 
 def newColumn(**kwargs):
-    """Answer a new Column instance, offering a squential paste-board for elements."""
+    """Answers a new Column instance, offering a squential paste-board for elements."""
     return Column(**kwargs)
 
 def newText(bs='', **kwargs):

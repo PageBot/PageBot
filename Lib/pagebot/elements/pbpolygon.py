@@ -144,7 +144,7 @@ class Polygon(Element):
         self.closePath = True
 
     def _get_block(self):
-        """Answer the bounding box of the contained points,
+        """Answers the bounding box of the contained points,
         relative to (self.x, self.y).
 
         >>> e = Polygon(x=125, y=230)
@@ -161,7 +161,7 @@ class Polygon(Element):
     block = property(_get_block)
 
     def getBezierPath(self, p=None):
-        """Answer a BezierPath representation, in the data-format of self.context,
+        """Answers a BezierPath representation, in the data-format of self.context,
         translated to optional position p
 
         >>> from pagebot.contexts import getContext
