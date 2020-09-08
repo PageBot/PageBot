@@ -1062,7 +1062,7 @@ class BaseContext(AbstractContext):
 
     # Some drawing macros.
 
-    def marker(self, x, y, r=1, fontSize=5, prefix=None):
+    def marker(self, x, y, r=1, fontSize=5, prefix=None, color=None):
         # TODO: move to elements.
         x = round(x)
         y = round(y)
@@ -1072,12 +1072,15 @@ class BaseContext(AbstractContext):
         if prefix:
             s = '%s %s' % (prefix, s)
 
-        style = dict(font='PageBot-Regular', fontSize=pt(fontSize), textFill=red)
+        if color is None:
+            color = red
+
+        style = dict(font='PageBot-Regular', fontSize=pt(fontSize), textFill=color)
         bs = self.newString(s, style=style)
         oldStroke = self._stroke
         oldFill = self._fill
         self.text(bs, (x+1, y+1))
-        self.fill(red)
+        self.fill(color)
         self.stroke(None)
         self.circle(x, y, r)
         self.fill(oldFill)
