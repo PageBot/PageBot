@@ -574,12 +574,6 @@ class FlatContext(BaseContext):
 
         TODO: implement runs instead of native context string.
 
-        """
-        spans = []
-        maxAscender = 0
-        maxFontSize = 0
-
-        """
         for run in bs.runs:
             flatFont, font = self._getFlatFont(run.style.get('font'))
             fontSize = run.style.get('fontSize', DEFAULT_FONT_SIZE)
@@ -596,6 +590,9 @@ class FlatContext(BaseContext):
         #placedText = self.page.place(self.b.text(paragraphs))
         #placedText.frame(x, y-maxAscender+200, placedText.width, fontSize)
         """
+        spans = []
+        maxAscender = 0
+        maxFontSize = 0
         placedText = self.page.place(bs.cs.txt)
 
         # If the style of the first BabelString run, contains a xTextAlign
@@ -609,7 +606,7 @@ class FlatContext(BaseContext):
 
         # Vertical alignment is handled by the caller, already calculated in
         # the `y`.
-        y -= bs.topLineDescender # FIXME: check, is this necessary?
+        #y -= bs.topLineDescender # FIXME: check, is this necessary?
 
         x = x.pt
         y = y.pt
@@ -692,18 +689,6 @@ class FlatContext(BaseContext):
         if isinstance(s, str):
             s = self.newString(s)
         assert isinstance(s, BabelString)
-
-        '''
-        # TODO: check & move to separate function.
-        if isinstance(s, str):
-            # Creates a new string with default styles.
-            style = dict(self._font or DEFAULT_FONT, fontSize=self._fontSize or self.DEFAULT_FONT_SIZE)
-            style = makeStyle(style=style)
-            s = self.newString(s, style)
-        elif not isinstance(s, BabelString):
-            raise PageBotFileFormatError('FlatContext.textBox:type is %s' % s.__class__.__name__)
-        '''
-
         assert self.page is not None, 'FlatString.text: self.page is not set.'
         assert r is not None
         xpt, ypt, wpt, hpt = pt(r)
