@@ -802,12 +802,12 @@ class FlatContext(BaseContext):
 
         for height, flatLine in flatRuns:
             height = round(height)
-            #print(height)
             if y is None:
                 y = height
+            else:
+                y += height
 
             babelLineInfo = BabelLineInfo(x, y, context=self, cLine=flatLine)
-            lineHeight = height
 
             for fst, s in flatLine:
                 font = findFont(fst.font.name.decode("utf-8"))
@@ -815,9 +815,7 @@ class FlatContext(BaseContext):
                     textFill=color(fst.color), tracking=pt(fst.tracking * fst.size))
                 babelRunInfo = BabelRunInfo(s, style, self, cRun=fst) # Cache the flatStyle, just in case.
                 babelLineInfo.runs.append(babelRunInfo)
-                lineHeight = max(lineHeight, height)
             lines.append(babelLineInfo)
-            y += lineHeight
 
         return lines
 
