@@ -14,7 +14,6 @@
 ABCD
 >>> bs.cs.__class__.__name__
 'FlatBabelData'
->>> from pagebot.toolbox.units import pt
 >>> FONTSIZE = pt(24)
 >>> style = dict(font='PageBot-Regular', fontSize=FONTSIZE)
 >>> bs = context.newString('Testing 123...', style)

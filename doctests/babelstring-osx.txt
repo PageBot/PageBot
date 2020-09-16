@@ -5,6 +5,8 @@
 >>> from pagebot.toolbox.loremipsum import loremipsum
 >>> from pagebot.toolbox.units import pt
 >>> from pagebot.contexts.basecontext.babelstring import BabelString
+>>> from pagebot.constants import DEFAULT_LEADING
+>>> FONTSIZE = pt(24)
 >>> context = getContext()
 >>> context
 <DrawBotContext>
@@ -15,8 +17,8 @@
 ABCD
 >>> bs.cs.__class__.__name__
 'FormattedString'
->>> style = dict(font='PageBot-Regular', fontSize=pt(24))
->>> bs = context.newString(loremipsum(), style, w=pt(400))
+>>> style = dict(font='PageBot-Regular', fontSize=FONTSIZE)
+>>> bs = context.newString('Testing 123...', style, w=pt(400))
 >>> bs.style
 {'font': 'PageBot-Regular', 'fontSize': 24pt, 'leading': 1.4em}
 >>> # Box width and height.
@@ -24,18 +26,21 @@ ABCD
 (400pt, None)
 >>> # Text width and height.
 >>> bs.tw, bs.th
-#(399.98pt, 3456pt)
+(119.38pt, 34pt)
+>>> DEFAULT_LEADING.base = FONTSIZE
+>>> round(pt(DEFAULT_LEADING)) == bs.th
+True
 >>> len(bs.lines)
-144
+1
 >>> baselines = context.getBaselines(bs)
 >>> len(baselines)
-144
+1
 >>> baselines = context.getBaselines(bs, h=pt(100))
 >>> keys = sorted(baselines.keys())
->>> #len(keys)
-#5
->>> #keys
-#[0, 24, 48, 72, 96]
+>>> len(keys)
+1
+>>> keys
+[0]
 >>> bs = BabelString('ABCD', dict(fontSize=100), context=context)
 >>> #bs.topLineCapHeight
 #65.8pt
