@@ -739,23 +739,22 @@ class FlatContext(BaseContext):
         lastDescender = 0.0
         placedText = bs.cs.pt
 
-
         # Reflow to new (w, h). Otherwise use the layout.runs as already stored
         # by placedText.
         if placedText.width != w or placedText.height != h:
             w = w or bs.w or math.inf
             h = h or bs.h or math.inf
+            assert w, h
             placedText.frame(0, 0, w, h)
 
         flatRuns = placedText.layout.runs()
+
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             style = None
             runWidth = 0
-            runHeight = 0
 
             for style, s in run:
                 runWidth += style.width(s)
-                runHeight = max(runHeight, style.leading)
 
             textWidth = max(textWidth, runWidth)
 
@@ -765,13 +764,11 @@ class FlatContext(BaseContext):
                 else:
                     textHeight += height
             else:
-                textHeight += runHeight
-
-            lastDescender = style.descender()
+                textHeight += style.leading
 
         if ascDesc:
             # NOTE: Descender is a negative value.
-            textHeight -= lastDescender
+            textHeight -= style.descender()
 
         return pt(textWidth, textHeight)
 

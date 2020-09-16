@@ -44,6 +44,8 @@ True
 >>> baselines = context.getBaselines(bs)
 >>> len(baselines)
 1
+>>> baselines[0].y == round(bs.topLineAscender)
+True
 >>> baselines = context.getBaselines(bs)
 >>> keys = sorted(baselines.keys())
 >>> len(keys)
