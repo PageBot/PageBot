@@ -606,7 +606,6 @@ class FlatContext(BaseContext):
 
         # Vertical alignment is handled by the caller, already calculated in
         # the `y`.
-        #y -= bs.topLineDescender # FIXME: check, is this necessary?
 
         x = x.pt
         y = y.pt
@@ -643,14 +642,16 @@ class FlatContext(BaseContext):
         >>> context.saveDrawing('_export/Flat-Text.pdf')
         """
         if isinstance(s, str):
-            s = self.newString(s)
-        assert isinstance(s, BabelString)
+            bs = self.newString(s)
+        else:
+            bs = s
+        assert isinstance(bs, BabelString)
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
         #xpt, ypt = self.translatePoint(p)
         #x, y = self.getTransformed(x, y)
         xpt, ypt = pt(p) # Make sure to convert to points
-        ypt = self.height - ypt
-        self._place(s, xpt, ypt)
+        ypt = self.height - ypt - bs.topLineDescender # FIXME: check, is this necessary?
+        self._place(bs, xpt, ypt)
 
     def textBox(self, s, r=None, clipPath=None, align=None):
         """Places the babelstring instance inside rectangle `r`. The rectangle
@@ -733,9 +734,9 @@ class FlatContext(BaseContext):
 
     def textSize(self, bs, w=None, h=None, align=None, ascDesc=True):
         """Determines text size based on placed text value."""
-        textWidth = 0
-        textHeight = 0
-        lastDescender = 0
+        textWidth = 0.0
+        textHeight = 0.0
+        lastDescender = 0.0
         placedText = bs.cs.pt
 
 

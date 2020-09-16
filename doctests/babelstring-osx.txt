@@ -23,7 +23,7 @@ ABCD
 >>> bs.w, bs.h
 (400pt, None)
 >>> # Text width and height.
->>> #bs.tw, bs.th
+>>> bs.tw, bs.th
 #(399.98pt, 3456pt)
 >>> len(bs.lines)
 144

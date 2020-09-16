@@ -2,6 +2,8 @@
 # Doctests for string functions on Linux.
 
 >>> from pagebot import getContext
+>>> from pagebot.toolbox.units import em, pt, upt
+>>> from pagebot.constants import DEFAULT_LEADING
 >>> context = getContext('Flat')
 >>> context
 <FlatContext>
@@ -12,29 +14,40 @@
 ABCD
 >>> bs.cs.__class__.__name__
 'FlatBabelData'
->>> from pagebot.toolbox.loremipsum import loremipsum
 >>> from pagebot.toolbox.units import pt
->>> style = dict(font='PageBot-Regular', fontSize=pt(24))
->>> bs = context.newString(loremipsum(), style, w=pt(400))
+>>> FONTSIZE = pt(24)
+>>> style = dict(font='PageBot-Regular', fontSize=FONTSIZE)
+>>> bs = context.newString('Testing 123...', style)
 >>> bs.style
 {'font': 'PageBot-Regular', 'fontSize': 24pt, 'leading': 1.4em}
->>> # Box width and height.
->>> bs.w, bs.h
-(400pt, None)
 >>> # Text width and height.
->>> # FIXME: should be identical to OSX.
->>> #bs.tw, bs.th
-#(404.88pt, 4113.6pt)
+>>> bs.tw, bs.th
+(119.38pt, 24pt)
+>>> # Same but different call. Flat calculates ascender + descender size by
+>>> # default.
+>>> context.textSize(bs)
+(119.38pt, 24pt)
+>>> # Font size multiplied by leading, just like DrawBot.
+>>> tw, th = context.textSize(bs, ascDesc=False)
+>>> th
+33.6pt
+>>> # Calculates line height by using leading with font size as base.
+>>> DEFAULT_LEADING.base = upt(FONTSIZE)
+>>> pt(DEFAULT_LEADING) == th
+True
+>>> # Box width and height.
+>>> # Only when explicitely set.
+>>> bs.w, bs.h
+(None, None)
 >>> len(bs.lines)
-143
+1
 >>> baselines = context.getBaselines(bs)
 >>> len(baselines)
-143
->>> baselines = context.getBaselines(bs, h=pt(100))
+1
+>>> baselines = context.getBaselines(bs)
 >>> keys = sorted(baselines.keys())
 >>> len(keys)
-4
->>> # FIXME: should be identical to OSX.
->>> #keys
-#[0, 18, 47, 76]
->>> # TODO: add test font measures.
+1
+>>> keys
+[0]
+>>> # TODO: also test for multiple lines and element level text boxes.
