@@ -33,9 +33,9 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.bezierpath import BezierPath
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
-        asFormatted, isUnit, degrees)
+        isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
-from pagebot.toolbox.transformer import uniqueID, asNormalizedJSON
+from pagebot.toolbox.transformer import uniqueID, asNormalizedJSON, asFormatted
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now
 from pagebot.gradient import Gradient, Shadow
@@ -4432,11 +4432,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         is to show the posiiton and size (in points and columns). This method
         can be redefined by inheriting elements that want to show additional
         information."""
-        s = '%s\nPosition: %s, %s, %s\nSize: %s, %s' % \
-            (self.__class__.__name__ + ' ' + (self.name or ''),
-                asFormatted(self.x), asFormatted(self.y), asFormatted(self.z),
-                asFormatted(self.w), asFormatted(self.h)
-            )
+        s = '%s\nPosition: x=%s, y=%s, z=%s\nSize: w=%s, h=%s' % \
+            (self.__class__.__name__ + ' ' + (self.name or ''), self.x, self.y,
+                    self.z, self.w, self.h)
         if self.xAlign or self.yAlign:
             s += '\nAlign: %s, %s' % (self.xAlign, self.yAlign)
         if self.conditions:
