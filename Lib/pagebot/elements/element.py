@@ -35,7 +35,7 @@ from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
         isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
-from pagebot.toolbox.transformer import uniqueID, asNormalizedJSON, asFormatted
+from pagebot.toolbox.transformer import uniqueID, asNormalizedJSON
 from pagebot.toolbox.timemark import TimeMark
 from pagebot.toolbox.dating import now
 from pagebot.gradient import Gradient, Shadow
