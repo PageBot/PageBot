@@ -39,7 +39,7 @@ class Oval(Element):
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
-        #self.buildFrame(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case
         # view.showFrame == True
@@ -75,9 +75,9 @@ class Oval(Element):
                 e.build_inds(view, p2D)
 
 class Circle(Oval):
-    def __init__(self, r=None, x=None, y=None, w=None, h=None,
-            xAlign=None, yAlign=None, **kwargs):
-        """Draws the circle in the current context canvas.  Default alignment
+    def __init__(self, r=None, x=None, y=None, w=None, h=None, xAlign=None,
+            yAlign=None, **kwargs):
+        """Draws the circle in the current context canvas. Default alignment
         of the circle is on its middle point (CENTER, MIDDLE). That makes it
         different from the Oval, which aligns default to bottom-left.
 

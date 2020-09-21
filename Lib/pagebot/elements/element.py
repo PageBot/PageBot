@@ -4504,7 +4504,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         h = h or self.h
 
         # Then draw the rectangle with the defined color/stroke/strokeWidth
-        c.rect(x, y, w, h) # Ignore bleed, should already have been applied on position and size.
+        #c.rect(x, y, w, h) # Ignore bleed, should already have been applied on position and size.
 
         c.fill(None)
         c.stroke(None, 0)
@@ -4651,8 +4651,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Default drawing method just drawing the frame. Probably will be
         redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        # Ignore z-axis for now.
+        p = self._applyScale(view, p) # Ignore z-axis for now.
         px, py, _ = p = self._applyAlignment(p)
 
         self._applyRotation(view, p)
@@ -4664,13 +4663,14 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         # True and self.isPage or if self.showFrame. Mark that we are drawing
         # background here.
         view.drawPageMetaInfoBackground(self, p)#, background=True)
+        view.drawElementFrame(self, p)
 
         # Call if defined.
         if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
-        # Draw the actual element content.  Inheriting elements classes can
-        # redefine just this method to fill in drawing behavior. @p is the
+        # Draw the actual element content. Inheriting elements classes can
+        # redefine this method only to fill in drawing behavior. @p is the
         # transformed position to draw in the main canvas.
         self.buildElement(view, p, drawElements, **kwargs)
 
@@ -4694,9 +4694,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def buildElement(self, view, p, drawElements=True, **kwargs):
         """Main drawing method for elements to draw their content and the
-        content of their children if they exist. @p is the transformed
-        position of the context canvas. To be redefined by inheriting element
-        classes that need to draw more than just their chold elements."""
+        content of their children if they exist. @p is the transformed position
+        of the context canvas. To be redefined by inheriting element classes
+        that need to draw more than just their chold elements."""
         if drawElements:
             # If there are child elements, recursively draw them over the pixel
             # image.
@@ -4864,24 +4864,24 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return score
 
     def solve(self, score=None):
-        """Evaluates the content of element e with the all the conditions.
-        The view is passed as an argument because it (or its builder) may be
-        needed to solve specific text conditions, such as run length of text
-        and overflow of text boxes."""
+        """Evaluates the content of element e with the all the conditions. The
+        view is passed as an argument because it (or its builder) may be needed
+        to solve specific text conditions, such as the run length of text and
+        overflow of text boxes."""
         if score is None:
             score = Score()
 
         # Can be None or empty list. Skip in case there are no conditions in
         # the style.
         if self.conditions:
-
             for condition in self.conditions:
                 condition.solve(self, score)
 
-        # Also works if showing element is not a container.
-        for e in self.elements:
-            if e.show:
-                e.solve(score)
+        else:
+            # Also works if showing element is not a container.
+            for e in self.elements:
+                if e.show:
+                    e.solve(score)
 
         return score
 

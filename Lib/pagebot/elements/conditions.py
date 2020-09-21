@@ -277,7 +277,8 @@ class Conditions:
     # Float conditions to page padding.
 
     def isFloatOnTop(self, tolerance=0):
-        return abs(min(self.getFloatSideTop(), self.parent.h - self.parent.pt) - self.mTop) <= tolerance
+        answer = abs(min(self.getFloatSideTop(), self.parent.h - self.parent.pt) - self.mTop) <= tolerance
+        return answer
 
     def isFloatOnBottom(self, tolerance=0):
         return abs(max(self.getFloatSideBottom(), self.parent.pb) - self.mBottom) <= tolerance
