@@ -32,8 +32,8 @@ from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.bezierpath import BezierPath
 from pagebot.contexts.basecontext.babelstring import BabelString
-from pagebot.toolbox.units import (units, rv, pt, point2D, point3D, pointOffset,
-        isUnit, degrees)
+from pagebot.toolbox.units import (units, rv, pt, point2D, point3D,
+        pointOffset, isUnit, degrees)
 from pagebot.toolbox.color import noColor, color, Color, blackColor
 from pagebot.toolbox.transformer import uniqueID, asNormalizedJSON
 from pagebot.toolbox.timemark import TimeMark
@@ -580,6 +580,35 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return self._eIds
     elementIds = property(_get_elementIds)
 
+    def _get_page(self):
+        """Answers the page somewhere in the parent tree, if it exists.
+        Answers None otherwise.
+
+        >>> from pagebot.elements.pbpage import Page
+        >>> page = Page()
+        >>> e1 = Element(parent=page)
+        >>> e2 = Element(parent=e1)
+        >>> e2.page.isPage
+        True
+        """
+        return self.getElementPage()
+    page = property(_get_page)
+
+    def _get_root(self):
+        """Answers the top of the parent tree.
+
+        >>> e = Element(name='root')
+        >>> e1 = Element(parent=e)
+        >>> e2 = Element(parent=e1)
+        >>> e3 = Element(parent=e2)
+        >>> e3.root.name == 'root'
+        True
+        """
+        if self.parent is None:
+            return self
+        return self.parent.root
+    root = property(_get_root)
+
     def get(self, eIdOrName, default=None):
         """Answers the element by eId or name. Answers the same selection for
         default, if the element cannot be found. Answers None if it does not
@@ -653,34 +682,14 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             return self.parent.getElementPage()
         return None
 
-    def _get_page(self):
-        """Answers the page somewhere in the parent tree, if it exists.
-        Answers None otherwise.
-
-        >>> from pagebot.elements.pbpage import Page
-        >>> page = Page()
-        >>> e1 = Element(parent=page)
-        >>> e2 = Element(parent=e1)
-        >>> e2.page.isPage
-        True
-        """
-        return self.getElementPage()
-    page = property(_get_page)
-
-    def _get_root(self):
-        """Answers the top of the parent tree.
-
-        >>> e = Element(name='root')
-        >>> e1 = Element(parent=e)
-        >>> e2 = Element(parent=e1)
-        >>> e3 = Element(parent=e2)
-        >>> e3.root.name == 'root'
-        True
-        """
-        if self.parent is None:
-            return self
-        return self.parent.root
-    root = property(_get_root)
+    def getElementPosition(self, view, origin):
+        """Applies various offsets and transformations to determine final
+        coordinates at which to place an element on a page."""
+        p = pointOffset(self.origin, origin)
+        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        self._applyRotation(view, p)
+        return x, p
 
     def getElementByName(self, name):
         """Answers the first element in the offspring list that fits the name.

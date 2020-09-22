@@ -706,14 +706,6 @@ class Text(Element):
 
     #   B U I L D
 
-
-    def getPosition(self, view, origin):
-        p = pointOffset(self.origin, origin)
-        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        #self._applyRotation(view, p)
-        return x, p
-
     def build(self, view, origin, drawElements=True, **kwargs):
         """Draws the text on position (x, y). Draws a background rectangle and
         / or frame if fill and / or stroke are defined.
@@ -755,29 +747,29 @@ class Text(Element):
         >>> doc.export('_export/Text-build2.pdf')
         """
         context = view.context # Get current context
-        x, p = self.getPosition(view, origin)
+        x, p = self.getElementPosition(view, origin)
         px, py, _ = p
-        context.stroke((0, 0, 1))
-        context.rect(px, py, self.w, self.h)
 
-        # TODO: Add Element clipping stuff here
+        # TODO: Add Element clipping stuff here.
+        # FIXME: needs some restructuring, text box width and BabelString width
+        # can be different now.
 
         # Let the view draw frame info for debugging, in case view.showFrame ==
         # True.
         view.drawElementFrame(self, p, **kwargs)
 
-        """Forces width and / or height, behave as a textbox. Only if
-        there is content."""
+        # NOTE: Temporarily draws a blue rectangle to check alignment.
+        context.stroke((0, 0, 1))
+        context.rect(px, py, self.w, self.h)
+
         if self.w or self.h:
             if self.bs.lines:
                 baseline0 = self.bs.lines[0].y
                 frameY = py - self.h + baseline0
                 # Draw optional background, frame or borders.
                 # Width is padded width of self.
-                w = self.w #or self.bs.tw
-                h = self.h #or self.bs.th
-
-                self.buildFrame(view, (px, frameY, w, h))
+                # FIXME.
+                self.buildFrame(view, (px, frameY, self.w, self.h))
 
                 if self.showMargin:
                     view.drawMargin(self, (px, frameY))
@@ -791,8 +783,6 @@ class Text(Element):
                 context.drawText(self.bs, (x, y, w, h))
 
         else:
-            """No width or height are defined; draws as string using its own
-            width (there may be embedded newlines)."""
             frameX = px
             frameY = py + self.bs.topLineDescender
             #frameW, frameH = self.context.textSize(self.bs, ascDesc=True) <-- not here.
