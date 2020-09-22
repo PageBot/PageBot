@@ -40,7 +40,7 @@ class Rect(Element):
     (300pt, 3p2)
     >>> view = doc.getView()
     >>> e.build(view, (0, 0))
-    >>> doc.export('_export/TestRect.pdf')
+    >>> doc.export('_export/TestRect-%s.pdf' % c.name)
     """
 
     def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
