@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -46,7 +46,7 @@ class Rect(Element):
     def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Draws the oval in the current context canvas.
 
-        >>> e = Oval(x=0, y=20, w=500, h=3)
+        >>> e = Rect(x=0, y=20, w=500, h=3)
         >>> e.xy
         (0pt, 20pt)
         >>> e.size
