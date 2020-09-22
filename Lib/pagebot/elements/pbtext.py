@@ -147,6 +147,7 @@ class Text(Element):
 
     bs = property(_get_bs, _set_bs)
 
+    '''
     def _get_w(self): # Width
         """Property for self.bs.w, holding the width of the textbox.
 
@@ -168,7 +169,9 @@ class Text(Element):
         w = (self.bs.w or self.bs.tw) + self.pl + self.pr
         return w
 
+
     def _set_w(self, w):
+        print(w)
         # If None, then self.w is elastic defined by self.bs height.
         if self._bs is not None:
             if w is not None:
@@ -208,6 +211,7 @@ class Text(Element):
             self.bs.h = h
 
     h = property(_get_h, _set_h)
+    '''
 
     def _get_firstColumnIndent(self):
         """If False or 0, ignores first line indent of a column on text
@@ -707,7 +711,7 @@ class Text(Element):
         p = pointOffset(self.origin, origin)
         x, _, _, = p = self._applyScale(view, p) # Text is already aligned
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        self._applyRotation(view, p)
+        #self._applyRotation(view, p)
         return x, p
 
     def build(self, view, origin, drawElements=True, **kwargs):
@@ -753,6 +757,8 @@ class Text(Element):
         context = view.context # Get current context
         x, p = self.getPosition(view, origin)
         px, py, _ = p
+        context.stroke((0, 0, 1))
+        context.rect(px, py, self.w, self.h)
 
         # TODO: Add Element clipping stuff here
 
@@ -762,14 +768,14 @@ class Text(Element):
 
         """Forces width and / or height, behave as a textbox. Only if
         there is content."""
-        if self.bs.hasWidth or self.bs.hasHeight:
+        if self.w or self.h:
             if self.bs.lines:
                 baseline0 = self.bs.lines[0].y
                 frameY = py - self.h + baseline0
                 # Draw optional background, frame or borders.
                 # Width is padded width of self.
-                w = self.pw or self.bs.tw
-                h = self.h or self.bs.th
+                w = self.w #or self.bs.tw
+                h = self.h #or self.bs.th
 
                 self.buildFrame(view, (px, frameY, w, h))
 
