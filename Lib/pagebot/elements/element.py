@@ -4450,13 +4450,13 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return s
 
     def buildFrame(self, view, p):
-        """Draw fill of the rectangular element space. The self.fill
-        defines the color of the element background. Instead of the DrawBot
-        stroke and strokeWidth attributes, use borders or (borderTop,
-        borderRight, borderBottom, borderLeft) attributes.
-        """
+        """Draws the rectangular element space. self.fill defines the color of
+        the element background. Instead of the DrawBot stroke and strokeWidth
+        attributes, use borders or (borderTop, borderRight, borderBottom,
+        borderLeft) attributes."""
         c = view.context
         eShadow = self.shadow
+
         if eShadow:
             c.saveGraphicState()
             c.setShadow(eShadow)
@@ -4470,8 +4470,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         #if eStroke is not noColor or eFill is not noColor or eGradient:
         c.saveGraphicState()
 
-        # Drawing element fill and/or frame
-        if eGradient: # Gradient overwrites setting of fill.
+        # Drawing element fill and / or frame.
+        if eGradient:
+            # Gradient overwrites setting of fill.
             # TODO: Make bleed work here too.
             # Add self.w and self.h to define start/end from relative size.
             c.setGradient(eGradient, p, self.w, self.h)
@@ -4503,12 +4504,12 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         w = w or self.w
         h = h or self.h
 
+        # FIXME: gives an extra square in lower left corner.
         # Then draw the rectangle with the defined color/stroke/strokeWidth
         #c.rect(x, y, w, h) # Ignore bleed, should already have been applied on position and size.
 
         c.fill(None)
         c.stroke(None, 0)
-
         c.restoreGraphicState()
 
         # Instead of full frame drawing, check on separate border settings.

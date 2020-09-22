@@ -16,6 +16,7 @@
 #
 
 
+from pagebot.constants import ORIGIN
 from math import sin, cos, radians
 from pagebot.elements import Rect
 from pagebot.toolbox.units import pointOffset, pt
@@ -23,9 +24,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import color
 
 class AnimationFrame(Rect):
-    """Showing one frame of an animation, supporting different states of a VariableFont
-
-    """
+    """Showing one frame of an animation, supporting different states of a VariableFont."""
     SAMPLE = 'Sample'
 
     def __init__(self, s, f, frames, frameIndex, phases=None, **kwargs):
@@ -60,9 +59,9 @@ class AnimationFrame(Rect):
         self.sampleText = s or self.SAMPLE
         self.phases = phases or {} # Dictionary for phasing values depending on frame index.
 
-    def build(self, view, origin, drawElements=True, **kwargs):
-        """Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
+        """Default drawing method just drawing the frame. Probably will be
+        redefined by inheriting element classes."""
         c = self.context
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -86,11 +85,9 @@ class AnimationFrame(Rect):
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def drawAnimatedFrame(self, view, origin, **kwargs):
-        """Draw the content of the element, responding to size, styles, font and content.
-        Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
-        if the axis exists.
-
-        """
+        """Draw the content of the element, responding to size, styles, font
+        and content.  Create 2 columns for the self.fontSizes ranges that show
+        the text with and without [opsz] if the axis exists."""
         wdthMin, wdthDefault, wdthMax = self.f.axes['wdth']
         wghtMin, wghtDefault, wghtMax = self.f.axes['wght']
 

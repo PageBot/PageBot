@@ -16,6 +16,7 @@
 #
 
 
+from pagebot.constants import ORIGIN
 from math import sin, cos, radians
 from pagebot.elements import Rect
 from pagebot.toolbox.units import pointOffset, pt
@@ -23,9 +24,7 @@ from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.color import color
 
 class AnimationFrame(Rect):
-    """Showing one frame of an animation, supporting different states of a VariableFont
-
-    """
+    """Showing one frame of an animation, supporting different states of a VariableFont."""
     SAMPLE = 'Sample'
 
     def __init__(self, s, font, frames, frameIndex, phases=None, **kwargs):
@@ -60,7 +59,7 @@ class AnimationFrame(Rect):
         self.sampleText = s or self.SAMPLE
         self.phases = phases or {} # Dictionary for phasing values depending on frame index.
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context
