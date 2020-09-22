@@ -503,28 +503,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     theme = property(_get_theme, _set_theme)
 
-    def checkStyleArgs(self, d):
-        """Fix style values where necessary.
-        TODO: make sure keys are correct.
-
-        >>> e = Element()
-        >>> style = dict(fill=(1, 0, 0), stroke=0.5)
-        >>> e.checkStyleArgs(style)
-        >>> style['fill']
-        Color(r=1, g=0, b=0)
-        >>> style['stroke']
-        Color(r=0.5, g=0.5, b=0.5)
-        """
-        fill = d.get('fill')
-
-        if fill is not None and not isinstance(fill, Color):
-            d['fill'] = color(fill)
-
-        stroke = d.get('stroke')
-
-        if stroke is not None and not isinstance(stroke, Color):
-            d['stroke'] = color(stroke)
-
     def _get_isLocked(self):
         return self.css('isLocked', False)
     def _set_isLocked(self, isLocked):
@@ -1203,7 +1181,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     #   S T Y L E
 
-    # Answers the cascaded style value, looking up the chain of ancestors, until style value is defined.
+    # Answers the cascaded style value, looking up the chain of ancestors,
+    # until style value is defined.
 
     def css(self, name, default=None):
         """In case we are looking for a plain css value, cascading from the
@@ -1228,6 +1207,28 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         if self.parent is not None:
             return self.parent.css(name, default)
         return default
+
+    def checkStyleArgs(self, d):
+        """Fix style values where necessary.
+        TODO: make sure keys are correct.
+
+        >>> e = Element()
+        >>> style = dict(fill=(1, 0, 0), stroke=0.5)
+        >>> e.checkStyleArgs(style)
+        >>> style['fill']
+        Color(r=1, g=0, b=0)
+        >>> style['stroke']
+        Color(r=0.5, g=0.5, b=0.5)
+        """
+        fill = d.get('fill')
+
+        if fill is not None and not isinstance(fill, Color):
+            d['fill'] = color(fill)
+
+        stroke = d.get('stroke')
+
+        if stroke is not None and not isinstance(stroke, Color):
+            d['stroke'] = color(stroke)
 
     def getNamedStyle(self, styleName):
         """In case we are looking for a named style (e.g. used by the
@@ -1593,11 +1594,13 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         if gridX is not None: # If there is a non-linear grid sequence defined, use that.
             undefined = 0
             usedWidth = 0
-            # Make a first pass to see how many columns (None) need equal division and what total width spare we have.
+            # Make a first pass to see how many columns (None) need equal
+            # division and what total width spare we have.
             for gridValue in gridX:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gw gutter
-                cw, gutter = gridValue
+                    # Only single column width defined, force fill in with
+                    # default gw gutter.
+                    gridValue = (gridValue, None)                 cw, gutter = gridValue
                 if cw is None:
                     undefined += 1
                 else:
@@ -1606,11 +1609,13 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                     gutter = gw
                 usedWidth += gutter
             equalWidth = (pw - usedWidth) / (undefined or 1)
-            # Now we know the divide width, scan through the grid list again, building x coordinates.
+            # Now we know the divide width, scan through the grid list again,
+            # building x coordinates.
             x = 0
             for gridValue in gridX:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column width defined, force fill in with default gw gutter
+                    # Only single column width defined, force fill in with default gw gutter.
+                    gridValue = (gridValue, None)
                 cw, gutter = gridValue
                 if cw is None:
                     cw = equalWidth
@@ -1619,7 +1624,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 gridColumns.append((x, cw))
                 x += cw + gutter
 
-        elif self.cw: # If no grid defined, and there is a general grid width, then run the squence for cw + gw gutter
+        elif self.cw:
+            # If no grid defined, and there is a general grid width, then run
+            # the squence for cw + gw gutter.
             cw = self.cw
             x = 0
             for index in range(int(pw/cw)): # Roughly the amount of columns to expect. Avoid while loop
@@ -1677,7 +1684,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             # Make a first pass to see how many columns (None) need equal division.
             for gridValue in gridY:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gh gutter
+                    # Only single column height defined, force fill in with
+                    # default gh gutter.
+                    gridValue = (gridValue, None)
                 ch, gutter = gridValue
                 if ch is None:
                     undefined += 1
@@ -1687,11 +1696,14 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                     gutter = gh
                 usedHeight += gutter
             usedHeight = (ph - usedHeight) / (undefined or 1)
-            # Now we know the divide width, scane through the grid list again, building x coordinates.
+            # Now we know the divide width, scane through the grid list again,
+            # building x coordinates.
             y = 0
             for gridValue in gridY:
                 if not isinstance(gridValue, (list, tuple)):
-                    gridValue = (gridValue, None) # Only single column height defined, force fill in with default gutter
+                    # Only single column height defined, force fill in with
+                    # default gutter.
+                    gridValue = (gridValue, None)
                 ch, gutter = gridValue
                 if ch is None:
                     ch = usedHeight
@@ -1699,10 +1711,13 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                     gutter = gh
                 gridRows.append((y, ch))
                 y += ch + gutter
-        elif self.ch: # If no grid defined, and there is a general grid height, then run the squence for ch + gh gutter
+        elif self.ch:
+            # If no grid defined, and there is a general grid height, then run
+            # the squence for ch + gh gutter.
             ch = self.ch
             y = 0
-            for index in range(int(ph/ch)): # Roughly the amount of columns to expect. Avoid while loop
+            for index in range(int(ph/ch)):
+                # Roughly the amount of columns to expect. Avoid while loop.
                 if y + ch > ph:
                     break
                 gridRows.append((y, ch))
@@ -4425,6 +4440,96 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         for e in self.elements:
             e.compose(doc, publication)
 
+    #   D R A W B O T / F L A T  S U P P O R T
+
+    def prepare(self, view):
+        """Respond to the top-down element broadcast to prepare for build.  If
+        the original image needs scaling, then prepare the build by letting the
+        context make a new cache file with the scaled images. If the cache
+        file already exists, then ignore, just continue the broadcast towards
+        the child elements. Default behavior is to do nothing. Inheriting
+        Element classes can redefine."""
+        for e in self.elements:
+            e.prepare(view)
+
+    def getPosition(self, view, origin):
+        p = pointOffset(self.origin, origin)
+        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        self._applyRotation(view, p)
+        return x, p
+
+    def build(self, view, origin, drawElements=True, **kwargs):
+        """Default drawing method just drawing the frame. Probably will be
+        redefined by inheriting element classes."""
+        p = pointOffset(self.origin, origin)
+        p = self._applyScale(view, p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p)
+
+        self._applyRotation(view, p)
+
+        # Draw optional frame or borders.
+        self.buildFrame(view, p)
+
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # background here.
+        view.drawPageMetaInfoBackground(self, p)#, background=True)
+        view.drawElementFrame(self, p)
+
+        # Call if defined.
+        if self.drawBefore is not None:
+            self.drawBefore(self, view, p)
+
+        # Draw the actual element content. Inheriting elements classes can
+        # redefine this method only to fill in drawing behavior. @p is the
+        # transformed position to draw in the main canvas.
+        self.buildElement(view, p, drawElements, **kwargs)
+
+        if self.drawAfter is not None:
+            # Call if defined.
+            self.drawAfter(self, view, p)
+
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # foreground here.
+        view.drawPageMetaInfo(self, p)
+
+        # Supposedly drawing outside rotation/scaling mode, so the origin of
+        # the element is visible.
+        view.drawElementOrigin(self, origin)
+
+        self._restoreRotation(view, p)
+        self._restoreScale(view)
+        # Depends on flag 'view.showElementInfo'.
+        view.drawElementInfo(self, origin)
+
+    def buildElement(self, view, p, drawElements=True, **kwargs):
+        """Main drawing method for elements to draw their content and the
+        content of their children if they exist. @p is the transformed position
+        of the context canvas. To be redefined by inheriting element classes
+        that need to draw more than just their chold elements."""
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel
+            # image.
+            self.buildChildElements(view, p, **kwargs)
+
+    def buildChildElements(self, view, origin=None, **kwargs):
+        """Draws child elements, dispatching depends on the implementation of
+        context specific build elements.
+
+        If no specific builder_<view.context.b.PB_ID> is implemented, call default
+        e.build(view, origin). """
+        hook = 'build_' + view.context.b.PB_ID
+
+        for e in self.elements:
+            if not e.show:
+                continue
+            if hasattr(e, hook):
+                getattr(e, hook)(view, origin, **kwargs)
+            else: # No implementation for this context, call default building method for this element.
+                e.build(view, origin, **kwargs)
+
     #   D R A W I N G  S U P P O R T
 
     def getMetricsString(self, view=None):
@@ -4635,89 +4740,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
             c.line((x-oLeft, y-oBottom), (x-oLeft, y+h+oTop))
             c.restoreGraphicState()
-
-    #   D R A W B O T / F L A T  S U P P O R T
-
-    def prepare(self, view):
-        """Respond to the top-down element broadcast to prepare for build.  If
-        the original image needs scaling, then prepare the build by letting the
-        context make a new cache file with the scaled images. If the cache
-        file already exists, then ignore, just continue the broadcast towards
-        the child elements. Default behavior is to do nothing. Inheriting
-        Element classes can redefine."""
-        for e in self.elements:
-            e.prepare(view)
-
-    def build(self, view, origin, drawElements=True, **kwargs):
-        """Default drawing method just drawing the frame. Probably will be
-        redefined by inheriting element classes."""
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p) # Ignore z-axis for now.
-        px, py, _ = p = self._applyAlignment(p)
-
-        self._applyRotation(view, p)
-
-        # Draw optional frame or borders.
-        self.buildFrame(view, p)
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # background here.
-        view.drawPageMetaInfoBackground(self, p)#, background=True)
-        view.drawElementFrame(self, p)
-
-        # Call if defined.
-        if self.drawBefore is not None:
-            self.drawBefore(self, view, p)
-
-        # Draw the actual element content. Inheriting elements classes can
-        # redefine this method only to fill in drawing behavior. @p is the
-        # transformed position to draw in the main canvas.
-        self.buildElement(view, p, drawElements, **kwargs)
-
-        if self.drawAfter is not None:
-            # Call if defined.
-            self.drawAfter(self, view, p)
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # foreground here.
-        view.drawPageMetaInfo(self, p)
-
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
-        # the element is visible.
-        view.drawElementOrigin(self, origin)
-
-        self._restoreRotation(view, p)
-        self._restoreScale(view)
-        # Depends on flag 'view.showElementInfo'.
-        view.drawElementInfo(self, origin)
-
-    def buildElement(self, view, p, drawElements=True, **kwargs):
-        """Main drawing method for elements to draw their content and the
-        content of their children if they exist. @p is the transformed position
-        of the context canvas. To be redefined by inheriting element classes
-        that need to draw more than just their chold elements."""
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel
-            # image.
-            self.buildChildElements(view, p, **kwargs)
-
-    def buildChildElements(self, view, origin=None, **kwargs):
-        """Draws child elements, dispatching depends on the implementation of
-        context specific build elements.
-
-        If no specific builder_<view.context.b.PB_ID> is implemented, call default
-        e.build(view, origin). """
-        hook = 'build_' + view.context.b.PB_ID
-
-        for e in self.elements:
-            if not e.show:
-                continue
-            if hasattr(e, hook):
-                getattr(e, hook)(view, origin, **kwargs)
-            else: # No implementation for this context, call default building method for this element.
-                e.build(view, origin, **kwargs)
 
     #   I N D E S I G N  S U P P O R T
 

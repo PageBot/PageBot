@@ -26,4 +26,3 @@
 #
 #     https://ialab.it.monash.edu/webcola/examples/3dLayout.html
 #
-from pagebot.elements.variablefonts.variablecircle import VariableCircle

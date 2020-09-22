@@ -15,9 +15,8 @@
 #     animationframe.py
 #
 
-
-from pagebot.constants import ORIGIN
 from math import sin, cos, radians
+from pagebot.constants import ORIGIN
 from pagebot.elements import Rect
 from pagebot.toolbox.units import pointOffset, pt
 from pagebot.fonttoolbox.objects.font import findFont

@@ -68,11 +68,9 @@ from pagebot.elements.pbcodeblock import CodeBlock
 #from pagebot.elements.ui.uicanvas import UICanvas
 
 # Variable Font elements
-# NOTE: `variablefonts` is deprecated.
-# Elements should be tested and moved to elements.vf.
 from pagebot.elements.variablefonts.variablecircle import VariableCircle
-from pagebot.elements.vf.designspacegraph import DesignSpace, DesignSpaceGraph
-from pagebot.elements.vf.specimen import TypeList, TypeFeatures, TypeGlyphSet, Waterfall
+from pagebot.elements.designspacegraph.designspacegraph import DesignSpace, DesignSpaceGraph
+from pagebot.elements.variablefonts.specimen import TypeList, TypeFeatures, TypeGlyphSet, Waterfall
 
 def elementFromPath(path, name=None, **kwargs):
     """Answer the element that is best suitable to hold the data in the path.

@@ -756,7 +756,8 @@ class Text(Element):
 
         # TODO: Add Element clipping stuff here
 
-        # Let the view draw frame info for debugging, in case view.showFrame == True.
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True.
         view.drawElementFrame(self, p, **kwargs)
 
         """Forces width and / or height, behave as a textbox. Only if
