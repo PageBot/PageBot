@@ -139,10 +139,11 @@ class BabelRun:
             textStroke = style['textStroke']
             if textStroke is not None:
                 textStroke = color(textStroke)
-            if textStroke.isCmyk:
-                fsStyle['cmykStroke'] = textStroke.cmyk
-            else:
-               fsStyle['stroke'] = textStroke.rgba
+
+                if textStroke.isCmyk:
+                    fsStyle['cmykStroke'] = textStroke.cmyk
+                else:
+                   fsStyle['stroke'] = textStroke.rgba
 
         if 'openTypeFeatures' in style:
             fsStyle['openTypeFeatures'] = style['openTypeFeatures']

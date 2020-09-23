@@ -87,6 +87,7 @@ class Text(Element):
         # instance or None. Needs to be done before element initialisation,
         # because some attributes (Text.xTextAlign) may need the string style
         # as reference.
+        assert bs
         self.bs = bs # BabelString source for this Text element.
 
         # These need the self.bs to be defined.
@@ -746,6 +747,9 @@ class Text(Element):
         True
         >>> doc.export('_export/Text-build2.pdf')
         """
+        if not self.bs:
+            return
+
         context = view.context # Get current context
         x, p = self.getElementPosition(view, origin)
         px, py, _ = p

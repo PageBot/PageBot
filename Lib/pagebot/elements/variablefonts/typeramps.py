@@ -170,7 +170,7 @@ class FontIcon(Element):
                                           textStroke=self.cStroke,
                                           textStrokeWidth=self.cStrokeWidth,
                                           fontSize=h*2/3))
-        tw, th = bs.size
+        tw, th = bs.textSize
         c.text(bs, (w/2-tw/2, h/2-th/3.2))
 
         if self.title:
@@ -179,7 +179,7 @@ class FontIcon(Element):
                                               textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = bs.size
+            tw, th = bs.textSize
             c.text(bs, (w/2-tw/2, self.h+th/2))
 
         y -= upt(self.LABEL_RLEADING, base=labelSize)
@@ -189,7 +189,7 @@ class FontIcon(Element):
                                               textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = bs.size
+            tw, th = bs.textSize
             c.text(bs, (w/2-tw/2, y))
             y -= upt(self.LABEL_RLEADING, base=labelSize)
         if self.label:
@@ -198,7 +198,7 @@ class FontIcon(Element):
                                               textFill=blackColor,
                                               rTracking=self.LABEL_RTRACKING,
                                               fontSize=labelSize))
-            tw, th = bs.size
+            tw, th = bs.textSize
             c.text(bs, (w/2-tw/2, y))
         c.restore()
 

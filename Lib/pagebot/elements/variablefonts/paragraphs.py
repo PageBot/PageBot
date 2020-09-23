@@ -30,6 +30,31 @@ class Paragraphs(BaseFontShow):
     textFill    Color of the text. Default is black.
     padding     Use in case of background color or frame. Default is 0
 
+    File "./paragraphs.py", line 58, in __main__.Paragraphs.__init__
+Failed example:
+    doc.export('_export/%sParagraphs.pdf' % font1.info.familyName)
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/doctest.py", line 1329, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest __main__.Paragraphs.__init__[20]>", line 1, in <module>
+        doc.export('_export/%sParagraphs.pdf' % font1.info.familyName)
+      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/document.py", line 1529, in export
+        self.build(path=path, multiPage=multiPage, **kwargs)
+      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/document.py", line 1511, in build
+        self.view.build(path, pageSelection=pageSelection, multiPage=multiPage, **kwargs)
+      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/elements/views/pageview.py", line 190, in build
+        page.buildChildElements(self, origin, **kwargs)
+      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/elements/element.py", line 4541, in buildChildElements
+        e.build(view, origin, **kwargs)
+      File "./paragraphs.py", line 88, in build
+        self.drawStacked(view, p, **kwargs)
+      File "./paragraphs.py", line 129, in drawStacked
+        x, _ = self.buildText(s1, s2, origin, x, y,
+      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/elements/variablefonts/basefontshow.py", line 105, in buildText
+        instance = self.getInstance(location) # Get Roman for labels, using default axis values.
+    AttributeError: 'Paragraphs' object has no attribute 'getInstance'
+
     """
     def __init__(self, f, words=None, labelSize=None, **kwargs):
         """
