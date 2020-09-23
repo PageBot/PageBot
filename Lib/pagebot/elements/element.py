@@ -1610,7 +1610,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                     # Only single column width defined, force fill in with
                     # default gw gutter.
                     gridValue = (gridValue, None)
-                    cw, gutter = gridValue
+                cw, gutter = gridValue
                 if cw is None:
                     undefined += 1
                 else:
