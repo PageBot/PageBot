@@ -60,7 +60,12 @@ class FontIcon(Element):
         >>> bg = newRect(x=w/2, w=w/2, h=h/2, fill=blackColor,parent=page)
         >>> fi = FontIcon(font, x=x, y=y, w=iw, h=ih, name="40k", c="H", cFill=color(0.5), earSize=0.3, earLeft=True, earFill=None, fill=color(1,0,0,0.5), parent=bg, stroke=color(1), strokeWidth=3)
         >>> doc.export('_export/FontIconTest.pdf')
-        >>> doc.export('_export/FontIconTest.jpg')
+        >>> # FIXME: problem rasterizing jpeg in Flat...
+        >>> # File "/Users/michiel/VirtualEnvironments/pagebot/PageBotFlat/flat/rasterizer.py", line 430, in rasterize
+        >>> # data[i] = (c0*alpha + data[i]*v + 127)//255
+        >>> # TypeError: 'float' object cannot be interpreted as an integer
+
+        >>> #doc.export('_export/FontIconTest.jpg')
         """
 
         Element.__init__(self,  **kwargs)
