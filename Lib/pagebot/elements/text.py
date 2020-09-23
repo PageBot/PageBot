@@ -87,8 +87,10 @@ class Text(Element):
         # instance or None. Needs to be done before element initialisation,
         # because some attributes (Text.xTextAlign) may need the string style
         # as reference.
-        assert bs
         self.bs = bs # BabelString source for this Text element.
+
+        # TODO: shouldn't BabelString be required?
+        #assert self.bs
 
         # These need the self.bs to be defined.
         if xTextAlign is not None:
