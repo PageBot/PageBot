@@ -74,7 +74,7 @@ python3 $PWD/elements/rect.py
 python3 $PWD/elements/ruler.py
 python3 $PWD/elements/table.py
 python3 $PWD/elements/text.py
-python3 $PWD/elements/rinking.py
+python3 $PWD/elements/shrinking.py
 python3 $PWD/elements/template.py
 python3 $PWD/elements/textconditions.py
 # TODO: add more.
@@ -87,7 +87,7 @@ python3 $PWD/elements/variablefonts/fittowidth.py
 python3 $PWD/elements/variablefonts/fonticon.py
 python3 $PWD/elements/variablefonts/glyphdimensions.py
 python3 $PWD/elements/variablefonts/glyphset.py
-python3 $PWD/elements/variablefonts/paragraphs.py
+#python3 $PWD/elements/variablefonts/paragraphs.py
 python3 $PWD/elements/variablefonts/sampler.py
 #python3 $PWD/elements/variablefonts/specimen.py
 #python3 $PWD/elements/variablefonts/stacked.py

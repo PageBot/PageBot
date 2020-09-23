@@ -52,10 +52,7 @@ class Text(Element):
     >>> page = doc[1]
     >>> t = Text('ABCD', parent=page)
     >>> t
-    <Text $ABCD$>
-    >>> t = Text('ABCD', parent=page)
-    >>> t
-    <Text $ABCD$>
+    <Text $ABCD$ w=100pt h=400pt>
     """
     isText = True
 
@@ -331,10 +328,10 @@ class Text(Element):
         >>> bs = context.newString('ABCD', style)
         >>> e = Text(bs, parent=doc[1])
         >>> e
-        <Text $ABCD$>
+        <Text $ABCD$ w=100pt h=1000pt>
         >>> e = Text(bs, x=100, y=100, w=200, parent=doc[1])
         >>> e
-        <Text $ABCD$ x=100pt y=100pt w=200pt>
+        <Text $ABCD$ x=100pt y=100pt w=200pt h=1000pt>
 
         """
         # FIXME: restore tests.
@@ -365,11 +362,11 @@ class Text(Element):
             s += ' y=%s' % self.y
 
         # Always show width and height if defined.
-        if self.bs.hasWidth:
-            s += ' w=%s' % self.bs.w
+        if self.w:#bs.hasWidth:
+            s += ' w=%s' % self.w
 
-        if self.bs.hasHeight:
-            s += ' h=%s' % self.bs.h
+        if self.h:#bs.hasHeight:
+            s += ' h=%s' % self.h
 
         return s+'>'
 
