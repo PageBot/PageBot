@@ -380,7 +380,8 @@ class SketchContext(BaseContext):
         >>> page = doc[1]
         >>> e = page.elements[0]
         >>> e
-        <Text $Type & sty...$ x=137pt y=191.18pt w=518pt h=100pt>
+        <Text $Type & sty...$ x=137pt y=191.18pt>
+        >>> #<Text $Type & sty...$ x=137pt y=191.18pt w=518pt h=100pt>
         """
         sketchPages = self.b.pages # Collect the list of SketchPage instance
         sortedArtboards = {} # First sort the artboard by y-->x pairs
