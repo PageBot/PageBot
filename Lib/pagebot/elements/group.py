@@ -14,10 +14,11 @@
 #
 #     group.py
 #
-from pagebot.elements.rect import Rect
+#from pagebot.elements.rect import Rect
+from pagebot.elements.element import Element
 
-class Group(Rect):
-    """Draw rectangle, default identacal to Element itself.
+class Group(Element):
+    """Groups elements, default identical to Element itself.
 
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot import getContext
@@ -51,10 +52,8 @@ class Group(Rect):
     ((0pt, 20pt), (0pt, 20pt, 0pt))
     >>> e.size, e.size3D
     ((300pt, 100pt), (300pt, 100pt, 100pt))
-
     """
-
-    # No separate build, default behavior is in Element.build()
+    # No separate build, default behavior is in Element.build().
 
 
 if __name__ == '__main__':

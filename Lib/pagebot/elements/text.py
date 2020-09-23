@@ -762,17 +762,20 @@ class Text(Element):
         view.drawElementFrame(self, p, **kwargs)
 
         # NOTE: Temporarily draws a blue rectangle to check alignment.
-        context.stroke((0, 0, 1))
-        context.rect(px, py, self.w, self.h)
+        #context.stroke((0, 0, 1))
+        #context.rect(px, py, self.w, self.h)
 
         if self.w or self.h:
+            context.drawText(self.bs, (px, py, self.w, self.h))
+            self.buildFrame(view, (px, py, self.w, self.h))
+
+            '''
             if self.bs.lines:
                 baseline0 = self.bs.lines[0].y
                 frameY = py - self.h + baseline0
                 # Draw optional background, frame or borders.
                 # Width is padded width of self.
                 # FIXME.
-                self.buildFrame(view, (px, frameY, self.w, self.h))
 
                 if self.showMargin:
                     view.drawMargin(self, (px, frameY))
@@ -780,11 +783,9 @@ class Text(Element):
                     view.drawPadding(self, (px, frameY))
 
                 # Draw text as box
-                y = py - self.pt - self.h + baseline0
-                w = self.w or self.bs.w
-                h = self.h or self.bs.h
-                context.drawText(self.bs, (x, y, w, h))
+            '''
 
+        '''
         else:
             frameX = px
             frameY = py + self.bs.topLineDescender
@@ -803,7 +804,7 @@ class Text(Element):
             # bs.th) Note that there still can be multiple lines in the string
             # if it contains '\n' characters.
             context.drawString(self.bs, (x - self.pt, py))
-
+        '''
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
