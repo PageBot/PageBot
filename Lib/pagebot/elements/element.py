@@ -584,7 +584,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Answers the page somewhere in the parent tree, if it exists.
         Answers None otherwise.
 
-        >>> from pagebot.elements.pbpage import Page
+        >>> from pagebot.elements.page import Page
         >>> page = Page()
         >>> e1 = Element(parent=page)
         >>> e2 = Element(parent=e1)
@@ -659,7 +659,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         layers above self. If there element has not a parent in the line of
         parents, then answers None.
 
-        >>> from pagebot.elements.pbpage import Page
+        >>> from pagebot.elements.page import Page
         >>> eb = Element(name='Bottom')
         >>> e = Element(elements=[eb])
         >>> e = Element(elements=[e])
@@ -1396,7 +1396,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         until the root document is reached.
 
         >>> from pagebot.document import Document
-        >>> from pagebot.elements.pbpage import Page
+        >>> from pagebot.elements.page import Page
         >>> e = Element(name='Child')
         >>> page = Page(elements=[e])
         >>> doc = Document(pages=[page])

@@ -14,7 +14,7 @@
 #
 #     pbartbpoard.py
 #
-from pagebot.elements.pbgroup import Group
+from pagebot.elements.group import Group
 
 class Artboard(Group):
     """ArtBoard is compatible with the SketchApp element, default identical to Group.

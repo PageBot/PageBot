@@ -22,7 +22,7 @@
 from pagebot.conditions import *
 from pagebot.constants import DEFAULT_FONT, FONT_FEATURES
 from pagebot.elements.element import Element
-from pagebot.elements.pbgroup import Group
+from pagebot.elements.group import Group
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.units import pt, px
 

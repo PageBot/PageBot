@@ -18,7 +18,7 @@ from pagebot.constants import CENTER, ORIGIN, MIDDLE
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.conditions import *
-from pagebot.elements.pbtext import Text
+from pagebot.elements.text import Text
 from pagebot.toolbox.color import whiteColor, blackColor, color
 
 class Row(Element):

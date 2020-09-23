@@ -14,7 +14,7 @@
 #
 #     codeblock.py
 #
-from pagebot.elements.pbtext import Text
+from pagebot.elements.text import Text
 from pagebot.toolbox.color import noColor, color
 
 class CodeBlock(Text):

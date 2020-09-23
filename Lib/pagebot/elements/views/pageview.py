@@ -23,7 +23,7 @@ from math import atan2, radians, degrees, cos, sin
 from pagebot.filepaths import getResourcesPath
 from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
-from pagebot.elements.pbquire import Quire
+from pagebot.elements.quire import Quire
 from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, QUIRE_SPREAD, #ORIGIN,
     BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD,
     GRID_COL, GRID_ROW, GRID_SQR,

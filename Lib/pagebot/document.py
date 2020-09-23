@@ -19,7 +19,7 @@ import codecs
 from pagebot import getContext
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
-from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.page import Page, Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.style import getRootStyle
 from pagebot.themes import DEFAULT_THEME_CLASS
@@ -343,7 +343,7 @@ class Document:
         check, so the caller can overwrite existing templates. Answer the
         template as convenience of the caller.
 
-        >>> from pagebot.elements.pbpage import Template
+        >>> from pagebot.elements.page import Template
         >>> name ='TestTemplate'
         >>> t = Template(w=200, h=300, name=name)
         >>> doc = Document(name='TestDoc')
@@ -882,7 +882,7 @@ class Document:
     def appendPage(self, page, pn=None):
         """Append page to the document. Assert that it is a page element.
 
-        >>> from pagebot.elements.pbpage import Page
+        >>> from pagebot.elements.page import Page
         >>> from pagebot.elements.views.pageview import PageView
         >>> doc = Document(name='TestDoc', startPage=50, autoPages=100)
         >>> len(doc), min(doc.pages.keys()), max(doc.pages.keys())

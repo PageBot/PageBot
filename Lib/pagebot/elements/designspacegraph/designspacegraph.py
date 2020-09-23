@@ -14,7 +14,7 @@
 #
 #     designspacegraph.py
 #
-from pagebot.elements.pbrect import Rect
+from pagebot.elements.rect import Rect
 from pagebot.toolbox.units import pt, upt
 from pagebot.toolbox.color import blackColor
 from pagebot.fonttoolbox.objects.font import findFont

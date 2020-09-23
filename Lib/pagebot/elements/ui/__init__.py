@@ -22,40 +22,40 @@ from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
 from pagebot.contexts.basecontext.bezierpath import BezierPath, newRectPath # PageBot generic equivalent of DrawBot.BezierPath
 
 # Simple elements
-from pagebot.elements.pbtext import Text
-from pagebot.elements.pbrect import Rect
-from pagebot.elements.pbgroup import Group
-from pagebot.elements.pbline import Line
-from pagebot.elements.pbruler import Ruler
-from pagebot.elements.pbpolygon import Polygon
-from pagebot.elements.pboval import Oval
-from pagebot.elements.pboval import Circle
+from pagebot.elements.text import Text
+from pagebot.elements.rect import Rect
+from pagebot.elements.group import Group
+from pagebot.elements.line import Line
+from pagebot.elements.ruler import Ruler
+from pagebot.elements.polygon import Polygon
+from pagebot.elements.oval import Oval
+from pagebot.elements.oval import Circle
 
 # Page elements
-from pagebot.elements.pbimage import Image
-from pagebot.elements.pbgalley import Galley, Column
-from pagebot.elements.pbpage import Page, Template
+from pagebot.elements.image import Image
+from pagebot.elements.galley import Galley, Column
+from pagebot.elements.page import Page, Template
 # Placeholder element, typically for Templates. Shows name.
-from pagebot.elements.pbplacer import Placer
+from pagebot.elements.placer import Placer
 
 # Artboard (SketchApp compatible, content element on pages.)
-from pagebot.elements.pbartboard import Artboard
+from pagebot.elements.artboard import Artboard
 
 # Path and mask elements
 #OLD from pagebot.elements.paths.pbpath import Path
-#OLD from pagebot.elements.pbbezierpath import BezierPath # Element drawing context.BezierPath instance.
+#OLD from pagebot.elements.bezierpath import BezierPath # Element drawing context.BezierPath instance.
 #from pagebot.elements.paths.glyphpath import GlyphPath
 
 # Element that holds a number of styled BezierPath instances to draw.
 from pagebot.elements.paths.pbpaths import Paths
 
 # Table elements
-from pagebot.elements.pbtable import Table
+from pagebot.elements.table import Table
 
 # Views and code
 from pagebot.elements.views import viewClasses
-from pagebot.elements.pbquire import Quire
-from pagebot.elements.pbcodeblock import CodeBlock
+from pagebot.elements.quire import Quire
+from pagebot.elements.codeblock import CodeBlock
 
 # Variable Font elements
 from pagebot.elements.variablefonts.variablecircle import VariableCircle

@@ -16,8 +16,8 @@
 #
 from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
-from pagebot.elements.pbtext import Text
-from pagebot.elements.pbruler import Ruler
+from pagebot.elements.text import Text
+from pagebot.elements.ruler import Ruler
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import color, noColor
 from pagebot.conditions import *

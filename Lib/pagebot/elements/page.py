@@ -18,7 +18,7 @@ import weakref
 import os
 
 from pagebot.elements.element import Element
-from pagebot.elements.pbgalley import Galley
+from pagebot.elements.galley import Galley
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.transformer import path2Dir, path2Url, path2FlatUrl
 from pagebot.constants import ORIGIN

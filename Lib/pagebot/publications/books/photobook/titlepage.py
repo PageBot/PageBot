@@ -15,7 +15,7 @@
 #     books/photobook/titlepage.py
 #
 from pagebot.conditions import Center2Center, Bottom2Bottom, Fit2Width, Top2Top
-#from pagebot.elements.pbtext import Text
+#from pagebot.elements.text import Text
 from pagebot.elements import newText
 
 def makeTitlePage(page, title=None, text=None):
