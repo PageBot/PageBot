@@ -17,8 +17,7 @@
 from pagebot.elements import Rect
 
 class BezierAnimation(Rect):
-    """Parse the design space file and show it as a D3 network.
-    """
+    """Parse the design space file and show it as a D3 network."""
 
     def build_html(self, view, path, drawElements=True, **kwargs):
         b = self.context.b

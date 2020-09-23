@@ -48,8 +48,8 @@ class AnimationFrame(Rect):
         ...     style = dict(leading=em(1.4), fontSize=400, xTextAlign=RIGHT, fill=color(0))
         ...     gs = AnimationFrame('Claire', font, frames, pn, parent=page, padding=20, style=style, w=page.pw, h=page.ph, context=c)
         >>> # No gif for Flat context yet.
-        >>> if context.name == 'DrawBot':
-        >>>     doc.export('_export/%sAnimation.gif' % font.info.familyName)
+        >>> if c.name == 'DrawBot':
+        ...     doc.export('_export/%sAnimation.gif' % font.info.familyName)
 
         TODO: Make self.css('xTextAlign') work for CENTER
         """
