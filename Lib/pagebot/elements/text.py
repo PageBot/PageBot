@@ -817,6 +817,43 @@ class Text(Element):
         be different from the regular Element top property, because the default
         origin is at the baseline of the top text line.
 
+        """
+        return self._applyVerticalAlignment(self.y) + self.bs.topLineAscender
+    def _set_top(self, y):
+        self.y += y - self.top # Trick to reverse vertical alignment.
+    top = property(_get_top, _set_top)
+
+    '''
+
+    def _set_top(self, y):
+        """Shift the element so `self.top == y`. Where the "top" is, depends on
+        the setting of `self.yAlign`. If `self.isText`, then vertical position
+        can also be defined by the top or bottom position of the baseline."""
+        yAlign = self.yAlign
+        print(yAlign)
+
+        if yAlign == MIDDLE:
+            self.y = units(y) - self.h/2
+        elif yAlign == BOTTOM:
+            self.y = y
+        else: # yAlign must be TOP or None
+            self.y = units(y) - self.h
+
+    def _get_top(self):
+        """Answers the top position (relative to self.parent) of self.
+
+        >>> e = Element(y=100, h=248, yAlign=TOP)
+        >>> e.top
+        100pt
+        >>> e.yAlign = BOTTOM
+        >>> e.top
+        348pt
+        >>> e.yAlign = MIDDLE
+        >>> e.top
+
+        """
+        """
+        TODO: restore these
         >>> from pagebot.constants import A4, MIDDLE_CAP, TOP
         >>> from pagebot.elements import newLine
         >>> from pagebot.document import Document
@@ -841,13 +878,19 @@ class Text(Element):
         (241.9pt, 200pt)
         >>> l = newLine(x=0, y=200, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
         >>> doc.export('_export/Text-top-200.pdf')
+        224pt
         """
-        return self._applyVerticalAlignment(self.y) + self.bs.topLineAscender
-    def _set_top(self, y):
-        self.y += y - self.top # Trick to reverse vertical alignment.
+        yAlign = self.yAlign
+
+        if yAlign == MIDDLE:
+            return self.y + self.h/2
+        if yAlign == BOTTOM:
+            return self.y + self.h
+        # yAlign must be TOP or None
+        return self.y
+
     top = property(_get_top, _set_top)
 
-    '''
 
     #   B U I L D  I N D E S I G N
 

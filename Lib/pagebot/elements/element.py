@@ -2285,11 +2285,11 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             return self.y + self.h
         # yAlign must be TOP or None
         return self.y
+
     def _set_top(self, y):
         """Shift the element so `self.top == y`. Where the "top" is, depends on
-        the setting of `self.yAlign`. If `self.isText`, then vertical
-        position can also be defined by the top or bottom position of the
-        baseline."""
+        the setting of `self.yAlign`. If `self.isText`, then vertical position
+        can also be defined by the top or bottom position of the baseline."""
         yAlign = self.yAlign
 
         if yAlign == MIDDLE:
@@ -2298,6 +2298,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             self.y = units(y) - self.h
         else: # yAlign must be TOP or None
             self.y = y
+
     top = property(_get_top, _set_top)
 
     def _get_mTop(self):
@@ -2314,8 +2315,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         224pt
         """
         return self.top + self.mt
+
     def _set_mTop(self, y):
         self.top = units(y) - self.mt
+
     mTop = property(_get_mTop, _set_mTop)
 
     def _get_middle(self):

@@ -1,12 +1,12 @@
 # vim: set filetype=python:
 
+>>> from pagebot.base.typesetter import Typesetter
 >>> from pagebot.constants import A4
 >>> from pagebot.document import Document
 >>> from pagebot.elements import Text
 >>> from pagebot.filepaths import getResourcesPath
 >>> from pagebot.toolbox.units import em, pt
 >>> from pagebot.toolbox.color import color, blackColor
->>> from pagebot.typesetter import Typesetter
 >>> from pagebot import getContext
 >>> numPages = 4
 >>> path = getResourcesPath() + '/texts/TEST.md' # Get the path to the text markdown.
