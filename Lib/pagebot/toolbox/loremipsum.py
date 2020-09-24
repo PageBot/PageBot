@@ -14,21 +14,19 @@
 #
 #     loremipsum.py
 #
-#     Answer a random lorem ipsum text.
+#     Answers a random lorem ipsum text.
 #
 #
-
-#import lorem
 
 from random import shuffle
 
-def loremipsum(doShuffle=False, words=None):
+def loremIpsum(doShuffle=False, words=None):
     """Answer random lorem ipsum text. Default is not to shuffle,
     self doc test always gets the same result.
 
-    >>> loremipsum()[:50]
+    >>> loremIpsum()[:50]
     'Lorem ipsum dolor sit amet, consectetur adipiscing'
-    >>> loremipsum(words=4) # Cutting of at word count, always ending with a period.
+    >>> loremIpsum(words=4) # Cutting of at word count, always ending with a period.
     'Lorem ipsum dolor sit.'
     """
     lorem = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et sapien tempor, tincidunt turpis tincidunt, bibendum arcu. Proin nec erat ut dui auctor aliquam egestas sit amet urna. Fusce auctor varius viverra. Morbi augue sapien, auctor et egestas vitae, venenatis et mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin bibendum diam id dapibus maximus. Curabitur et odio tincidunt, fermentum velit eget, iaculis augue. Duis faucibus sapien id massa facilisis pretium ut non tortor.

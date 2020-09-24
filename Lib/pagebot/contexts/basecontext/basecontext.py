@@ -878,12 +878,12 @@ class BaseContext(AbstractContext):
     def textOverflow(self, lines, h, align=None):
         """Answers the part of the text that doesn't fit in the box.
 
-        >>> from pagebot.toolbox.loremipsum import loremipsum
+        >>> from pagebot.toolbox.loremipsum import loremIpsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> context = getContext() # Get default Flat or DrawBot context
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
-        >>> bs = context.newString(loremipsum(), style, w=pt(400))
+        >>> bs = context.newString(loremIpsum(), style, w=pt(400))
         >>> bs.w
         400pt
         >>> lines = bs.lines # Same as context.textLines(bs.cs, bs.w)

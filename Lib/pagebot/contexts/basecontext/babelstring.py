@@ -342,12 +342,12 @@ class BabelString:
         ask the context to render it before answering. Caches the result in
         self._lines.
 
-        >>> from pagebot.toolbox.loremipsum import loremipsum
+        >>> from pagebot.toolbox.loremipsum import loremIpsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
-        >>> bs = BabelString(loremipsum(), style, w=pt(500), context=context)
+        >>> bs = BabelString(loremIpsum(), style, w=pt(500), context=context)
         >>> lines = bs.lines
         >>> len(lines)
         113
