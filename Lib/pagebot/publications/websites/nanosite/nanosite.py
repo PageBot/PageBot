@@ -21,11 +21,11 @@ import shutil
 import traceback
 
 from pagebot.publications.websites.basesite import BaseSite
-from pagebot.elements.views import MampView
 from pagebot.constants import *
-from pagebot.composer import Composer
-from pagebot.typesetter import Typesetter
+from pagebot.base.composer import Composer
+from pagebot.base.typesetter import Typesetter
 from pagebot.elements import *
+from pagebot.elements.views import MampView
 from pagebot.elements.web.nanosite.siteelements import *
 
 class NanoSite(BaseSite):
@@ -38,9 +38,9 @@ class NanoSite(BaseSite):
     >>> from css.nanostyle_css import cssPy
     >>> name = 'PageBot NanoSite'
     >>> # Pick a theme for this site.
-    >>> theme = BackToTheCity() 
+    >>> theme = BackToTheCity()
     >>> # Get example markDown file from resources.
-    >>> srcPath = getResourcesPath() + '/texts/SITE.md' 
+    >>> srcPath = getResourcesPath() + '/texts/SITE.md'
     >>> os.path.exists(srcPath)
     True
     >>> ns = NanoSite(name=name, theme=theme)
@@ -59,7 +59,7 @@ class NanoSite(BaseSite):
                 navigation = page.select('Navigation')
                 if navigation is not None:
                     # Get a fresh one for each page.
-                    navigation.pageTree = doc.getPageTree() 
+                    navigation.pageTree = doc.getPageTree()
 
     def makeTemplate(self, doc):
         """Make a default template that is the typical base for a NanoSite.
@@ -67,10 +67,10 @@ class NanoSite(BaseSite):
 
         default = Template('Default', context=doc.context)
         # Create main page wrapper.
-        wrapper = Wrapper(parent=default) 
+        wrapper = Wrapper(parent=default)
 
         # Header to hold logo and navigation elements.
-        header = Header(parent=wrapper) 
+        header = Header(parent=wrapper)
 
         #logoString = doc.context.newString(SITE_NAME)
         Logo(parent=header, logo=doc.title)
@@ -134,7 +134,7 @@ class NanoSite(BaseSite):
 
         page = doc[1]
         # Copy element tree to page.
-        page.applyTemplate(template) 
+        page.applyTemplate(template)
 
         # By default, the typesetter produces a single Galley with content and
         # code blocks.
@@ -180,7 +180,7 @@ class NanoSite(BaseSite):
         if os.path.exists(filePath):
             # Comment this line, if more safety is required. In that case
             # manually delete.
-            shutil.rmtree(filePath) 
+            shutil.rmtree(filePath)
 
         doc.export(filePath)
 

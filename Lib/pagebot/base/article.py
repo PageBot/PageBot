@@ -15,7 +15,7 @@
 #     article.py
 #
 import os
-from pagebot.typesetter import Typesetter
+from pagebot.base.typesetter import Typesetter
 
 class Article:
     """An Article instance is the abstract binder between content (e.g. as

@@ -3,11 +3,11 @@ set -ev
 export PWD="Lib/pagebot"
 
 python3 $PWD/__init__.py
-python3 $PWD/article.py
-python3 $PWD/composer.py
 
-#
 python3 $PWD/base/__init__.py
+python3 $PWD/base/article.py
+python3 $PWD/base/composer.py
+python3 $PWD/base/typesetter.py
 
 # Conditions.
 python3 $PWD/conditions/__init__.py
@@ -198,5 +198,3 @@ python3 $PWD/toolbox/hyphenation.py
 python3 $PWD/toolbox/markers.py
 python3 $PWD/toolbox/timemark.py
 python3 $PWD/toolbox/units.py
-
-python3 $PWD/typesetter.py
