@@ -18,16 +18,14 @@ from pagebot.elements import newText
 from pagebot.elements import CodeBlock
 
 class Composer:
-    """A Composer takes a artDirection and tries to make pagination from given
-    context, a “nice” layout (on existing or new document pages), by taking the
-    elements from the galley pasteboard and finding the best place in pages,
-    e.g. in page-flows that are copied from their templates.
+    """A Composer takes an artDirection and tries to make pagination from a
+    given context, a “nice” layout (on existing or new document pages), by
+    taking the elements from the galley pasteboard and finding the best place
+    in pages, e.g. in page-flows that are copied from their templates.
 
     If necessary elements can be split, new elements can be made on the page
     and element can be reshaped byt width and height, if that results in better
-    placements.
-
-    """
+    placements."""
     def __init__(self, doc):
         self.doc = doc
 
@@ -40,8 +38,7 @@ class Composer:
         Targets contains the resources for the composition, such as the doc,
         current page, current box and other info that the MarkDown assumes to
         be available. If targets is omitted, then a default target dictionary
-        is created by the Composer and answered at the end.
-        """
+        is created by the Composer and answered at the end."""
         if targets is None:
             if page is None:
                 page = self.doc[1]
@@ -69,12 +66,17 @@ class Composer:
         composerName = self.__class__.__name__
 
         for e in galley.elements:
-            if isinstance(e, CodeBlock): # Code can select a new page/box and execute other Python statements.
-                e.run(targets) # Keep same targets, so code blocks share sequence of altered globals.
+            # Code can select a new page/box and execute other Python
+            # statements.
+            if isinstance(e, CodeBlock):
+                # Keep same targets, so code blocks share sequence of altered
+                # globals.
+                e.run(targets)
                 verbose.append('%s.compose: Run codeblock "%s"' % (composerName, e.code[:100]))
 
             elif targets.get('box') is not None and targets.get('box').isText and targets.get('box').bs is not None and e.isText:
-                # If new content and last content are both text boxes, then merge the string.
+                # If new content and last content are both text boxes, then
+                # merge the string.
                 targets.get('box').bs += e.bs
 
             elif targets.get('box') is not None:
