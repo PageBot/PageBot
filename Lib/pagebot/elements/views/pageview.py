@@ -216,9 +216,7 @@ class PageView(BaseView):
         MyBuilder(document).export(fileName), the builder is responsible to
         query the document, pages, elements and styles.
         '''
-
         folder = path2ParentPath(path)
-
         if folder and not os.path.exists(folder):
             os.mkdir(folder)
 

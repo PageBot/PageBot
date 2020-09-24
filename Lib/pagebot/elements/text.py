@@ -370,6 +370,110 @@ class Text(Element):
 
         return s+'>'
 
+    def build(self, view, origin, drawElements=True, **kwargs):
+        """Draws the text on position (x, y). Draws a background rectangle and
+        / or frame if fill and / or stroke are defined.
+
+        >>> from pagebot.document import Document
+        >>> from pagebot.elements import *
+        >>> from pagebot.contexts import getContext
+        >>> from pagebot.toolbox.units import pt, em
+        >>> context = getContext()
+        >>> W, H = 500, 400
+        >>> doc = Document(w=W, h=H, context=context)
+        >>> page = doc[1]
+        >>> fontSize = pt(100)
+        >>> style = dict(font='PageBot-Regular', fontSize=fontSize, leading=fontSize, textFill=(1, 0, 0), xAlign=CENTER)
+        >>> bs = context.newString('Hkpx\\nHkpx', style)
+        >>> t = Text(bs, x=W/2, y=H/2, parent=page, showOrigin=True, fill=0.9, yAlign=MIDDLE)
+        >>> l = Line(x=t.x-t.w/2, y=t.y, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.capHeight, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.ascender, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.xHeight, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.descender, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
+        >>> doc.export('_export/Text-build1.pdf')
+
+        >>> W, H = 700, 100
+        >>> doc = Document(w=W, h=H, context=context)
+        >>> view = doc.view
+        >>> view.showOrigin = True
+        >>> view.padding = pt(30)
+        >>> view.showCropMarks = True
+        >>> view.showFrame = True
+        >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(18), textFill=(0, 0, 0.5), xAlign=CENTER)
+        >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit valim mecto trambor.'
+        >>> bs = context.newString(txt, style) # Creates a BabelString with context reference.
+        >>> bs.context is context
+        True
+        >>> t = Text(bs, x=W/2, y=H/2, parent=doc[1], yAlign=MIDDLE_X)
+        >>> t.context is context
+        True
+        >>> doc.export('_export/Text-build2.pdf')
+        """
+        if not self.bs:
+            return
+
+        context = view.context # Get current context
+        x, p = self.getElementPosition(view, origin)
+        px, py, _ = p
+
+        # TODO: Add Element clipping stuff here.
+        # FIXME: needs some restructuring, text box width and BabelString width
+        # can be different now.
+
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True.
+        view.drawElementFrame(self, p, **kwargs)
+
+        # NOTE: Temporarily draws a blue rectangle to check alignment.
+        #context.stroke((0, 0, 1))
+        #context.rect(px, py, self.w, self.h)
+
+        if self.w or self.h:
+            context.drawText(self.bs, (px, py, self.w, self.h))
+            self.buildFrame(view, (px, py, self.w, self.h))
+
+            '''
+            if self.bs.lines:
+                baseline0 = self.bs.lines[0].y
+                frameY = py - self.h + baseline0
+                # Draw optional background, frame or borders.
+                # Width is padded width of self.
+                # FIXME.
+
+                if self.showMargin:
+                    view.drawMargin(self, (px, frameY))
+                if self.showPadding:
+                    view.drawPadding(self, (px, frameY))
+
+                # Draw text as box
+            '''
+
+        '''
+        else:
+            frameX = px
+            frameY = py + self.bs.topLineDescender
+            #frameW, frameH = self.context.textSize(self.bs, ascDesc=True) <-- not here.
+            frameW, frameH = self.context.textSize(self.bs)
+            # Draw optional background, frame or borders.
+            #self.buildFrame(view, (px, py, self.bs.tw, self.h))
+            self.buildFrame(view, (frameX, frameY, frameW, frameH))
+
+            if self.showMargin:
+                view.drawMargin(self, (px, frameY))
+            if self.showPadding:
+                view.drawPadding(self, (px, frameY))
+
+            # No size defined, just draw the string with it's own (bs.tw,
+            # bs.th) Note that there still can be multiple lines in the string
+            # if it contains '\n' characters.
+            context.drawString(self.bs, (x - self.pt, py))
+        '''
+        self._restoreRotation(view, p)
+        self._restoreScale(view)
+        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        view.drawElementOrigin(self, origin)
+
     def copy(self, parent=None):
         """Answers a full copy of `self`, where the "unique" fields are set to
         default. Also performs a deep copy on all child elements.
@@ -703,112 +807,6 @@ class Text(Element):
                     nextElement.prevElement = self.name # Remember the back link
                     page = nextElement.overflow2Next(processed) # Solve any overflow on the next element.
         return overflow
-
-    #   B U I L D
-
-    def build(self, view, origin, drawElements=True, **kwargs):
-        """Draws the text on position (x, y). Draws a background rectangle and
-        / or frame if fill and / or stroke are defined.
-
-        >>> from pagebot.document import Document
-        >>> from pagebot.elements import *
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.toolbox.units import pt, em
-        >>> context = getContext()
-        >>> W, H = 500, 400
-        >>> doc = Document(w=W, h=H, context=context)
-        >>> page = doc[1]
-        >>> fontSize = pt(100)
-        >>> style = dict(font='PageBot-Regular', fontSize=fontSize, leading=fontSize, textFill=(1, 0, 0), xAlign=CENTER)
-        >>> bs = context.newString('Hkpx\\nHkpx', style)
-        >>> t = Text(bs, x=W/2, y=H/2, parent=page, showOrigin=True, fill=0.9, yAlign=MIDDLE)
-        >>> l = Line(x=t.x-t.w/2, y=t.y, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
-        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.capHeight, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
-        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.ascender, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
-        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.xHeight, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
-        >>> l = Line(x=t.x-t.w/2, y=t.y+t.bs.descender, w=t.w, h=0, stroke=(0, 0, 0.5), parent=page)
-        >>> doc.export('_export/Text-build1.pdf')
-
-        >>> W, H = 700, 100
-        >>> doc = Document(w=W, h=H, context=context)
-        >>> view = doc.view
-        >>> view.showOrigin = True
-        >>> view.padding = pt(30)
-        >>> view.showCropMarks = True
-        >>> view.showFrame = True
-        >>> style = dict(font='PageBot-Regular', leading=em(1), fontSize=pt(18), textFill=(0, 0, 0.5), xAlign=CENTER)
-        >>> txt = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit valim mecto trambor.'
-        >>> bs = context.newString(txt, style) # Creates a BabelString with context reference.
-        >>> bs.context is context
-        True
-        >>> t = Text(bs, x=W/2, y=H/2, parent=doc[1], yAlign=MIDDLE_X)
-        >>> t.context is context
-        True
-        >>> doc.export('_export/Text-build2.pdf')
-        """
-        if not self.bs:
-            return
-
-        context = view.context # Get current context
-        x, p = self.getElementPosition(view, origin)
-        px, py, _ = p
-
-        # TODO: Add Element clipping stuff here.
-        # FIXME: needs some restructuring, text box width and BabelString width
-        # can be different now.
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True.
-        view.drawElementFrame(self, p, **kwargs)
-
-        # NOTE: Temporarily draws a blue rectangle to check alignment.
-        #context.stroke((0, 0, 1))
-        #context.rect(px, py, self.w, self.h)
-
-        if self.w or self.h:
-            context.drawText(self.bs, (px, py, self.w, self.h))
-            self.buildFrame(view, (px, py, self.w, self.h))
-
-            '''
-            if self.bs.lines:
-                baseline0 = self.bs.lines[0].y
-                frameY = py - self.h + baseline0
-                # Draw optional background, frame or borders.
-                # Width is padded width of self.
-                # FIXME.
-
-                if self.showMargin:
-                    view.drawMargin(self, (px, frameY))
-                if self.showPadding:
-                    view.drawPadding(self, (px, frameY))
-
-                # Draw text as box
-            '''
-
-        '''
-        else:
-            frameX = px
-            frameY = py + self.bs.topLineDescender
-            #frameW, frameH = self.context.textSize(self.bs, ascDesc=True) <-- not here.
-            frameW, frameH = self.context.textSize(self.bs)
-            # Draw optional background, frame or borders.
-            #self.buildFrame(view, (px, py, self.bs.tw, self.h))
-            self.buildFrame(view, (frameX, frameY, frameW, frameH))
-
-            if self.showMargin:
-                view.drawMargin(self, (px, frameY))
-            if self.showPadding:
-                view.drawPadding(self, (px, frameY))
-
-            # No size defined, just draw the string with it's own (bs.tw,
-            # bs.th) Note that there still can be multiple lines in the string
-            # if it contains '\n' characters.
-            context.drawString(self.bs, (x - self.pt, py))
-        '''
-        self._restoreRotation(view, p)
-        self._restoreScale(view)
-        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
-        view.drawElementOrigin(self, origin)
 
     def _drawOverflowMarker_drawBot(self, view, px, py):
         """Draws the optional overflow marker, if text doesn't fit in the box."""

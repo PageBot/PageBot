@@ -2,7 +2,6 @@
 # Doctests for string functions on OSX.
 
 >>> from pagebot import getContext
->>> from pagebot.toolbox.loremipsum import loremipsum
 >>> from pagebot.toolbox.units import pt
 >>> from pagebot.contexts.basecontext.babelstring import BabelString
 >>> from pagebot.constants import DEFAULT_LEADING
