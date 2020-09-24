@@ -107,13 +107,11 @@ class Text(Element):
         if bottom is not None:
             self.bottom = bottom
 
-        # Now there is a self._bs, set it's width and height (can be None)
         self.w = w
         self.h = h
 
     def _get_bs(self):
         """Answers the stored formatted BabelString. The value can be None."""
-
         return self._bs
 
     def _set_bs(self, bs):
@@ -143,75 +141,8 @@ class Text(Element):
             bs = BabelString(bs, self.style, w=self.w, h=self.h, context=self.context)
         assert isinstance(bs, BabelString)
         self._bs = bs
-        #bs.context = self.context
 
     bs = property(_get_bs, _set_bs)
-
-    '''
-    def _get_w(self): # Width
-        """Property for self.bs.w, holding the width of the textbox.
-
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.document import Document
-        >>> context = getContext()
-        >>> doc = Document(w=300, h=400, autoPages=1, context=context)
-        >>> page = doc[1]
-        >>> t = Text('ABCD', parent=page, w=125) # Width forces “Text” behavior
-        >>> page[t.eId].w
-        125pt
-        >>> t.w = 150
-        >>> t.w, t.w == page[t.eId].w
-        (150pt, True)
-        """
-        if self._bs is None:
-            return None
-
-        w = (self.bs.w or self.bs.tw) + self.pl + self.pr
-        return w
-
-
-    def _set_w(self, w):
-        print(w)
-        # If None, then self.w is elastic defined by self.bs height.
-        if self._bs is not None:
-            if w is not None:
-                w = units(w) - self.pl - self.pr # Correct for padding
-            self.bs.w = w
-
-    w = property(_get_w, _set_w)
-
-    def _get_h(self):
-        """Answers the height of the textBox if defined. Otherwise answers the
-        height of self.bs.textSize
-
-        >>> from pagebot.contexts import getContext
-        >>> from pagebot.document import Document
-        >>> context = getContext()
-        >>> doc = Document(w=300, h=400, autoPages=1, context=context)
-        >>> page = doc[1]
-        >>> style = dict(font='PageBot-Regular', fontSize=14)
-        >>> t = Text('This is content', parent=page, style=style, w=100, h=220)
-        >>> page[t.eId].h
-        220pt
-        >>> t.h = 220
-        >>> t.h, t.h == page[t.eId].h
-        (220pt, True)
-        >>> t.h = None
-        """
-        if self._bs is None:
-            return None
-        h = (self.bs.h or self.bs.th) + self.pt + self.pb # Correct for padding
-        return h
-
-    def _set_h(self, h):
-        # If None, then self.h is elastic defined by self.bs height.
-        if self._bs is not None:
-            if h is not None:
-                h = units(h) - self.pt - self.pb # Correct for padding
-            self.bs.h = h
-
-    h = property(_get_h, _set_h)
-    '''
 
     def _get_firstColumnIndent(self):
         """If False or 0, ignores first line indent of a column on text
@@ -428,50 +359,22 @@ class Text(Element):
         # NOTE: Temporarily draws a blue rectangle to check alignment.
         #context.stroke((0, 0, 1))
         #context.rect(px, py, self.w, self.h)
+        assert self.w, self.h
+        #if self.w and self.h:
 
-        if self.w or self.h:
-            context.drawText(self.bs, (px, py, self.w, self.h))
-            self.buildFrame(view, (px, py, self.w, self.h))
+        context.drawText(self.bs, (px, py, self.w, self.h))
+        self.buildFrame(view, (px, py, self.w, self.h))
 
-            '''
-            if self.bs.lines:
-                baseline0 = self.bs.lines[0].y
-                frameY = py - self.h + baseline0
-                # Draw optional background, frame or borders.
-                # Width is padded width of self.
-                # FIXME.
+        if self.showMargin:
+            view.drawMargin(self, (px, py))
 
-                if self.showMargin:
-                    view.drawMargin(self, (px, frameY))
-                if self.showPadding:
-                    view.drawPadding(self, (px, frameY))
+        if self.showPadding:
+            view.drawPadding(self, (px, py))
 
-                # Draw text as box
-            '''
-
-        '''
-        else:
-            frameX = px
-            frameY = py + self.bs.topLineDescender
-            #frameW, frameH = self.context.textSize(self.bs, ascDesc=True) <-- not here.
-            frameW, frameH = self.context.textSize(self.bs)
-            # Draw optional background, frame or borders.
-            #self.buildFrame(view, (px, py, self.bs.tw, self.h))
-            self.buildFrame(view, (frameX, frameY, frameW, frameH))
-
-            if self.showMargin:
-                view.drawMargin(self, (px, frameY))
-            if self.showPadding:
-                view.drawPadding(self, (px, frameY))
-
-            # No size defined, just draw the string with it's own (bs.tw,
-            # bs.th) Note that there still can be multiple lines in the string
-            # if it contains '\n' characters.
-            context.drawString(self.bs, (x - self.pt, py))
-        '''
         self._restoreRotation(view, p)
         self._restoreScale(view)
-        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        # Depends on css flag 'showElementInfo'.
+        view.drawElementInfo(self, origin)
         view.drawElementOrigin(self, origin)
 
     def copy(self, parent=None):
@@ -679,7 +582,8 @@ class Text(Element):
         >>> t.yAlign
         'bottom'
         """
-        if self._bs is not None and not self.bs.hasHeight: # Behave as string, then yAlign and bs.yTextAlign are equivalent
+        # Behave as string, then yAlign and bs.yTextAlign are equivalent.
+        if self._bs is not None and not self.bs.hasHeight:
             return self.bs.yAlign
         return self.css('yAlign', BASELINE)
 
@@ -775,19 +679,24 @@ class Text(Element):
 
             if self.nextPage: # Try to use element on another page?
                 # Try on several types in which the next page can be defined.
-                if page is not None and self.nextPage == 'next': # Force to next page, relative to current
+                # Force to next page, relative to current.
+                if page is not None and self.nextPage == 'next':
                     page = page.next
                 elif isinstance(self.nextPage, Element):
                     page = self.nextPage
-                elif page is not None and isinstance(self.nextPage, (int, float)): # Offset to next page
+                elif page is not None and isinstance(self.nextPage, (int, float)):
+                    # Offset to next page.
                     page = page.parent.pageNumber(page) + self.nextPage
-                else: # Try by name
+                else:
+                    # Try by name.
                     page = self.doc.getPage(self.nextPage)
                 if page is not None:
                     nextElement =  page.getElementByName(self.nextElement)
 
-            nextElement = page.getElementByName(self.nextElement) # Find element on this page.
-            if page is not None and nextElement is None: # Not found any in the regular way?
+            # Find element on this page.
+            nextElement = page.getElementByName(self.nextElement)
+            # Not found any in the regular way?
+            if page is not None and nextElement is None:
                 # Now try with deepFind
                 nextElement = page.parent.deepFind(self.nextElement)
 
@@ -798,24 +707,28 @@ class Text(Element):
                     # Finally found one empty box on this page or next page?
                     processed.add(nextElement.eId)
                     # Prevent indenting of first overflow text in next column,
-                    # using a tiny-small space to define the new line style,
-                    # with rest of style copied from first character of the overflow string.
+                    # using a small space to define the new line style,
+                    # with rest of style copied from first character of the
+                    # overflow string.
                     overflow = overflow.columnStart(self.firstColumnIndent)
 
                     nextElement.bs = overflow
-                    nextElement.prevPage = page # Remember the page we came from, link in both directions.
-                    nextElement.prevElement = self.name # Remember the back link
-                    page = nextElement.overflow2Next(processed) # Solve any overflow on the next element.
+                    # Remember the page we came from, link in both directions.
+                    nextElement.prevPage = page
+                    # Remember the back link.
+                    nextElement.prevElement = self.name
+                    # Solve any overflow on the next element.
+                    page = nextElement.overflow2Next(processed)
         return overflow
 
     def _drawOverflowMarker_drawBot(self, view, px, py):
         """Draws the optional overflow marker, if text doesn't fit in the box."""
-        b = self.b # Get current builder from self.doc.context.b
+        # Get current builder from self.doc.context.b
         bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='PageBot-Bold', fontSize=10))
         tw, _ = bs.size
         # FIX: Should work work self.bottom
-        #b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
-        b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
+        #self.b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
+        self.b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
 
 
     def _applyAlignment(self, p):
@@ -870,6 +783,7 @@ class Text(Element):
         #else BASELINE, None is default
         return y
 
+    '''
     def _get_bottom(self):
         """Bottom position of bounding box, not including margins.
 
@@ -886,14 +800,18 @@ class Text(Element):
         >>> #t.bottom, t.y # Identical, as aligned on bottom
         #(300pt, 300pt)
         """
+
         if self._bs is None:
             return None
-        return self.top - (self.bs.h or self.bs.th)
-    def _set_bottom(self, y):
-        if self._bs is not None:
-            self.top = y + (self.bs.h or self.bs.th)
-    bottom = property(_get_bottom, _set_bottom)
+        return self.y#self.top - self.h
 
+    def _set_bottom(self, y):
+        self.top = y + self.h
+
+    bottom = property(_get_bottom, _set_bottom)
+    '''
+
+    '''
     def _get_top(self):
         """Bottom position of bounding box, not including margins. This has to
         be different from the regular Element top property, because the default
@@ -929,6 +847,7 @@ class Text(Element):
         self.y += y - self.top # Trick to reverse vertical alignment.
     top = property(_get_top, _set_top)
 
+    '''
 
     #   B U I L D  I N D E S I G N
 
@@ -957,16 +876,19 @@ class Text(Element):
 
         if self.bs is not None:
             html = context.fromBabelString(self.bs)
-            hasContent = bool(html and html.strip()) # Check if there is any content, besides white space
+            # Check if there is any content, besides white space.
+            hasContent = bool(html and html.strip())
         else:
             hasContent = False
 
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         if hasContent:
             b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
-            b.addHtml(html) # Get HTML from BabelString in HtmlString context.
+            # Get HTML from BabelString in HtmlString context.
+            b.addHtml(html)
 
-        if self.drawBefore is not None: # Call if defined
+        if self.drawBefore is not None:
+            # Call if defined.
             self.drawBefore(self, view)
 
         if drawElements:

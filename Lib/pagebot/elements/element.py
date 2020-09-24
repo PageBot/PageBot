@@ -2385,6 +2385,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return self.bottom - self.mb
 
     def _set_mBottom(self, y):
+        b = units(y) + self.mb
         self.bottom = units(y) + self.mb
 
     mBottom = property(_get_mBottom, _set_mBottom)

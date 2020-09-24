@@ -780,9 +780,9 @@ class Alignments:
         >>> e2.y, 500 - 80
         (420pt, 420)
         """
-
         if self.parent is None:
             return False
+
         self.mBottom = self.parent.pb
         return True
 
