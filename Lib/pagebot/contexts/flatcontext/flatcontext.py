@@ -748,10 +748,13 @@ class FlatContext(BaseContext):
             placedText.frame(0, 0, w, h)
 
         flatRuns = placedText.layout.runs()
+        style = None
 
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
-            style = None
             runWidth = 0
+
+            if len(run) == 0:
+                continue
 
             for style, s in run:
                 runWidth += style.width(s)
@@ -763,10 +766,10 @@ class FlatContext(BaseContext):
                     textHeight += style.ascender()
                 else:
                     textHeight += height
-            else:
+            elif style:
                 textHeight += style.leading
 
-        if ascDesc:
+        if ascDesc and style:
             # NOTE: Descender is a negative value.
             textHeight -= style.descender()
 
