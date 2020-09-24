@@ -753,9 +753,6 @@ class FlatContext(BaseContext):
         for rIndex, (height, run) in enumerate(placedText.layout.runs()):
             runWidth = 0
 
-            if len(run) == 0:
-                continue
-
             for style, s in run:
                 runWidth += style.width(s)
 
