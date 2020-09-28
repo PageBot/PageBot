@@ -783,6 +783,8 @@ class Text(Element):
         #else BASELINE, None is default
         return y
 
+    # NOTE: Changed babelstring text() implementation, (mostly) behaves like a
+    # regular rectangle.
     '''
     def _get_bottom(self):
         """Bottom position of bounding box, not including margins.
@@ -809,9 +811,7 @@ class Text(Element):
         self.top = y + self.h
 
     bottom = property(_get_bottom, _set_bottom)
-    '''
 
-    '''
     def _get_top(self):
         """Bottom position of bounding box, not including margins. This has to
         be different from the regular Element top property, because the default
@@ -828,13 +828,13 @@ class Text(Element):
     def _set_top(self, y):
         """Shift the element so `self.top == y`. Where the "top" is, depends on
         the setting of `self.yAlign`. If `self.isText`, then vertical position
-        can also be defined by the top or bottom position of the baseline."""
-        yAlign = self.yAlign
-        print(yAlign)
+        can also be defined by the top or bottom position of the baseline.
 
-        if yAlign == MIDDLE:
+        TODO: placed upside down compared to other elements, reverse.
+        """
+        if self.yAlign == MIDDLE:
             self.y = units(y) - self.h/2
-        elif yAlign == BOTTOM:
+        elif self.yAlign == BOTTOM:
             self.y = y
         else: # yAlign must be TOP or None
             self.y = units(y) - self.h
@@ -842,6 +842,7 @@ class Text(Element):
     def _get_top(self):
         """Answers the top position (relative to self.parent) of self.
 
+        TODO: placed upside down compared to other elements, reverse.
         >>> e = Element(y=100, h=248, yAlign=TOP)
         >>> e.top
         100pt
@@ -880,12 +881,11 @@ class Text(Element):
         >>> doc.export('_export/Text-top-200.pdf')
         224pt
         """
-        yAlign = self.yAlign
-
-        if yAlign == MIDDLE:
+        if self.yAlign == MIDDLE:
             return self.y + self.h/2
-        if yAlign == BOTTOM:
+        if self.yAlign == BOTTOM:
             return self.y + self.h
+
         # yAlign must be TOP or None
         return self.y
 
