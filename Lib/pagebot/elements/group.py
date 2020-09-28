@@ -20,6 +20,8 @@ from pagebot.elements.element import Element
 class Group(Element):
     """Groups elements, default identical to Element itself.
 
+    FIXME: nested alignments need more testing.
+
     >>> from pagebot.toolbox.units import pt
     >>> from pagebot import getContext
     >>> from pagebot.elements.element import Element
@@ -32,8 +34,9 @@ class Group(Element):
     <Page #1 default (300pt, 400pt)>
     >>> e1, e2, e3 = Element(w=123),Element(w=234),Element(w=345)
     >>> e = Group(parent=page, x=0, y=20, w=page.w, elements=(e1, e2, e3))
-
     """
+
+    # TODO: restore tests.
     """
     >>> e.build(doc.getView(), (0, 0))
     >>> e.xy,  e.size

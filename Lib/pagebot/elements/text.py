@@ -33,17 +33,10 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
 
 class Text(Element):
-    """PageBot stores text by the internal BabelString format with full control
-    of the line positions.
+    """PageBot stores text based on the internal BabelString format.
 
-    NOTE: we now use the `Text` class instead of (DrawBot) textboxes. The
-    problem with text boxes is that they position text from “above the ascender
-    of the top line”, without much control on the position of baselines. Larger
-    type in the first line will push the whole content of the box down. That is
-    why Text.build starts out with the  context.textLines()  and implements
-    drawing the separate text lines by context.text(bs), which always renders
-    text on the baseline position. As a result different contexts have more
-    similar output.
+    TODO: reimplement various top baseline alignments.
+    TODO: placed upside down compared to other elements, reverse.
 
     >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
@@ -73,7 +66,7 @@ class Text(Element):
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
 
-        # Combine rootStyle, optional self.style and **kwargs attributes. Note
+        # Combines rootStyle, optional self.style and **kwargs attributes. Note
         # that the final style is stored in the BabelString instance self.bs.
         # self.style is used as template, in the content is defined as plain
         # string.
@@ -118,7 +111,7 @@ class Text(Element):
         """Makes sure that this is a formatted BabelString. Otherwise creates
         it from string with the current style.
 
-        NOTE: there is a potential clash in the duplicate usage of fill and
+        FIXME: there is a potential clash in the duplicate usage of fill and
         stroke.
 
         >>> from pagebot.document import Document
@@ -227,13 +220,6 @@ class Text(Element):
     tailIndent = pr = property(_get_tailIndent, _set_tailIndent)
 
     def _get_baselines(self):
-
-        '''
-        if self._baselines is None:
-            #self.textLines # Initialize both self._textLines and self._baselines
-            self._get_textLines()
-        return self._baselines
-        '''
         return self.context.getBaselines(self.bs)
 
     baselines = property(_get_baselines)
@@ -841,8 +827,6 @@ class Text(Element):
 
     def _get_top(self):
         """Answers the top position (relative to self.parent) of self.
-
-        TODO: placed upside down compared to other elements, reverse.
         >>> e = Element(y=100, h=248, yAlign=TOP)
         >>> e.top
         100pt
@@ -851,12 +835,7 @@ class Text(Element):
         348pt
         >>> e.yAlign = MIDDLE
         >>> e.top
-
-        """
-        """
-        TODO: restore these
-        >>> from pagebot.constants import A4, MIDDLE_CAP, TOP
-        >>> from pagebot.elements import newLine
+        224pt
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -864,22 +843,13 @@ class Text(Element):
         >>> page = doc[1]
         >>> bs = context.newString('ABCD', dict(fontSize=pt(100)))
         >>> t = Text(bs, parent=page, x=pt(100), y=pt(500), yAlign=TOP, fill=0.8)
-        >>> l = newLine(x=0, y=500, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
         >>> t.top
         500pt
-        >>> doc.export('_export/Text-top-500.pdf')
-        >>> t.top = 300
-        >>> t.top, t.y # Same value, as aligned on top
-        (300pt, 300pt)
-        >>> l = newLine(x=0, y=300, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
-        >>> doc.export('_export/Text-top-300.pdf')
-        >>> t.yAlign = MIDDLE_CAP # For Text this is quivalent to t.yAlign
+        >>> t.y
+        500pt
         >>> t.y -= 100
-        >>> t.top, t.y # Different now, with other alignment.
-        (241.9pt, 200pt)
-        >>> l = newLine(x=0, y=200, w=page.w, h=0, parent=page, stroke=(0, 0, 0.5), strokeWidth=0.5)
-        >>> doc.export('_export/Text-top-200.pdf')
-        224pt
+        >>> t.y
+        400pt
         """
         if self.yAlign == MIDDLE:
             return self.y + self.h/2
