@@ -293,7 +293,8 @@ class Fit2SideTop(Condition):
             self.addScore(e.fit2SideTop(), e, score)
 
 class Fit2BleedTop(Condition):
-    """From the current bottom position, until it fits the parent.top and overshooting bleed."""
+    """From the current bottom position, until it fits the parent.top and
+    overshooting bleed."""
     def test(self, e):
         return e.isTopOnBleedTop(self.tolerance)
 
@@ -353,13 +354,14 @@ class Fit2HeightBleeds(Condition):
 
 #    S H R I N K
 
-#   By shrinking conditions, elements get smaller to match the size of their children.
-#   Not only literally ”shrinking”, if self is smaller than the space occupied by
-#   the child elements, then it will grow on that side.
+#   By shrinking conditions, elements get smaller to match the size of their
+#   children. Not only literally ”shrinking”, if self is smaller than the
+#   space occupied by the child elements, then it will grow on that side.
 
 class Shrink(Condition):
-    """Shrink the element on all sides around the margins of the enclose child elements.
-    There should be at least one child element for this to be executed."""
+    """Shrink the element on all sides around the margins of the enclose child
+    elements. There should be at least one child element for this to be
+    executed."""
 
     def _getConditions(self):
         return [Left2Left, Top2Top, Fit2Right, Fit2Bottom]
@@ -374,8 +376,8 @@ class Shrink(Condition):
         self.solveAll(e, self._getConditions(), score)
 
 class Shrink2BlockSides(Condition):
-    """Shirink the element on all sides of the children sides. There needs to be at least
-    one child element."""
+    """Shirink the element on all sides of the children sides. There needs to
+    be at least one child element."""
 
     def _getConditions(self):
         return [Shrink2BlockSideLeft, Shrink2BlockSideTop, Shrink2BlockSideRight, Shrink2BlockSideBottom]
@@ -763,7 +765,8 @@ class Origin2SideRight(Condition):
 #    Middle Vertical Margins (vertical center, following CSS naming convention)
 
 class Middle2Middle(Condition):
-    """Middle (vertical center) e bounding box vertical between parent margins."""
+    """Middle (vertical center) e bounding box vertical between parent
+    margins."""
     def test(self, e):
         return e.isMiddleOnMiddle(self.tolerance)
 

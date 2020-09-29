@@ -46,10 +46,9 @@ from pagebot.elements.flow import Flow
 from pagebot.elements.imaging import Imaging
 from pagebot.elements.shrinking import Shrinking
 from pagebot.elements.template import Template
-from pagebot.elements.textconditions import TextConditions
 
 class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
-        Template, TextConditions):
+        Template):
     """The base element object."""
 
     # Initializes the default Element behavior flags. These flags can be
@@ -2279,6 +2278,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         224pt
         """
         yAlign = self.yAlign
+
         if yAlign == MIDDLE:
             return self.y + self.h/2
         if yAlign == BOTTOM:
@@ -4330,6 +4330,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 break
             if abs(e.z - self.z) > tolerance:
                 continue # Not equal z-layer
+
             if e.mBottom >= self.mTop or self.mBottom >= e.mTop:
                 continue
             x = max(e.mRight, x)

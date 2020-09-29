@@ -284,7 +284,8 @@ class Conditions:
         return abs(max(self.getFloatSideBottom(), self.parent.pb) - self.mBottom) <= tolerance
 
     def isFloatOnLeft(self, tolerance=0):
-        return abs(max(self.getFloatSideLeft(), self.parent.pl) - self.mLeft) <= tolerance
+        answer = abs(max(self.getFloatSideLeft(), self.parent.pl) - self.mLeft) <= tolerance
+        return answer
 
     def isFloatOnRight(self, tolerance=0):
         return abs(min(self.getFloatSideRight(), self.parent.w - self.parent.pr) - self.mRight) <= tolerance

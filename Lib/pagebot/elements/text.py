@@ -31,8 +31,9 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, point2D, point3D, pt, units, upt
 from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
+from pagebot.elements.textconditions import TextConditions
 
-class Text(Element):
+class Text(Element, TextConditions):
     """PageBot stores text based on the internal BabelString format.
 
     TODO: reimplement various top baseline alignments.
@@ -94,7 +95,6 @@ class Text(Element):
             self.padding = padding
         if margin is not None:
             self.margin = margin
-
         if top is not None:
             self.top = top
         if bottom is not None:
@@ -341,12 +341,7 @@ class Text(Element):
         # Let the view draw frame info for debugging, in case view.showFrame ==
         # True.
         view.drawElementFrame(self, p, **kwargs)
-
-        # NOTE: Temporarily draws a blue rectangle to check alignment.
-        #context.stroke((0, 0, 1))
-        #context.rect(px, py, self.w, self.h)
         assert self.w, self.h
-        #if self.w and self.h:
 
         context.drawText(self.bs, (px, py, self.w, self.h))
         self.buildFrame(view, (px, py, self.w, self.h))
@@ -811,6 +806,7 @@ class Text(Element):
 
     '''
 
+    '''
     def _set_top(self, y):
         """Shift the element so `self.top == y`. Where the "top" is, depends on
         the setting of `self.yAlign`. If `self.isText`, then vertical position
@@ -860,6 +856,7 @@ class Text(Element):
         return self.y
 
     top = property(_get_top, _set_top)
+    '''
 
 
     #   B U I L D  I N D E S I G N

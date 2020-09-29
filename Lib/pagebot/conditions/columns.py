@@ -18,7 +18,8 @@ from pagebot.conditions.condition import Condition
 #    F I T T I N G  C O L U M N S
 
 class ColCondition(Condition):
-    def __init__(self, col=0, colSpan=1, row=0, rowSpan=1, value=1, tolerance=1, error=-10, verbose=False):
+    def __init__(self, col=0, colSpan=1, row=0, rowSpan=1, value=1,
+            tolerance=1, error=-10, verbose=False):
         Condition.__init__(self, value=value, tolerance=tolerance, error=-error, verbose=verbose)
         self.col = col
         self.row = row
@@ -26,7 +27,8 @@ class ColCondition(Condition):
         self.rowSpan = rowSpan
 
 class RowCondition(Condition):
-    def __init__(self, row=0, rowSpan=1, col=0, colSpan=1, value=1, tolerance=1, error=-10, verbose=False):
+    def __init__(self, row=0, rowSpan=1, col=0, colSpan=1, value=1,
+            tolerance=1, error=-10, verbose=False):
         Condition.__init__(self, value=value, tolerance=tolerance, error=-error, verbose=verbose)
         self.col = col
         self.row = row
@@ -96,7 +98,8 @@ class Right2Col(ColCondition):
             self.addScore(e.right2Col(self.col), e, score)
 
 class Fit2ColSpan(ColCondition):
-    """Fit the width of the element to the col spans self.colSpan starting at self.col."""
+    """Fit the width of the element to the col spans self.colSpan starting at
+    self.col."""
     def test(self, e):
         return e.isLeftOnCol(self.col, self.tolerance) and e.isFitOnColSpan(self.col, self.colSpan, self.tolerance)
 
@@ -106,7 +109,8 @@ class Fit2ColSpan(ColCondition):
             self.addScore(e.fit2ColSpan(self.col, self.colSpan), e, score)
 
 class Top2Row(RowCondition):
-    """Fit the left of the element on the column index #, as defined in self.col."""
+    """Fit the left of the element on the column index #, as defined in
+    self.col."""
     def test(self, e):
         return e.isTopOnRow(self.row, self.tolerance)
 
@@ -115,7 +119,8 @@ class Top2Row(RowCondition):
             self.addScore(e.top2Row(self.row), e, score)
 
 class Bottom2Row(RowCondition):
-    """Fit the left of the element on the column index #, as defined in self.col."""
+    """Fit the left of the element on the column index #, as defined in
+    self.col."""
     def test(self, e):
         return e.isBottomOnRow(self.row, self.tolerance)
 
@@ -124,7 +129,8 @@ class Bottom2Row(RowCondition):
             self.addScore(e.bottom2Row(self.row), e, score)
 
 class Fit2RowSpan(RowCondition):
-    """Fit the left of the element on the column index #, as defined in self.col."""
+    """Fit the left of the element on the column index #, as defined in
+    self.col."""
     def test(self, e):
         return e.isTopOnCol(self.row, self.tolerance) and e.isFitOnRowSpan(self.row, self.rowSpan, self.tolerance)
 
