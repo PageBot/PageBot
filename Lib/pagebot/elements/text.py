@@ -31,9 +31,10 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, point2D, point3D, pt, units, upt
 from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
+from pagebot.elements.textalignments import TextAlignments
 from pagebot.elements.textconditions import TextConditions
 
-class Text(Element, TextConditions):
+class Text(Element, TextConditions, TextAlignments):
     """PageBot stores text based on the internal BabelString format.
 
     TODO: reimplement various top baseline alignments.

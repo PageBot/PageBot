@@ -88,6 +88,7 @@ python3 $PWD/elements/shrinking.py
 python3 $PWD/elements/table.py
 python3 $PWD/elements/template.py
 python3 $PWD/elements/text.py
+python3 $PWD/elements/textalignments.py
 python3 $PWD/elements/textconditions.py
 python3 $PWD/elements/dating/__init__.py
 python3 $PWD/elements/dating/calendarmonth.py

@@ -1112,81 +1112,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """
         return abs(self.getDistance2Grid(self.middle)) <= tolerance
 
-    def isBaselineOnGrid(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isBaselineOnTop(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isBaselineOnBottom(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isAscenderOnGrid(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isAscenderOnTop(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isAscenderOnBottom(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isCapHeightOnGrid(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isCapHeightOnTop(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isCapHeightOnBottom(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isXHeightOnGrid(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isXHeightOnTop(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isXHeightOnBottom(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isDescenderOnGrid(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isDescenderOnTop(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
-    def isDescenderOnBottom(self, tolerance=0, index=0):
-        # Implemented for elements that support text boxes.
-        # Default is True for non-text elements, so the calling condition is satisfied.
-        return True
-
     #   S T Y L E
 
     # Answers the cascaded style value, looking up the chain of ancestors,
@@ -1281,7 +1206,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     def getBlendedStyle(self, t=None):
         """Answers the blended style for self, blended between the current time
         marks on position t or self.t. If style values are not in the time
-        marks, then their values
+        marks, then their values.
 
         >>> e = Element(t=10)
         >>> e.getBlendedStyle()
