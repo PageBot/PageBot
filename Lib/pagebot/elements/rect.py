@@ -78,6 +78,7 @@ class Rect(Element):
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin)
+        view.drawElementOrigin(self, origin)
 
     def build_inds(self, view, origin, drawElements=True):
         """It is better to have a separate InDesignContext build tree, since we

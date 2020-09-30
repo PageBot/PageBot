@@ -2027,8 +2027,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         raise ValueError
     '''
 
-    # Origin compensated by alignment. This is used for easy solving of conditions,
-    # where the positioning can be compenssaring the element alignment type.
+    # Origin compensated by alignment. This is used for easy solving of
+    # conditions, where the positioning can be compenssaring the element
+    # alignment type.
 
     def _get_left(self):
         """Answers the position of the left side of the element, in relation to

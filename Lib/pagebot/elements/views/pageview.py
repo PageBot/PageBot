@@ -264,7 +264,7 @@ class PageView(BaseView):
         self.drawBaselines(page, origin, background=False)
 
     def drawPageMetaInfoBackground(self, page, origin, path=None):
-        """Draw the foreground meta info of the page, depending on the settings
+        """Draws the foreground meta info of the page, depending on the settings
         of the flags.
 
         >>> from pagebot import getContext
@@ -287,7 +287,7 @@ class PageView(BaseView):
 
 
     def drawFrame(self, e, origin):
-        """Draw the page frame if the the flag is on and if there ie padding
+        """Draws the page frame if the the flag is on and if there ie padding
         enough to show other meta info. Otherwise the padding is truncated to
         0: no use to draw the frame.
 
@@ -330,7 +330,7 @@ class PageView(BaseView):
 
 
     def drawPadding(self, e, origin):
-        """Draw the page frame of its current padding.
+        """Draws the page frame of its current padding.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -344,7 +344,8 @@ class PageView(BaseView):
         """
         e_pt, e_pr, e_pb, e_pl = e.padding
 
-        if ((self.showPadding and e.isPage) or e.showPadding) and (e_pt or e_pr or e_pb or e_pl):
+        if ((self.showPadding and e.isPage) or e.showPadding) and \
+                (e_pt or e_pr or e_pb or e_pl):
             context = self.context
 
             '''
@@ -355,8 +356,12 @@ class PageView(BaseView):
             p = origin
 
             px, py = point2D(e._applyScale(self, p))
-            viewPaddingStroke = e.viewPaddingStroke or self.viewPaddingStroke or self.DEFAULT_STROKE_COLOR
-            viewPaddingStrokeWidth = e.viewPaddingStrokeWidth or self.viewPaddingStrokeWidth or self.DEFAULT_STROKE_WIDTH
+            viewPaddingStroke = e.viewPaddingStroke or \
+                    self.viewPaddingStroke or \
+                    self.DEFAULT_STROKE_COLOR
+            viewPaddingStrokeWidth = e.viewPaddingStrokeWidth or \
+                    self.viewPaddingStrokeWidth or \
+                    self.DEFAULT_STROKE_WIDTH
             context.fill(noColor)
             context.stroke(viewPaddingStroke, viewPaddingStrokeWidth)
 
@@ -365,7 +370,7 @@ class PageView(BaseView):
             e._restoreScale(self)
 
     def drawMargin(self, e, origin):
-        """Draw the page frame of its current margin.
+        """Draws the page frame of its current margin.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -405,8 +410,8 @@ class PageView(BaseView):
             e._restoreScale(self)
 
     def drawNameInfo(self, e, origin, path):
-        """Draw additional document information, color markers, page number,
-        date, version, etc.  outside the page frame, if drawing crop marks.
+        """Draws additional document information, color markers, page number,
+        date, version, etc. outside the page frame, if drawing crop marks.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -498,20 +503,19 @@ class PageView(BaseView):
     def drawFlowConnections(self, e, origin):
         """If rootStyle.showFlowConnections is True, draw the flow connections
         on the page, using their stroke / width settings of the style."""
-
         context = self.context
         p = pointOffset(e.origin, origin)
         p = e._applyScale(self, p)
         px, py, _ = p = e._applyAlignment(p) # Ignore z-axis for now.
 
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
-
             fmf = 0.15#self.css('viewFlowCurvatureFactor', 0.15)
             for startE in e.elements:
                 nextE = startE.next
                 if nextE is not None:
-                    # For all the flow sequences found in the page, draw flow arrows at offset (ox, oy)
-                    # This offset is defined by optional
+                    # For all the flow sequences found in the page, draw flow
+                    # arrows at offset (ox, oy) This offset is defined by
+                    # optional
                     sx = startE.right
                     sy = startE.bottom
                     nx = nextE.left
@@ -715,6 +719,7 @@ class PageView(BaseView):
         #px, py = point2D(origin)
         #px, py = point2D(e.origin)
         #px, py = point2D(e.xy)
+        #print('draw element origin', e)
 
         S = e.css('viewInfoOriginMarkerSize', pt(3))
         # Draw origin of the element
