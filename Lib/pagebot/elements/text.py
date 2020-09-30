@@ -28,7 +28,7 @@ from pagebot.constants import *
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.style import makeStyle
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import pointOffset, point2D, point3D, pt, units, upt
+from pagebot.toolbox.units import pointOffset, point2D, pt, units, upt
 from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
 from pagebot.elements.textalignments import TextAlignments
@@ -89,6 +89,7 @@ class Text(Element, TextConditions, TextAlignments):
         # These need the self.bs to be defined.
         if xTextAlign is not None:
             self.xTextAlign = xTextAlign
+
         if xAlign is not None:
             self.xAlign = xAlign
         if yAlign is not None:

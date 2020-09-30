@@ -299,6 +299,7 @@ class BabelString:
         if self.runs:
             return self.runs[0].style.get('xTextAlign')
         return LEFT
+
     xTextAlign = property(_get_xTextAlign)
 
     def _get_yTextAlign(self):
@@ -1053,10 +1054,12 @@ class BabelString:
         """
         style = self.style # Style of current run
         return style.get('xTextAlign') or style.get('xAlign', LEFT)
+
     def _set_xAlign(self, xAlign):
         style = self.style
         style['xTextAlign'] = style['xAlign'] = xAlign
         self.reset() # Make sure context cache recalculates.
+
     xAlign = property(_get_xAlign, _set_xAlign)
 
     def _get_yAlign(self):
