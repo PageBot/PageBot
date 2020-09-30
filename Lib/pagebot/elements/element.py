@@ -4264,10 +4264,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def getFloatSideRight(self, previousOnly=True, tolerance=0):
         """Answers the max Y that can float to the right, without overlapping
-        previous sibling elements.  This means we are just looking at the
-        vertical projection of (self.mLeft, self.mRight).  Note that the y may be
-        outside the parent box. Only elements with identical z-value are
-        compared.  Comparison of available space, includes the margins of the
+        previous sibling elements. This means we are just looking at the
+        vertical projection of (self.mLeft, self.mRight). Note that the y may
+        be outside the parent box. Only elements with identical z-value are
+        compared. Comparison of available space, includes the margins of the
         elements."""
         x = self.parent.w
         for e in self.parent.elements: # All elements that share self.parent, except self.
@@ -4281,10 +4281,13 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return x
 
     def _applyAlignment(self, p):
-        """Answers point `p` according to the alignment status in the css."""
+        """Answers point `p` according to the alignment status in the css.
+
+        TODO: handle other text alignments.
+        """
         px, py, pz = point3D(p)
 
-        # Horizontal
+        # Horizontal.
         xAlign = self.xAlign
 
         if xAlign == CENTER:
@@ -4292,7 +4295,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         elif xAlign == RIGHT:
             px -= self.w / self.scaleX
 
-        # Vertical
+        # Vertical.
         yAlign = self.yAlign
 
         if yAlign == MIDDLE:

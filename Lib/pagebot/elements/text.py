@@ -33,6 +33,7 @@ from pagebot.toolbox.color import color
 from pagebot.toolbox.hyphenation import hyphenatedWords
 from pagebot.elements.textalignments import TextAlignments
 from pagebot.elements.textconditions import TextConditions
+from pagebot.toolbox.color import noColor
 
 class Text(Element, TextConditions, TextAlignments):
     """PageBot stores text based on the internal BabelString format.
@@ -58,6 +59,7 @@ class Text(Element, TextConditions, TextAlignments):
             parent=None, padding=None, conditions=None, xTextAlign=None,
             xAlign=None, yAlign=None, margin=None, top=None, bottom=None,
             **kwargs):
+
 
         # Placeholder, ignoring self.w and self.h until defined.
         self._bs = None
@@ -91,6 +93,8 @@ class Text(Element, TextConditions, TextAlignments):
             self.xAlign = xAlign
         if yAlign is not None:
             self.yAlign = yAlign
+        else:
+            self.yAlign = BOTTOM
 
         if padding is not None:
             self.padding = padding
@@ -343,7 +347,9 @@ class Text(Element, TextConditions, TextAlignments):
         # True.
         view.drawElementFrame(self, p, **kwargs)
         assert self.w, self.h
-
+        context.fill(self.css('fill', noColor))
+        context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
+        context.rect(px, py, self.w, self.h)
         context.drawText(self.bs, (px, py, self.w, self.h))
         self.buildFrame(view, (px, py, self.w, self.h))
 
@@ -567,7 +573,7 @@ class Text(Element, TextConditions, TextAlignments):
         # Behave as string, then yAlign and bs.yTextAlign are equivalent.
         if self._bs is not None and not self.bs.hasHeight:
             return self.bs.yAlign
-        return self.css('yAlign', BASELINE)
+        return self.css('yAlign', BOTTOM)
 
     def _set_yAlign(self, yAlign):
         # Save locally, blocking CSS parent scope for this param.
@@ -713,9 +719,11 @@ class Text(Element, TextConditions, TextAlignments):
         self.b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))
 
 
+    # Disabling these temporarily, needs some testing at element level first.
+    '''
     def _applyAlignment(self, p):
-        """Answers point `p` according to the alignment status in the css
-        and alignment of the text."""
+        """Answers point `p` according to the alignment status in the css and
+        alignment of the text."""
         px, py, pz = point3D(p)
         return self._applyHorizontalAlignment(px), self._applyVerticalAlignment(py), pz
 
@@ -764,6 +772,7 @@ class Text(Element, TextConditions, TextAlignments):
 
         #else BASELINE, None is default
         return y
+    '''
 
     # NOTE: Changed babelstring text() implementation, (mostly) behaves like a
     # regular rectangle.
