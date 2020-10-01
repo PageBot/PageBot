@@ -19,11 +19,10 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import *
 
 class BaseView(Element):
-    """A View is just another kind of container, kept by document to make a
-    certain presentation of the enclosed page / element tree. Views support
-    services, such as answering the size of a formatted string (if possible),
-    how much overflow there is for a certain box, etc. The view is also the
-    only place where the current context should be stored."""
+    """A View is just another type of container, kept by document to build a
+    presentation of the enclosed page / element tree. Views support services
+    such as answering the size of a formatted string and the amount of overflow
+    for a text box. The view stores a reference to the current context."""
 
     viewId = 'View'
     isView = True
@@ -50,24 +49,15 @@ class BaseView(Element):
         # If set to True, views may decide to add more information while
         # building.
         self.verbose = verbose
-
-        # Check if the context is supported by this view type.
-        # FIXME: cyclic import of context, should go somewhere else.
-        '''
-        if context is None:
-            from pagebot.contexts import getContext
-            context = getContext(self.DEFAULT_CONTEXT_ID)
-        '''
         if context is None:
             raise ValueError('Missing context for view "%s"' % self)
-        #if context.__class__.__name__ not in self.SUPPORTED_CONTEXTS:
-        #    raise ValueError('Missing or unsupported context "%s" for view "%s"' % (context.__class__.__name__, self))
+
         self.context = context # Set the self._context property.
 
         if context is not None:
             self.context.setSize(self.w, self.h)
 
-        # Optional implemented by inheriting view classes to preset parameters
+        # Optionally implemented by inheriting view classes to preset parameters.
         self.setControls()
 
         # List of collected elements that need to draw their info on top of the
