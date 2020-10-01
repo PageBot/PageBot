@@ -138,9 +138,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         # recursively
         self.sId = sId
 
-        # If undefined yAlign and parent has origin on top, then default yAlign
-        # to TOP. Local value is overwritten if there is a parent defined.
-        # Assuming origin is at the bottom (OS X style) for now.
+        # If undefined yAlign, then default yAlign to BOTTOM. Child value is
+        # overwritten if a parent is defined. The origin is always at the
+        # bottom (OS X style) for now.
 
         # Property seeks parent.
         if yAlign is None:
@@ -149,8 +149,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         # Initialize self._elements and self._eIds.
         self.clearElements()
         self.checkStyleArgs(kwargs)
-        # Make default style for t == 0 from remaining args
-        # such as fill, stroke, strokeWidth, textFill, textStroke, textStrokewidth
+
+        # Make default style for t == 0 from remaining arguments such as fill,
+        # stroke, strokeWidth, textFill, textStroke, textStrokewidth
         self.style = makeStyle(style, **kwargs)
         self.style['xAlign'] = xAlign
         self.style['yAlign'] = yAlign
@@ -1384,7 +1385,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         this method. """
         if parent is not None:
             parent = weakref.ref(parent)
-        self._parent = parent # Can be None if self needs to be unlinked from a parent tree. E.g. when moving it.
+
+        # Can be None if self needs to be unlinked from a parent tree. E.g.
+        # when it is moved.
+        self._parent = parent
 
     def _get_parent(self):
         """Answers the parent of the element, if it exists, by weakref

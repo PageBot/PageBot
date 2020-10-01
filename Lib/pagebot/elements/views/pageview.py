@@ -633,6 +633,7 @@ class PageView(BaseView):
         '''
 
     def _drawElementsNeedingInfo(self, e):
+        # TODO: split up into smaller functions.
         b = self.b
         context = self.context
 
@@ -665,7 +666,7 @@ class PageView(BaseView):
                 context.text(bs, (tpx+Pd, tpy+th))
 
             if (self.showDimensions and e.isPage) or e.showDimensions:
-                # TODO: Make separate arrow functio and better positions
+                # TODO: Make separate arrow function and better positions
                 # Draw width and height measures
                 context.fill(noColor)
                 context.stroke(blackColor, w=pt(0.25))
@@ -710,37 +711,33 @@ class PageView(BaseView):
             e._restoreScale(self)
 
     def drawElementOrigin(self, e, origin):
+        # Draw origin of the element
         if not (self.showOrigin or e.showOrigin):
             return
 
         context = self.context
         px, py, _ = pointOffset(e.origin, origin)
-        #px, py, _ = pointOffset(origin, e.origin)
-        #px, py = point2D(origin)
-        #px, py = point2D(e.origin)
-        #px, py = point2D(e.xy)
-        #print('draw element origin', e)
-
         S = e.css('viewInfoOriginMarkerSize', pt(3))
-        # Draw origin of the element
         fill = e.css('viewInfoOriginMarkerFill', noColor)
         stroke = e.css('viewInfoOriginMarkerStroke', blackColor)
         width = e.css('viewInfoOriginMarkerStrokeWidth', pt(0.25))
-        context.fill(fill) # Transparant fill, so we can see the marker on dark backgrounds.
+
+        # Transparent fill, so we can see the marker on dark backgrounds.
+        context.fill(fill)
         context.stroke(stroke, width)
         context.oval(px-S, py-S, 2*S, 2*S)
         context.line((px-S, py), (px+S, py))
         context.line((px, py-S), (px, py+S))
 
         if (self.showDimensions and e.isPage) or e.showDimensions:
-            bs = context.newString(str(e.xy),
-                    style=dict(font=self.css('viewInfoFont'),
+            msg = 'x: %s, y: %s, w: %s, h: %s' % (e.x, e.y, e.w, e.h)
+            style = dict(font=self.css('viewInfoFont'),
                         fontSize=self.css('viewInfoFontSize'),
                         leading=self.css('viewInfoLeading'),
-                        textFill=color(0.1)))
+                        textFill=color(0.1))
+            bs = context.newString(msg, style=style)
 
             w, h = bs.textSize
-
             context.drawString(bs, (px, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):

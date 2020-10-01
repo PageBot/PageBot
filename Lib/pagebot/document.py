@@ -1442,7 +1442,6 @@ class Document:
 
         # Check if the context is supported by this view type.
         if context is None:
-            from pagebot.contexts import getContext
             context = getContext(self.DEFAULT_CONTEXT_ID)
 
         view = self.view = self.views[viewId] = viewClasses[viewId](name=name
