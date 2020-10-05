@@ -720,6 +720,437 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 return found
         return None
 
+    #   D R A W B O T / F L A T  S U P P O R T
+
+    def prepare(self, view):
+        """Respond to the top-down element broadcast to prepare for build.  If
+        the original image needs scaling, then prepare the build by letting the
+        context make a new cache file with the scaled images. If the cache
+        file already exists, then ignore, just continue the broadcast towards
+        the child elements. Default behavior is to do nothing. Inheriting
+        Element classes can redefine."""
+        for e in self.elements:
+            e.prepare(view)
+
+    def prepare_flat(self, view):
+        for e in self.elements:
+            e.prepare_flat(view)
+
+    def getPosition(self, view, origin):
+        p = pointOffset(self.origin, origin)
+        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
+        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        self._applyRotation(view, p)
+        return x, p
+
+    def build(self, view, origin, drawElements=True, **kwargs):
+        """Default drawing method just drawing the frame. Probably will be
+        redefined by inheriting element classes."""
+        p = pointOffset(self.origin, origin)
+        p = self._applyScale(view, p) # Ignore z-axis for now.
+        px, py, _ = p = self._applyAlignment(p)
+
+        self._applyRotation(view, p)
+
+        # Draw optional frame or borders.
+        self.buildFrame(view, p)
+
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # background here.
+        view.drawPageMetaInfoBackground(self, p)#, background=True)
+        view.drawElementFrame(self, p)
+
+        # Call if defined.
+        if self.drawBefore is not None:
+            self.drawBefore(self, view, p)
+
+        # Draw the actual element content. Inheriting elements classes can
+        # redefine this method only to fill in drawing behavior. @p is the
+        # transformed position to draw in the main canvas.
+        self.buildElement(view, p, drawElements, **kwargs)
+
+        if self.drawAfter is not None:
+            # Call if defined.
+            self.drawAfter(self, view, p)
+
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # foreground here.
+        view.drawPageMetaInfo(self, p)
+
+        # Supposedly drawing outside rotation/scaling mode, so the origin of
+        # the element is visible.
+        view.drawElementOrigin(self, origin)
+
+        self._restoreRotation(view, p)
+        self._restoreScale(view)
+        # Depends on flag 'view.showElementInfo'.
+        view.drawElementInfo(self, origin)
+
+    def buildElement(self, view, p, drawElements=True, **kwargs):
+        """Main drawing method for elements to draw their content and the
+        content of their children if they exist. @p is the transformed position
+        of the context canvas. To be redefined by inheriting element classes
+        that need to draw more than just their chold elements."""
+        if drawElements:
+            # If there are child elements, recursively draw them over the pixel
+            # image.
+            self.buildChildElements(view, p, **kwargs)
+
+    def buildChildElements(self, view, origin=None, **kwargs):
+        """Draws child elements, dispatching depends on the implementation of
+        context specific build elements.
+
+        If no specific builder_<view.context.b.PB_ID> is implemented, call default
+        e.build(view, origin). """
+        hook = 'build_' + view.context.b.PB_ID
+
+        for e in self.elements:
+            if not e.show:
+                continue
+            if hasattr(e, hook):
+                getattr(e, hook)(view, origin, **kwargs)
+            else:
+                # No implementation for this context, call default building
+                # method for this element.
+                e.build(view, origin, **kwargs)
+
+    #   I N D E S I G N  S U P P O R T
+
+    def prepare_inds(self, view):
+        for e in self.elements:
+            e.prepare_inds(view)
+
+    def build_inds(self, view, origin, drawElements=True, **kwargs):
+        """It is better to have a separate InDesignContext build tree, since we
+        need more information down there than just drawing instructions. This
+        way the InDesignContext just gets the PageBot Element passed over,
+        using it's own API."""
+        p = pointOffset(self.origin, origin)
+        p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
+        # Inheriting Elements should add their context call here.
+        if drawElements:
+            for e in self.elements:
+                e.build_inds(view, p2D, **kwargs)
+
+    #   H T M L  /  S C S S / S A S S  S U P P O R T
+
+    # Sass syntax is not supported yet. It does not appear to be standard and
+    # cannot be easily converted from existing CSS. Meanwhile, many CSS
+    # designers can extend easier to SCSS.
+
+    def prepare_html(self, view):
+        """Respond to the top-down view --> element broadcast in preparation for
+        build_html. Default behavior is to do nothing other than recursively
+        broadcast to all child element. Inheriting Element classes can
+        redefine."""
+        for e in self.elements:
+            e.prepare_html(view)
+
+    def prepare_zip(self, view):
+        """Respond to the top-down view --> element broadcast in preparation
+        for build_zip. Default behavior is to do nothing other than
+        recursively broadcast to all child element. Inheriting Element classes
+        can redefine."""
+        for e in self.elements:
+            e.prepare_zip(view)
+
+    '''
+    def build_scss(self, view):
+        """Build the scss variables for this element."""
+        b = self.context.b
+        b.build_scss(self, view)
+        for e in self.elements:
+            if e.show:
+                e.build_scss(view)
+    '''
+
+    def build_css(self, view, cssList=None):
+        """Build the scss variables for this element and pass the request on
+        to the child elements. This should harvest the CSS that is specific
+        for a single page."""
+        if cssList is None:
+            cssList = []
+        for e in self.elements:
+            if e.show:
+                e.build_css(view, cssList)
+        return cssList
+
+    def asNormalizedJSON(self):
+        """Build self and all child elements as regular dict and add it to the
+        list of siblings. Path points to the folder where elements can copy
+        additional files, such as images, fonts, CSS, JS, etc.). This path will
+        later be converted to zip file, as main storage of the current
+        document.
+
+        >>> import os
+        >>> e = Element(x=50, y=60)
+        >>> d = e.asNormalizedJSON()
+        >>> d['style']['x']['v']
+        50
+        >>> d['style']['h']['v'], d['style']['h']['class_']
+        (100, 'Pt')
+        """
+        elements = []
+        d = dict(
+            name=self.name,
+            class_=self.__class__.__name__,
+            elements=asNormalizedJSON(self.elements),
+            style=asNormalizedJSON(self.style)
+        )
+        return d
+
+    def build_html(self, view, path, drawElements=True, **kwargs):
+        """Build the HTML/CSS code through WebBuilder (or equivalent) that is
+        the closest representation of self. If there are any child elements,
+        then also included their code, using the level recursive indent. For
+        HTML builder the origin is ignored, as all position is relative."""
+        # Use the current context builder to write the HTML/CSS code.
+        b = view.context.b
+
+        if self.htmlCode is not None:
+            # Add chunk of defined HTML to output.
+            b.addHtml(self.htmlCode)
+        elif self.htmlPaths is not None:
+            for htmlPath in self.htmlPaths:
+                # Add HTML content from file, if path is not None and the file
+                # exists.
+                b.importHtml(htmlPath)
+        else:
+            # No default class, ignore if not defined.
+            b.div(cssClass=self.cssClass, cssId=self.cssId)
+
+            if self.drawBefore is not None: # Call if defined
+                self.drawBefore(self, view)
+
+            # Build child elements, dispatch if they implemented generic or
+            # context specific build method.
+            if drawElements:
+                self.buildChildElements(view, path, **kwargs)
+
+            # Call if defined.
+            if self.drawAfter is not None:
+                self.drawAfter(self, view)
+
+            b._div()
+
+    #   D R A W I N G  S U P P O R T
+
+    def getMetricsString(self, view=None):
+        """Answers a single string with metrics info about the element. Default
+        is to show the posiiton and size (in points and columns). This method
+        can be redefined by inheriting elements that want to show additional
+        information."""
+        s = '%s\nPosition: x=%s, y=%s, z=%s\nSize: w=%s, h=%s' % \
+            (self.__class__.__name__ + ' ' + (self.name or ''), self.x, self.y,
+                    self.z, self.w, self.h)
+        if self.xAlign or self.yAlign:
+            s += '\nAlign: %s, %s' % (self.xAlign, self.yAlign)
+        if self.conditions:
+            if view is None and self.doc is not None:
+                view = self.doc.view
+            if view is not None:
+                score = self.evaluate(view)
+                s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
+                if score.fails:
+                    s += ' Fails: %d' % len(score.fails)
+                    for eFail in score.fails:
+                        s += '\n%s %s' % eFail
+        return s
+
+    def buildFrame(self, view, p):
+        """Draws the rectangular element space. self.fill defines the color of
+        the element background. Instead of the DrawBot stroke and strokeWidth
+        attributes, use borders or (borderTop, borderRight, borderBottom,
+        borderLeft) attributes."""
+        c = view.context
+        eShadow = self.shadow
+
+        if eShadow:
+            c.saveGraphicState()
+            c.setShadow(eShadow)
+            c.rect(p[0], p[1], self.w, self.h)
+            c.restoreGraphicState()
+
+        eFill = self.fill # Default is noColor
+        eStroke = self.stroke #self.css('stroke', default=noColor)
+        eGradient = self.gradient
+
+        #if eStroke is not noColor or eFill is not noColor or eGradient:
+        c.saveGraphicState()
+
+        # Drawing element fill and / or frame.
+        if eGradient:
+            # Gradient overwrites setting of fill.
+            # TODO: Make bleed work here too.
+            # Add self.w and self.h to define start/end from relative size.
+            c.setGradient(eGradient, p, self.w, self.h)
+        elif eFill is None or eFill is noColor:
+            c.fill(None)
+        else:
+            c.fill(eFill)
+
+        if eStroke in (None, noColor):
+            c.stroke(None, 0)
+        else: # Separate from border behavior if set.
+            c.stroke(eStroke, self.strokeWidth)
+
+        if self.framePath is not None: # In case defined, use instead of bounding box.
+            c.drawPath(self.framePath)
+
+        w = None
+        h = None
+        if len(p) == 4:
+            x, y, w, h = p
+        elif len(p) == 2:
+            x, y = p
+        else:
+            x = y = 0
+            #msg = 'Element.buildFrame(): Badly formatted position argument p'
+            #print(msg)
+            # TODO: raise error.
+
+        w = w or self.w
+        h = h or self.h
+
+        # FIXME: gives an extra square in lower left corner.
+        # Then draw the rectangle with the defined color/stroke/strokeWidth
+        #c.rect(x, y, w, h) # Ignore bleed, should already have been applied on position and size.
+
+        c.fill(None)
+        c.stroke(None, 0)
+        c.restoreGraphicState()
+
+        # Instead of full frame drawing, check on separate border settings.
+        borderTop = self.borderTop
+        borderBottom = self.borderBottom
+        borderRight = self.borderRight
+        borderLeft = self.borderLeft
+
+        if borderTop is not None:
+            c.saveGraphicState()
+            c.lineDash(borderTop.get('dash')) # None for no dash
+            c.stroke(borderTop.get('stroke', noColor), borderTop.get('strokeWidth', 0))
+
+            oLeft = 0 # Extra offset on left, if there is a left border.
+
+            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
+                if borderLeft.get('line') == ONLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)
+
+            oRight = 0 # Extra offset on right, if there is a right border.
+
+            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
+                if borderRight.get('line') == ONLINE:
+                    oRight = borderRight.get('strokeWidth', 0)/2
+                elif borderRight.get('line') == OUTLINE:
+                    oRight = borderRight.get('strokeWidth', 0)
+
+            if borderTop.get('line') == OUTLINE:
+                oTop = borderTop.get('strokeWidth', 0)/2
+            elif borderTop.get('line') == INLINE:
+                oTop = -borderTop.get('strokeWidth', 0)/2
+            else:
+                oTop = 0
+
+            c.line((x-oLeft, y+h+oTop), (x+w+oRight, y+h+oTop))
+            c.restoreGraphicState()
+
+        if borderBottom is not None:
+            c.saveGraphicState()
+            c.lineDash(borderBottom.get('dash')) # None for no dash
+            c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
+
+            oLeft = 0 # Extra offset on left, if there is a left border.
+            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
+                if borderLeft.get('line') == ONLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oLeft = borderLeft.get('strokeWidth', 0)
+
+            oRight = 0 # Extra offset on right, if there is a right border.
+            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
+                if borderRight.get('line') == ONLINE:
+                    oRight = borderRight.get('strokeWidth', 0)/2
+                elif borderRight.get('line') == OUTLINE:
+                    oRight = borderRight.get('strokeWidth', 0)
+
+            if borderBottom.get('line') == OUTLINE:
+                oBottom = borderBottom.get('strokeWidth', 0)/2
+            elif borderBottom.get('line') == INLINE:
+                oBottom = -borderBottom.get('strokeWidth', 0)/2
+            else:
+                oBottom = 0
+
+            c.line((x-oLeft, y-oBottom), (x+w+oRight, y-oBottom))
+            c.restoreGraphicState()
+
+        if borderRight is not None:
+            c.saveGraphicState()
+            c.lineDash(borderRight.get('dash')) # None for no dash
+            c.stroke(borderRight.get('stroke', noColor), borderRight.get('strokeWidth', 0))
+
+            oTop = 0 # Extra offset on top, if there is a top border.
+            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
+                if borderTop.get('line') == ONLINE:
+                    oTop = borderTop.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oTop = borderTop.get('strokeWidth', 0)
+
+            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
+                if borderBottom.get('line') == ONLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)/2
+                elif borderBottom.get('line') == OUTLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)
+
+            if borderRight.get('line') == OUTLINE:
+                oRight = borderRight.get('strokeWidth', 0)/2
+            elif borderRight.get('line') == INLINE:
+                oRight = -borderRight.get('strokeWidth', 0)/2
+            else:
+                oRight = 0
+
+            c.line((x+w+oRight, y-oBottom), (x+w+oRight, y+h+oTop))
+            c.restoreGraphicState()
+
+        if borderLeft is not None:
+            c.saveGraphicState()
+            c.lineDash(borderLeft.get('dash')) # None for no dash
+            c.stroke(borderLeft.get('stroke', noColor), borderLeft.get('strokeWidth', 0))
+
+            oTop = 0 # Extra offset on top, if there is a top border.
+            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
+                if borderTop.get('line') == ONLINE:
+                    oTop = borderTop.get('strokeWidth', 0)/2
+                elif borderLeft.get('line') == OUTLINE:
+                    oTop = borderTop.get('strokeWidth', 0)
+
+            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
+                if borderBottom.get('line') == ONLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)/2
+                elif borderBottom.get('line') == OUTLINE:
+                    oBottom = borderBottom.get('strokeWidth', 0)
+
+            if borderLeft.get('line') == OUTLINE:
+                oLeft = borderLeft.get('strokeWidth', 0)/2
+            elif borderLeft.get('line') == INLINE:
+                oLeft = -borderLeft.get('strokeWidth', 0)/2
+            else:
+                oLeft = 0
+
+            c.line((x-oLeft, y-oBottom), (x-oLeft, y+h+oTop))
+            c.restoreGraphicState()
+
+    #   V A L I D A T I O N
+
+
+    # Find.
+
     def deepFindAll(self, name=None, pattern=None, result=None):
         """Perform a dynamic recursive deep find for all elements with the name.
         Don't include self. Either *name* or *pattern* should be defined,
@@ -2727,7 +3158,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_bleed(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take care of the reposition/scaling themselves
+        Elements will take care of reposition / scaling themselves
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleed=21)
@@ -2756,7 +3187,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_bleedTop(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take care of the reposition/scaling themselves.
+        Elements will take care of reposition / scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedTop=20)
@@ -2775,7 +3206,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_bleedBottom(self):
         """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take care of the reposition/scaling themselves.
+        Elements will take care of reposition / scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedBottom=20)
@@ -2795,8 +3226,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     bleedBottom = property(_get_bleedBottom, _set_bleedBottom)
 
     def _get_bleedLeft(self):
-        """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take care of the reposition/scaling themselves.
+        """Answers the value for bleed over the sides of parent or page
+        objects. Elements will take care of reposition / scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedLeft=20)
@@ -2814,8 +3245,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     bleedLeft = property(_get_bleedLeft, _set_bleedLeft)
 
     def _get_bleedRight(self):
-        """Answers the value for bleed over the sides of parent or page objects.
-        Elements will take care of the reposition/scaling themselves.
+        """Answers the value for bleed over the sides of parent or page
+        objects. Elements will take care of reposition / scaling themselves.
 
         >>> from pagebot.toolbox.units import mm
         >>> e = Element(bleedRight=20)
@@ -3224,6 +3655,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         (15%, 15%, 15%, 15%)
         """
         return self.mt, self.mr, self.mb, self.ml
+
     def _set_margin(self, margin):
         # Can be 123, [123], [123, 234] or [123, 234, 345, 4565, ]
         if not isinstance(margin, (list, tuple)):
@@ -4389,434 +4821,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         for e in self.elements:
             e.compose(doc, publication)
 
-    #   D R A W B O T / F L A T  S U P P O R T
-
-    def prepare(self, view):
-        """Respond to the top-down element broadcast to prepare for build.  If
-        the original image needs scaling, then prepare the build by letting the
-        context make a new cache file with the scaled images. If the cache
-        file already exists, then ignore, just continue the broadcast towards
-        the child elements. Default behavior is to do nothing. Inheriting
-        Element classes can redefine."""
-        for e in self.elements:
-            e.prepare(view)
-
-    def getPosition(self, view, origin):
-        p = pointOffset(self.origin, origin)
-        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        self._applyRotation(view, p)
-        return x, p
-
-    def build(self, view, origin, drawElements=True, **kwargs):
-        """Default drawing method just drawing the frame. Probably will be
-        redefined by inheriting element classes."""
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p) # Ignore z-axis for now.
-        px, py, _ = p = self._applyAlignment(p)
-
-        self._applyRotation(view, p)
-
-        # Draw optional frame or borders.
-        self.buildFrame(view, p)
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # background here.
-        view.drawPageMetaInfoBackground(self, p)#, background=True)
-        view.drawElementFrame(self, p)
-
-        # Call if defined.
-        if self.drawBefore is not None:
-            self.drawBefore(self, view, p)
-
-        # Draw the actual element content. Inheriting elements classes can
-        # redefine this method only to fill in drawing behavior. @p is the
-        # transformed position to draw in the main canvas.
-        self.buildElement(view, p, drawElements, **kwargs)
-
-        if self.drawAfter is not None:
-            # Call if defined.
-            self.drawAfter(self, view, p)
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # foreground here.
-        view.drawPageMetaInfo(self, p)
-
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
-        # the element is visible.
-        view.drawElementOrigin(self, origin)
-
-        self._restoreRotation(view, p)
-        self._restoreScale(view)
-        # Depends on flag 'view.showElementInfo'.
-        view.drawElementInfo(self, origin)
-
-    def buildElement(self, view, p, drawElements=True, **kwargs):
-        """Main drawing method for elements to draw their content and the
-        content of their children if they exist. @p is the transformed position
-        of the context canvas. To be redefined by inheriting element classes
-        that need to draw more than just their chold elements."""
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel
-            # image.
-            self.buildChildElements(view, p, **kwargs)
-
-    def buildChildElements(self, view, origin=None, **kwargs):
-        """Draws child elements, dispatching depends on the implementation of
-        context specific build elements.
-
-        If no specific builder_<view.context.b.PB_ID> is implemented, call default
-        e.build(view, origin). """
-        hook = 'build_' + view.context.b.PB_ID
-
-        for e in self.elements:
-            if not e.show:
-                continue
-            if hasattr(e, hook):
-                getattr(e, hook)(view, origin, **kwargs)
-            else: # No implementation for this context, call default building method for this element.
-                e.build(view, origin, **kwargs)
-
-    #   D R A W I N G  S U P P O R T
-
-    def getMetricsString(self, view=None):
-        """Answers a single string with metrics info about the element. Default
-        is to show the posiiton and size (in points and columns). This method
-        can be redefined by inheriting elements that want to show additional
-        information."""
-        s = '%s\nPosition: x=%s, y=%s, z=%s\nSize: w=%s, h=%s' % \
-            (self.__class__.__name__ + ' ' + (self.name or ''), self.x, self.y,
-                    self.z, self.w, self.h)
-        if self.xAlign or self.yAlign:
-            s += '\nAlign: %s, %s' % (self.xAlign, self.yAlign)
-        if self.conditions:
-            if view is None and self.doc is not None:
-                view = self.doc.view
-            if view is not None:
-                score = self.evaluate(view)
-                s += '\nConditions: %d | Evaluate %d' % (len(self.conditions), score.result)
-                if score.fails:
-                    s += ' Fails: %d' % len(score.fails)
-                    for eFail in score.fails:
-                        s += '\n%s %s' % eFail
-        return s
-
-    def buildFrame(self, view, p):
-        """Draws the rectangular element space. self.fill defines the color of
-        the element background. Instead of the DrawBot stroke and strokeWidth
-        attributes, use borders or (borderTop, borderRight, borderBottom,
-        borderLeft) attributes."""
-        c = view.context
-        eShadow = self.shadow
-
-        if eShadow:
-            c.saveGraphicState()
-            c.setShadow(eShadow)
-            c.rect(p[0], p[1], self.w, self.h)
-            c.restoreGraphicState()
-
-        eFill = self.fill # Default is noColor
-        eStroke = self.stroke #self.css('stroke', default=noColor)
-        eGradient = self.gradient
-
-        #if eStroke is not noColor or eFill is not noColor or eGradient:
-        c.saveGraphicState()
-
-        # Drawing element fill and / or frame.
-        if eGradient:
-            # Gradient overwrites setting of fill.
-            # TODO: Make bleed work here too.
-            # Add self.w and self.h to define start/end from relative size.
-            c.setGradient(eGradient, p, self.w, self.h)
-        elif eFill is None or eFill is noColor:
-            c.fill(None)
-        else:
-            c.fill(eFill)
-
-        if eStroke in (None, noColor):
-            c.stroke(None, 0)
-        else: # Separate from border behavior if set.
-            c.stroke(eStroke, self.strokeWidth)
-
-        if self.framePath is not None: # In case defined, use instead of bounding box.
-            c.drawPath(self.framePath)
-
-        w = None
-        h = None
-        if len(p) == 4:
-            x, y, w, h = p
-        elif len(p) == 2:
-            x, y = p
-        else:
-            x = y = 0
-            #msg = 'Element.buildFrame(): Badly formatted position argument p'
-            #print(msg)
-            # TODO: raise error.
-
-        w = w or self.w
-        h = h or self.h
-
-        # FIXME: gives an extra square in lower left corner.
-        # Then draw the rectangle with the defined color/stroke/strokeWidth
-        #c.rect(x, y, w, h) # Ignore bleed, should already have been applied on position and size.
-
-        c.fill(None)
-        c.stroke(None, 0)
-        c.restoreGraphicState()
-
-        # Instead of full frame drawing, check on separate border settings.
-        borderTop = self.borderTop
-        borderBottom = self.borderBottom
-        borderRight = self.borderRight
-        borderLeft = self.borderLeft
-
-        if borderTop is not None:
-            c.saveGraphicState()
-            c.lineDash(borderTop.get('dash')) # None for no dash
-            c.stroke(borderTop.get('stroke', noColor), borderTop.get('strokeWidth', 0))
-
-            oLeft = 0 # Extra offset on left, if there is a left border.
-
-            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
-                if borderLeft.get('line') == ONLINE:
-                    oLeft = borderLeft.get('strokeWidth', 0)/2
-                elif borderLeft.get('line') == OUTLINE:
-                    oLeft = borderLeft.get('strokeWidth', 0)
-
-            oRight = 0 # Extra offset on right, if there is a right border.
-
-            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
-                if borderRight.get('line') == ONLINE:
-                    oRight = borderRight.get('strokeWidth', 0)/2
-                elif borderRight.get('line') == OUTLINE:
-                    oRight = borderRight.get('strokeWidth', 0)
-
-            if borderTop.get('line') == OUTLINE:
-                oTop = borderTop.get('strokeWidth', 0)/2
-            elif borderTop.get('line') == INLINE:
-                oTop = -borderTop.get('strokeWidth', 0)/2
-            else:
-                oTop = 0
-
-            c.line((x-oLeft, y+h+oTop), (x+w+oRight, y+h+oTop))
-            c.restoreGraphicState()
-
-        if borderBottom is not None:
-            c.saveGraphicState()
-            c.lineDash(borderBottom.get('dash')) # None for no dash
-            c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
-
-            oLeft = 0 # Extra offset on left, if there is a left border.
-            if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
-                if borderLeft.get('line') == ONLINE:
-                    oLeft = borderLeft.get('strokeWidth', 0)/2
-                elif borderLeft.get('line') == OUTLINE:
-                    oLeft = borderLeft.get('strokeWidth', 0)
-
-            oRight = 0 # Extra offset on right, if there is a right border.
-            if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
-                if borderRight.get('line') == ONLINE:
-                    oRight = borderRight.get('strokeWidth', 0)/2
-                elif borderRight.get('line') == OUTLINE:
-                    oRight = borderRight.get('strokeWidth', 0)
-
-            if borderBottom.get('line') == OUTLINE:
-                oBottom = borderBottom.get('strokeWidth', 0)/2
-            elif borderBottom.get('line') == INLINE:
-                oBottom = -borderBottom.get('strokeWidth', 0)/2
-            else:
-                oBottom = 0
-
-            c.line((x-oLeft, y-oBottom), (x+w+oRight, y-oBottom))
-            c.restoreGraphicState()
-
-        if borderRight is not None:
-            c.saveGraphicState()
-            c.lineDash(borderRight.get('dash')) # None for no dash
-            c.stroke(borderRight.get('stroke', noColor), borderRight.get('strokeWidth', 0))
-
-            oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
-                if borderTop.get('line') == ONLINE:
-                    oTop = borderTop.get('strokeWidth', 0)/2
-                elif borderLeft.get('line') == OUTLINE:
-                    oTop = borderTop.get('strokeWidth', 0)
-
-            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
-                if borderBottom.get('line') == ONLINE:
-                    oBottom = borderBottom.get('strokeWidth', 0)/2
-                elif borderBottom.get('line') == OUTLINE:
-                    oBottom = borderBottom.get('strokeWidth', 0)
-
-            if borderRight.get('line') == OUTLINE:
-                oRight = borderRight.get('strokeWidth', 0)/2
-            elif borderRight.get('line') == INLINE:
-                oRight = -borderRight.get('strokeWidth', 0)/2
-            else:
-                oRight = 0
-
-            c.line((x+w+oRight, y-oBottom), (x+w+oRight, y+h+oTop))
-            c.restoreGraphicState()
-
-        if borderLeft is not None:
-            c.saveGraphicState()
-            c.lineDash(borderLeft.get('dash')) # None for no dash
-            c.stroke(borderLeft.get('stroke', noColor), borderLeft.get('strokeWidth', 0))
-
-            oTop = 0 # Extra offset on top, if there is a top border.
-            if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
-                if borderTop.get('line') == ONLINE:
-                    oTop = borderTop.get('strokeWidth', 0)/2
-                elif borderLeft.get('line') == OUTLINE:
-                    oTop = borderTop.get('strokeWidth', 0)
-
-            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
-            if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
-                if borderBottom.get('line') == ONLINE:
-                    oBottom = borderBottom.get('strokeWidth', 0)/2
-                elif borderBottom.get('line') == OUTLINE:
-                    oBottom = borderBottom.get('strokeWidth', 0)
-
-            if borderLeft.get('line') == OUTLINE:
-                oLeft = borderLeft.get('strokeWidth', 0)/2
-            elif borderLeft.get('line') == INLINE:
-                oLeft = -borderLeft.get('strokeWidth', 0)/2
-            else:
-                oLeft = 0
-
-            c.line((x-oLeft, y-oBottom), (x-oLeft, y+h+oTop))
-            c.restoreGraphicState()
-
-    #   I N D E S I G N  S U P P O R T
-
-    def prepare_inds(self, view):
-        for e in self.elements:
-            e.prepare_inds(view)
-
-    def build_inds(self, view, origin, drawElements=True, **kwargs):
-        """It is better to have a separate InDesignContext build tree, since we
-        need more information down there than just drawing instructions. This
-        way the InDesignContext just gets the PageBot Element passed over,
-        using it's own API."""
-        p = pointOffset(self.origin, origin)
-        p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
-        # Inheriting Elements should add their context call here.
-        if drawElements:
-            for e in self.elements:
-                e.build_inds(view, p2D, **kwargs)
-
-    #   F L A T  S U P P O R T
-
-    def prepare_flat(self, view):
-        for e in self.elements:
-            e.prepare_flat(view)
-
-    #   H T M L  /  S C S S / S A S S  S U P P O R T
-
-    # Sass syntax is not supported yet. It does not appear to be standard and
-    # cannot be easily converted from existing CSS. Meanwhile, many CSS
-    # designers can extend easier to SCSS.
-
-    def prepare_html(self, view):
-        """Respond to the top-down view --> element broadcast in preparation for
-        build_html. Default behavior is to do nothing other than recursively
-        broadcast to all child element. Inheriting Element classes can
-        redefine."""
-        for e in self.elements:
-            e.prepare_html(view)
-
-    def prepare_zip(self, view):
-        """Respond to the top-down view --> element broadcast in preparation
-        for build_zip. Default behavior is to do nothing other than
-        recursively broadcast to all child element. Inheriting Element classes
-        can redefine."""
-        for e in self.elements:
-            e.prepare_zip(view)
-
-    '''
-    def build_scss(self, view):
-        """Build the scss variables for this element."""
-        b = self.context.b
-        b.build_scss(self, view)
-        for e in self.elements:
-            if e.show:
-                e.build_scss(view)
-    '''
-
-    def build_css(self, view, cssList=None):
-        """Build the scss variables for this element and pass the request on
-        to the child elements. This should harvest the CSS that is specific
-        for a single page."""
-        if cssList is None:
-            cssList = []
-        for e in self.elements:
-            if e.show:
-                e.build_css(view, cssList)
-        return cssList
-
-    def asNormalizedJSON(self):
-        """Build self and all child elements as regular dict and add it to the
-        list of siblings. Path points to the folder where elements can copy
-        additional files, such as images, fonts, CSS, JS, etc.). This path will
-        later be converted to zip file, as main storage of the current
-        document.
-
-        >>> import os
-        >>> e = Element(x=50, y=60)
-        >>> d = e.asNormalizedJSON()
-        >>> d['style']['x']['v']
-        50
-        >>> d['style']['h']['v'], d['style']['h']['class_']
-        (100, 'Pt')
-        """
-        elements = []
-        d = dict(
-            name=self.name,
-            class_=self.__class__.__name__,
-            elements=asNormalizedJSON(self.elements),
-            style=asNormalizedJSON(self.style)
-        )
-        return d
-
-    def build_html(self, view, path, drawElements=True, **kwargs):
-        """Build the HTML/CSS code through WebBuilder (or equivalent) that is
-        the closest representation of self. If there are any child elements,
-        then also included their code, using the level recursive indent. For
-        HTML builder the origin is ignored, as all position is relative."""
-        # Use the current context builder to write the HTML/CSS code.
-        b = view.context.b
-
-        if self.htmlCode is not None:
-            # Add chunk of defined HTML to output.
-            b.addHtml(self.htmlCode)
-        elif self.htmlPaths is not None:
-            for htmlPath in self.htmlPaths:
-                # Add HTML content from file, if path is not None and the file
-                # exists.
-                b.importHtml(htmlPath)
-        else:
-            # No default class, ignore if not defined.
-            b.div(cssClass=self.cssClass, cssId=self.cssId)
-
-            if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view)
-
-            # Build child elements, dispatch if they implemented generic or
-            # context specific build method.
-            if drawElements:
-                self.buildChildElements(view, path, **kwargs)
-
-            # Call if defined.
-            if self.drawAfter is not None:
-                self.drawAfter(self, view)
-
-            b._div()
-
-    #   V A L I D A T I O N
-
     def evaluate(self, score=None):
         """Evaluates the content of element `e` with all the conditions."""
         if score is None:
@@ -4864,7 +4868,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     #   or view.
 
     def setShowings(self, *args):
-        """Set the showing flags of self (often a View instance) to predefined
+        """Sets the showing flags of self (often a View instance) to predefined
         flags, depending on a type of stage of usage."""
         setNames = set(args)
 
