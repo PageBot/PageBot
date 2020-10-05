@@ -351,7 +351,11 @@ class Text(Element, TextConditions, TextAlignments):
         context.fill(self.css('fill', noColor))
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         context.rect(px, py, self.w, self.h)
-        context.drawText(self.bs, (px, py, self.w, self.h))
+        px1 = px + self.pl
+        py1 = py - self.pt
+        pw1 = self.w - self.pr
+        ph1 = self.h - self.pb
+        context.drawText(self.bs, (px1, py1, pw1, ph1))
         self.buildFrame(view, (px, py, self.w, self.h))
 
         if self.showMargin:
