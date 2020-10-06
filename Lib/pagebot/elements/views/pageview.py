@@ -616,12 +616,11 @@ class PageView(BaseView):
             x = origin[0]
             y = origin[1]
             mt, mr, mb, ml = e.margin
-            context = self.context
-            context.fill(color(random(), random(), random(), 0.3))
-            context.rect(x-ml, y, max(2,ml), e.h)
-            context.rect(x+e.w, y, max(1,mr), e.h)
-            context.rect(x-ml, y-mb, ml+e.w+mr, max(1,mb))
-            context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
+            self.context.fill(color(random(), random(), random(), 0.3))
+            self.context.rect(x-ml, y, max(2,ml), e.h)
+            self.context.rect(x+e.w, y, max(1,mr), e.h)
+            self.context.rect(x-ml, y-mb, ml+e.w+mr, max(1,mb))
+            self.context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
 
     def drawElementInfo(self, e, origin):
         """For debugging this will make the elements show their info.
@@ -631,14 +630,13 @@ class PageView(BaseView):
         TODO: finish and test.
         """
 
-        '''
-        if not e.eId in self.elementsNeedingInfo:
+        #if not e.eId in self.elementsNeedingInfo:
+        if (self.showElementInfo and e.isPage) or e.showElementInfo:
             self.elementsNeedingInfo[e.eId] = (e, origin)
-        '''
+            self._drawElementsNeedingInfo(e)
 
     def _drawElementsNeedingInfo(self, e):
         # TODO: split up into smaller functions.
-        b = self.b
         context = self.context
 
         for e, origin in self.elementsNeedingInfo.values():
@@ -655,8 +653,11 @@ class PageView(BaseView):
                             leading=self.css('viewInfoLeading'),
                             textFill=color(0.1)))
                 tw, th = bs.size
-                Pd = 4 # Padding in box and shadow offset.
-                tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
+                # Padding in box and shadow offset.
+                Pd = 4
+                # Make info box outdent the element. Keeping shadow on the
+                # element top left corner.
+                tpx = px - Pd/2
                 tpy = py + e.h - th - Pd
 
                 # Tiny shadow
