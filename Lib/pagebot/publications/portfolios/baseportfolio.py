@@ -116,7 +116,7 @@ class BasePortfolio(Publication):
             h = (page.ph - (self.rows - 1) * gutter) / self.rows
             if title != prevTitle:
                 bs = doc.context.newString(title, style=self.styles['title'])
-                tw, th = bs.size
+                tw, th = bs.textSize
                 newText(bs, conditions=[Left2Left(), Fit2Width(), Float2Top()], h=1.5*th, parent=page)
                 prevTitle = title
 

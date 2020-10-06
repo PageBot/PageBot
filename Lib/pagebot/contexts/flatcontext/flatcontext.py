@@ -281,7 +281,7 @@ class FlatContext(BaseContext):
                         style=dict(font=DEFAULT_FALLBACK_FONT_PATH,
                             fontSize=pt(64), fill=color(0, 1, 1),
                             textFill=color(1, 0, 0)))
-                tw, th = bs.size
+                tw, th = bs.textSize
                 self.text(bs, (w/2-tw/2, h/2-th/4))
             self.saveImage(cachedFilePath)
 

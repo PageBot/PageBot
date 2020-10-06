@@ -422,7 +422,7 @@ class PageMapView(BaseView):
                 # Draw box with element info.
                 bs = context.newString(e.getElementInfoString(), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=color(0.1)))
-                tw, th = bs.size
+                tw, th = bs.textSize
                 Pd = 4 # Padding in box and shadow offset.
                 tpx = px - Pd/2 # Make info box outdent the element. Keeping shadow on the element top left corner.
                 tpy = py + e.h - th - Pd
@@ -465,7 +465,7 @@ class PageMapView(BaseView):
                                                   fontSize=self.css('viewInfoFontSize'),
                                                   leading=self.css('viewInfoLeading'),
                                                   textFill=color(0.1)))
-                tw, th = bs.size
+                tw, th = bs.textSize
                 context.text(bs, ((x2 + x1)/2 - tw/2, y1-1.5*S))
 
                 # Vertical measure
@@ -480,7 +480,7 @@ class PageMapView(BaseView):
 
                 bs = context.newString(asFormatted(y2 - y1), style=dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'), textFill=0.1))
-                tw, th = bs.size
+                tw, th = bs.textSize
                 context.text(bs, (x2+2*S-tw/2, (y2+y1)/2))
 
             e._restoreScale(self)
@@ -507,7 +507,7 @@ class PageMapView(BaseView):
             bs = context.newString(e.xy, style=dict(font=self.css('viewInfoFont'),
                 fontSize=self.css('viewInfoFontSize'), leading=self.css('viewInfoLeading'),
                 textFill=color(0.1)))
-            w, h = bs.size
+            w, h = bs.textSize
             context.text(bs, (px - w/2, py + S*1.5))
 
     def drawMissingElementRect(self, e, origin):

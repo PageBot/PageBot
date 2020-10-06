@@ -120,7 +120,7 @@ class VariableCircle(Element):
                                    style=dict(font=variableFont.path,
                                               fontSize=fontSize/4,
                                               textFill=blackColor))
-            tw, th = bs.size
+            tw, th = bs.textSize
             context.text(bs, (mx-tw/2, my-fontSize/2*self.R-th*2/3))
         glyphPathScale = fontSize/self.vfFont.info.unitsPerEm
         context.drawGlyphPath(variableFont, glyphName, mx, my-fontSize/3, s=glyphPathScale, fillColor=0)
@@ -178,11 +178,11 @@ class VariableCircle(Element):
                 context.circle(mx+markerX, my+markerY, self.markerRadius)
 
                 bs = context.newString(axisName, style=style)
-                tw, th = bs.size
+                tw, th = bs.textSize
                 context.text(bs, (mx + markerX + upt(markerX)/upt(r) * tw * 1.25 - tw/2, my + markerY + upt(markerY)/upt(r) * th * 1.6 - th/4))
 
                 bs = context.newString('%d' % minValue, style=style)
-                tw, th = bs.size
+                tw, th = bs.textSize
                 context.text(bs, (mx + markerX - tw/2, my + markerY - th/4))
 
             if angle2 is not None and maxValue != defaultValue:
@@ -190,11 +190,11 @@ class VariableCircle(Element):
                 context.circle(mx+markerX, my+markerY, self.markerRadius)
 
                 bs = context.newString(axisName, style=style)
-                tw, th = bs.size
+                tw, th = bs.textSize
                 context.text(bs, (mx + markerX + upt(markerX)/upt(r) * tw * 1.25 - tw/2, my + markerY + upt(markerY)/upt(r) * th * 1.6 - th/4))
 
                 bs = context.newString('%d' % maxValue, style=style)
-                tw, th = bs.size
+                tw, th = bs.textSize
                 context.text(bs, (mx + markerX - tw/2, my + markerY - th/4))
 
 
@@ -230,7 +230,7 @@ class VariableCircle(Element):
                              style=dict(font=self.style.get('labelFont'),
                                         fontSize=axisNameFontSize,
                                         fill=self.style.get('axisNameColor', 0)))
-            tw, th = bs.size
+            tw, th = bs.textSize
             context.fill((0.7, 0.7, 0.7, 0.6))
             context.stroke(None)
             context.rect(mx+markerX-tw/2-4, my+markerY-axisNameFontSize/2-th*1.5-4, tw+8, th)
@@ -245,7 +245,7 @@ class VariableCircle(Element):
                              style=dict(font=self.style.get('labelFont'),
                                         fontSize=valueFontSize,
                                         fill=self.style.get('axisValueColor', 0)))
-            tw, th = bs.size
+            tw, th = bs.textSize
             context.fill((0.7, 0.7, 0.7, 0.6))
             context.stroke(None)
             context.rect(mx+markerX-tw/2-4, my+markerY+valueFontSize/2+th*1.5-4, tw+8, th)
@@ -261,7 +261,7 @@ class VariableCircle(Element):
                              style=dict(font=self.style.get('labelFont'),
                                         fontSize=valueFontSize,
                                         fill=self.style.get('axisValueColor', 0)))
-            tw, th = bs.size
+            tw, th = bs.textSize
             context.fill((0.7, 0.7, 0.7, 0.6))
             context.stroke(None)
             context.rect(mx+markerX*self.INTERPOLATION-tw/2-4, my+markerY*self.INTERPOLATION+valueFontSize/2+th*1.5-4, tw+8, th)
@@ -276,7 +276,7 @@ class VariableCircle(Element):
                              style=dict(font=self.style.get('labelFont'),
                                         fontSize=valueFontSize,
                                         fill=self.style.get('axisValueColor', 0)))
-            tw, th = bs.size
+            tw, th = bs.textSize
             context.fill((0.7, 0.7, 0.7, 0.6))
             context.stroke(None)
             minM = 0.2

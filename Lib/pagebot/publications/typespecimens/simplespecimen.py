@@ -37,7 +37,7 @@ class SimpleSpecimen(BaseTypeSpecimen):
             tw1, th1 = bs1.size
             if bs is None:
                 bs = bs1
-            tw, th = bs.size
+            tw, th = bs.textSize
             if max(tw, tw1) > page.pw or (th + th1) > page.ph:
                 break
             bs += bs1

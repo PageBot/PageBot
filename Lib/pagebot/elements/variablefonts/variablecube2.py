@@ -109,14 +109,14 @@ class VariableCube2(Element):
                                                        indexY * RANGE / sizeY),
                                      fontSize=6,
                                      fill=blackColor)
-                w, h = bs.size()
+                w, h = bs.textSize()
 
                 c.text(bs, ppx - stepX/4, ppy - 16)
                 # Bit of hack, we need the width of the glyph here.
 
         bs = c.newString('Other axes: %s' % self.location,
                              fontSize=6, fill=blackColor)
-        w, h = bs.size()
+        w, h = bs.textSize()
         c.text(bs, px, py - 16)
 
 

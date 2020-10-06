@@ -129,7 +129,7 @@ def fitVariableWidth(context, varFont, s, w, fontSize, condensedLocation, wideLo
                 wideLocation=wideLocation,
                 font=font,
                 bs=bs,
-                width=bs.size[0],
+                width=bs.textSize[0],
                 location=location)
 
 def getConstrainedLocation(font, location):

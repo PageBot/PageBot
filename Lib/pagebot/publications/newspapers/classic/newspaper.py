@@ -175,7 +175,7 @@ class Newspaper(Publication):
         # Newspaper name with border lines on top and bottom
         #self.title = 'NORTHAMPTON GLOBE'
         bs = self.view.newString(self.title.upper(), style=titleStyle)
-        _, nameHeight = bs.size
+        _, nameHeight = bs.textSize
 
         title = Title(parent=t, mb=2*gutter, h=nameHeight,
             conditions=[Top2Top(), Fit2Width()])

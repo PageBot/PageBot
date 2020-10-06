@@ -636,9 +636,6 @@ class PageView(BaseView):
             self._drawElementsNeedingInfo(e)
 
     def _drawElementsNeedingInfo(self, e):
-        # TODO: split up into smaller functions.
-        context = self.context
-
         for e, origin in self.elementsNeedingInfo.values():
             p = pointOffset(e.origin, origin)
             p = e._applyScale(self, p)
@@ -646,74 +643,82 @@ class PageView(BaseView):
             pw, ph = e.w, e.h
 
             if (self.showElementInfo and e.isPage) or e.showElementInfo:
-                # Draw box with element info.
-                bs = context.newString(e.getElementInfoString(),
-                        style=dict(font=self.css('viewInfoFont'),
-                            fontSize=self.css('viewInfoFontSize'),
-                            leading=self.css('viewInfoLeading'),
-                            textFill=color(0.1)))
-                tw, th = bs.size
-                # Padding in box and shadow offset.
-                Pd = 4
-                # Make info box outdent the element. Keeping shadow on the
-                # element top left corner.
-                tpx = px - Pd/2
-                tpy = py + e.h - th - Pd
-
-                # Tiny shadow
-                context.fill(color(0.3, 0.3, 0.3, 0.5))
-                context.stroke(noColor)
-                context.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
-                # Frame
-                context.fill(self.css('viewInfoFill'))
-                context.stroke(color(0.3), w=pt(0.25))
-                context.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
-                context.text(bs, (tpx+Pd, tpy+th))
+                self.drawInfo(e, px, py, pw, ph)
 
             if (self.showDimensions and e.isPage) or e.showDimensions:
-                # TODO: Make separate arrow function and better positions
-                # Draw width and height measures
-                context.fill(noColor)
-                context.stroke(blackColor, w=pt(0.25))
-                S = self.css('viewInfoOriginMarkerSize', pt(5))
-
-                # Horizontal measure
-                context.line((px,    py - 0.5*S), (px,      py - 3.5*S))
-                context.line((px+pw, py - 0.5*S), (px+pw,   py - 3.5*S))
-                context.line((px,    py - 2*S),   (px+pw,   py - 2*S))
-                # Arrow heads
-                context.line((px,    py - 2*S),   (px+S,    py - 1.5*S))
-                context.line((px,    py - 2*S),   (px+S,    py - 2.5*S))
-                context.line((px+pw, py - 2*S),   (px+pw-S, py - 1.5*S))
-                context.line((px+pw, py - 2*S),   (px+pw-S, py - 2.5*S))
-
-                bs = context.newString(str(pw),
-                        style=dict(font=self.css('viewInfoFont'),
-                            fontSize=self.css('viewInfoFontSize'),
-                            leading=self.css('viewInfoLeading'),
-                            textFill=color(0.1)))
-                tw, th = bs.size
-                context.text(bs, (px + pw/2 - tw/2, py-1.5*S))
-
-                # Vertical measure
-                context.line((px+pw+0.5*S, py),    (px+pw+3.5*S, py))
-                context.line((px+pw+0.5*S, py+ph), (px+pw+3.5*S, py+ph))
-                context.line((px+pw+2*S,   py),    (px+pw+2*S,   py+ph))
-                # Arrow heads
-                context.line((px+pw+2*S, py+ph),   (px+pw+2.5*S, py+ph-S))
-                context.line((px+pw+2*S, py+ph),   (px+pw+1.5*S, py+ph-S))
-                context.line((px+pw+2*S, py),      (px+pw+2.5*S, py+S))
-                context.line((px+pw+2*S, py),      (px+pw+1.5*S, py+S))
-
-                bs = context.newString(str(ph),
-                        style=dict(font=self.css('viewInfoFont'),
-                            fontSize=self.css('viewInfoFontSize'),
-                            leading=self.css('viewInfoLeading'),
-                            textFill=color(0.1)))
-                tw, th = bs.size
-                context.text(bs, (px+pw+2*S-tw/2, py+ph/2))
+                self.drawDimensions(px, py, pw, ph)
 
             e._restoreScale(self)
+
+    def drawInfo(self, e, px, py, pw, ph):
+        # Draw box with element info.
+        style = dict(font=self.css('viewInfoFont'),
+                    fontSize=self.css('viewInfoFontSize'),
+                    leading=self.css('viewInfoLeading'),
+                    textFill=color(0.1))
+        bs = self.context.newString(str(e), style=style)
+        tw, th = bs.textSize
+
+        # Padding in box and shadow offset.
+        Pd = 4
+
+        # Make info box outdent the element. Keeping shadow on the
+        # element top left corner.
+        tpx = px - Pd/2
+        tpy = py + e.h - th - Pd
+
+        # Tiny shadow
+        self.context.fill(color(0.3, 0.3, 0.3, 0.5))
+        self.context.stroke(noColor)
+        self.context.rect(tpx+Pd/2, tpy, tw+2*Pd, th+1.5*Pd)
+        # Frame
+        self.context.fill(self.css('viewInfoFill'))
+        self.context.stroke(color(0.3), w=pt(0.25))
+        self.context.rect(tpx, tpy, tw+2.5*Pd, th+1.5*Pd)
+        self.context.text(bs, (tpx+Pd, tpy+th))
+
+    def drawDimensions(self, px, py, pw, ph):
+        # TODO: Make separate arrow function and better positions
+        # Draw width and height measures
+        self.context.fill(noColor)
+        self.context.stroke(blackColor, w=pt(0.25))
+        S = self.css('viewInfoOriginMarkerSize', pt(5))
+
+        # Horizontal measure
+        self.context.line((px,    py - 0.5*S), (px,      py - 3.5*S))
+        self.context.line((px+pw, py - 0.5*S), (px+pw,   py - 3.5*S))
+        self.context.line((px,    py - 2*S),   (px+pw,   py - 2*S))
+        # Arrow heads
+        self.context.line((px,    py - 2*S),   (px+S,    py - 1.5*S))
+        self.context.line((px,    py - 2*S),   (px+S,    py - 2.5*S))
+        self.context.line((px+pw, py - 2*S),   (px+pw-S, py - 1.5*S))
+        self.context.line((px+pw, py - 2*S),   (px+pw-S, py - 2.5*S))
+
+        bs = self.context.newString(str(pw),
+                style=dict(font=self.css('viewInfoFont'),
+                    fontSize=self.css('viewInfoFontSize'),
+                    leading=self.css('viewInfoLeading'),
+                    textFill=color(0.1)))
+        tw, th = bs.textSize
+        self.context.text(bs, (px + pw/2 - tw/2, py-1.5*S))
+
+        # Vertical measure
+        self.context.line((px+pw+0.5*S, py),    (px+pw+3.5*S, py))
+        self.context.line((px+pw+0.5*S, py+ph), (px+pw+3.5*S, py+ph))
+        self.context.line((px+pw+2*S,   py),    (px+pw+2*S,   py+ph))
+        # Arrow heads
+        self.context.line((px+pw+2*S, py+ph),   (px+pw+2.5*S, py+ph-S))
+        self.context.line((px+pw+2*S, py+ph),   (px+pw+1.5*S, py+ph-S))
+        self.context.line((px+pw+2*S, py),      (px+pw+2.5*S, py+S))
+        self.context.line((px+pw+2*S, py),      (px+pw+1.5*S, py+S))
+
+        bs = self.context.newString(str(ph),
+                style=dict(font=self.css('viewInfoFont'),
+                    fontSize=self.css('viewInfoFontSize'),
+                    leading=self.css('viewInfoLeading'),
+                    textFill=color(0.1)))
+        tw, th = bs.textSize
+        self.context.text(bs, (px+pw+2*S-tw/2, py+ph/2))
 
     def drawElementOrigin(self, e, origin):
         # Draw origin of the element

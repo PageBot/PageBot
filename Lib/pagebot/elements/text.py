@@ -718,7 +718,7 @@ class Text(Element, TextConditions, TextAlignments):
         """Draws the optional overflow marker, if text doesn't fit in the box."""
         # Get current builder from self.doc.context.b
         bs = self.newString('[+]', style=dict(textFill=color(r=1, g=0, b=0), font='PageBot-Bold', fontSize=10))
-        tw, _ = bs.size
+        tw, _ = bs.textSize
         # FIX: Should work work self.bottom
         #self.b.text(bs.s, upt(self.right - 3 - tw, self.bottom + 3))
         self.b.text(bs.s, upt(self.right - 3 - tw, self.y + 6))

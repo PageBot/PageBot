@@ -110,12 +110,12 @@ class VariableScatter(Element):
                 if self.recipeAxes:
                     recipe = self.location2Recipe(location)
                     bs = c.newString(recipe, fontSize=4, fill=blackColor)
-                    w, h = bs.size()
+                    w, h = bs.textSize()
                     c.text(bs, ppx - stepX/4, ppy - 24) # Bit of hack, we need the width of the glyph here.
                     if len(self.recipeAxes) > 3:
                         recipe = self.location2Recipe(location, 3, 6)
                         bs = c.newString(recipe, fontSize=4, fill=blackColor)
-                        w, h = bs.size()
+                        w, h = bs.textSize()
                         c.text(bs, point=(ppx - stepX/4 + 30, ppy - 24)) # Bit of hack, we need the width of the glyph here.
 
         if self.drawAfter is not None: # Call if defined
