@@ -72,10 +72,12 @@ class PageView(BaseView):
             # pages.
             spreads = {}
 
-            # If flag is set, compose the page dictionary into a dictionary of
-            # larger pages, holding Quire instances that can compose various
-            # layouts of the pages, including spreads. page.ml and page.mr
-            # define the distance between the spread pages.
+            '''
+            If the flag is set, compose the page dictionary into a dictionary
+            of larger pages, holding Quire instances that can compose various
+            layouts of the pages, including spreads. page.ml and page.mr define
+            the distance between the spread pages.
+            '''
             sortedPages = Quire.pages2Spreads(QUIRE_SPREAD)
 
         return sortedPages
@@ -131,17 +133,13 @@ class PageView(BaseView):
         sortedPages = self.getSortedPages()
 
         # Recursively let all element prepare for the upcoming build, e.g. by
-        # saving scaled images into cache if that file does not already exists.
-        # Note that this is done on a page-by-page level, not a preparation of
-        # all
+        # saving scaled images in cache if they do not already exists.  Note
+        # that this is executed on a page-by-page level, not all at once.
         for pn, pages in sortedPages:
             for page in pages:
                 page.prepare(self)
 
         for pn, pages in sortedPages:
-            #if pageSelection is not None and not page.y in pageSelection:
-            #    continue
-
             '''
             Creates a new DrawBot viewport page to draw template + page, if not
             already done. In case the document is oversized, then make all
@@ -175,7 +173,8 @@ class PageView(BaseView):
             if fillColor is not noColor:
                 bt, br, bb, bl = page.bleed
                 self.context.fill(fillColor)
-                self.context.rect(x=page.bleedLeft, y=page.bleedBottom, w=pw+br+bl, h=ph+bt+bb)
+                self.context.rect(x=page.bleedLeft, y=page.bleedBottom,
+                        w=pw+br+bl, h=ph+bt+bb)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
@@ -189,8 +188,7 @@ class PageView(BaseView):
             # too.
             page.buildChildElements(self, origin, **kwargs)
 
-            # If there is meta info request at the foreground,
-            # then draw that here now.
+            # If there is meta info request at the foreground, then draw it.
             self.drawPageMetaInfo(page, origin)
 
             if self.drawAfter is not None: # Call if defined
@@ -223,7 +221,8 @@ class PageView(BaseView):
         # FIXME:
         #  - "fileName" is undefined
         #  - "frameDuration" is a method or a CSS value ?
-        #if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
+        #if frameDuration is not None and \
+        #   (fileName.endswith('.mov') or fileName.endswith('.gif')):
         #    frameDuration(frameDuration)
 
         self.context.saveDrawing(path, multiPage=multiPage)
@@ -304,21 +303,29 @@ class PageView(BaseView):
         >>> view = PageView(context=context, style=style)
         >>> view.showFrame = True
         >>> view.drawFrame(e, (0, 0))
-
         """
         if ((self.showFrame and e.isPage) or e.showFrame) and \
-                self.pl >= self.viewMinInfoPadding and self.pr >= self.viewMinInfoPadding and \
-                self.pt >= self.viewMinInfoPadding and self.pb >= self.viewMinInfoPadding:
+                self.pl >= self.viewMinInfoPadding and \
+                self.pr >= self.viewMinInfoPadding and \
+                self.pt >= self.viewMinInfoPadding and \
+                self.pb >= self.viewMinInfoPadding:
+
             # TODO: May need to be scaled, as self.drawPadding does.
             ox, oy = point2D(origin)
             context = self.context
             context.fill(noColor)
 
-            viewFrameStroke = e.viewFrameStroke or self.viewFrameStroke or self.DEFAULT_STROKE_COLOR
-            viewFrameStrokeWidth = e.viewFrameStrokeWidth or self.viewFrameStrokeWidth or self.DEFAULT_STROKE_WIDTH
+            viewFrameStroke = e.viewFrameStroke or \
+                    self.viewFrameStroke or \
+                    self.DEFAULT_STROKE_COLOR
+
+            viewFrameStrokeWidth = e.viewFrameStrokeWidth or \
+                    self.viewFrameStrokeWidth or \
+                    self.DEFAULT_STROKE_WIDTH
 
             context.stroke(viewFrameStroke, viewFrameStrokeWidth)
             context.rect(ox, oy, e.w, e.h)
+
             # If there are folds, draw them too in the same color.
             folds = e.folds or self.folds
             if folds:
@@ -336,8 +343,10 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values
-        >>> e = Element(style=style) # Works on generic elements as well as pages.
+        >>> # Get default values.
+        >>> style = getRootStyle()
+        >>> # Works on generic elements as well as pages.
+        >>> e = Element(style=style)
         >>> view = PageView(context=context, style=style)
         >>> view.showPadding = True
         >>> view.drawPadding(e, (0, 0))
@@ -347,14 +356,7 @@ class PageView(BaseView):
         if ((self.showPadding and e.isPage) or e.showPadding) and \
                 (e_pt or e_pr or e_pb or e_pl):
             context = self.context
-
-            '''
-            if e.isPage:
-                p = pointOffset(e.origin, origin)
-            else:
-            '''
             p = origin
-
             px, py = point2D(e._applyScale(self, p))
             viewPaddingStroke = e.viewPaddingStroke or \
                     self.viewPaddingStroke or \
@@ -366,7 +368,6 @@ class PageView(BaseView):
             context.stroke(viewPaddingStroke, viewPaddingStrokeWidth)
 
             context.rect(px + e_pl, py + e_pb, e.w - e_pl - e_pr, e.h - e_pt - e_pb)
-
             e._restoreScale(self)
 
     def drawMargin(self, e, origin):
@@ -376,8 +377,10 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values
-        >>> e = Element(style=style) # Works on generic elements as well as pages.
+        >>> # Get default values.
+        >>> style = getRootStyle()
+        >>> # Works on generic elements as well as pages.
+        >>> e = Element(style=style)
         >>> view = PageView(context=context, style=style)
         >>> view.showMargin = True
         >>> view.drawMargin(e, (0, 0))
@@ -506,7 +509,8 @@ class PageView(BaseView):
         context = self.context
         p = pointOffset(e.origin, origin)
         p = e._applyScale(self, p)
-        px, py, _ = p = e._applyAlignment(p) # Ignore z-axis for now.
+        # Ignore z-axis for now.
+        px, py, _ = p = e._applyAlignment(p)
 
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
             fmf = 0.15#self.css('viewFlowCurvatureFactor', 0.15)
@@ -744,15 +748,17 @@ class PageView(BaseView):
         """When designing templates and pages, this will draw a filled
         rectangle on the element bounding box (if self.css('missingElementFill'
         is defined) and a cross, indicating that this element has missing
-        content (as in unused image frames). Only draw if the list
+        content, for example when an image is missing. Only draw if the list
         self.showGrid contains proper types of grid names.
 
         >>> from pagebot import getContext
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values
-        >>> e = Element(style=style) # Works on generic elements as well as pages.
+        >>> # Get default values.
+        >>> style = getRootStyle()
+        >>> # Works on generic elements as well as pages.
+        >>> e = Element(style=style)
         >>> view = PageView(context=context, style=style)
         >>> view.showMissingElement = True
         >>> view.drawMissingElementRect(e, (0, 0))
@@ -802,8 +808,10 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values
-        >>> e = Element(style=style) # Works on generic elements as well as pages.
+        >>> # Get default values.
+        >>> style = getRootStyle()
+        >>> # Works on generic elements as well as pages.
+        >>> e = Element(style=style)
         >>> view = PageView(context=context, style=style)
         >>> view.showGrid = [GRID_COL, GRID_ROW]
         >>> view.drawGrid(e, (0, 0))
@@ -1078,10 +1086,13 @@ class PageView(BaseView):
         >>> context = getContext()
         >>> from pagebot.elements.element import Element
         >>> from pagebot.style import getRootStyle
-        >>> style = getRootStyle() # Get default values
-        >>> e = Element() # Works on generic elements as well as pages.
+        >>> # Get default values.
+        >>> style = getRootStyle()
+        >>> # Works on generic elements as well as pages.
+        >>> e = Element()
         >>> view = PageView(context=context, style=style)
-        >>> view.showRegistrationMarks = True # Boolean expands into set
+        >>> # Boolean expands into set.
+        >>> view.showRegistrationMarks = True
         >>> sorted(view.showRegistrationMarks)
         ['bottom', 'left', 'right', 'top']
         >>> view.drawRegistrationMarks(e, pt(0, 0))
@@ -1152,7 +1163,8 @@ class PageView(BaseView):
             w, h = e.size
             folds = e.folds or self.css('folds')
 
-            cmDistance = e.css('viewCropMarkDistance') # From the side, compare with bleed.
+            # From the side, compare with bleed.
+            cmDistance = e.css('viewCropMarkDistance')
             if not cmDistance:
                 cmDistance = self.css('viewCropMarkDistance', pt(12))
 
@@ -1165,7 +1177,8 @@ class PageView(BaseView):
                 cmStrokeWidth = self.css('viewCropMarkStrokeWidth', pt(0.25))
 
             context.fill(noColor)
-            context.stroke(registrationColor, w=cmStrokeWidth) # For CMYK, draw all colors color(cmyk=1))
+            # For CMYK, draw all colors color(cmyk=1)).
+            context.stroke(registrationColor, w=cmStrokeWidth)
 
             # Calculate distances, comparing to bleeds.
             cmLeft = max(e.bleedLeft, self.bleedLeft, cmDistance)
