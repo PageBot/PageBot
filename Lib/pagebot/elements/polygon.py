@@ -81,6 +81,7 @@ class Polygon(Element):
         #context.fill(self.css('fill'))
         #context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         bezierPath = self.getBezierPath(p)
+        # FIXME: don't use builder, use context.
         b.drawPath(bezierPath)
 
         # Debugging where it moved.

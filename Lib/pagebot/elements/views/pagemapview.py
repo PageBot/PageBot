@@ -63,12 +63,9 @@ class PageMapView(BaseView):
         if path.startswith(self.EXPORT_PATH) and not os.path.exists(self.EXPORT_PATH):
             os.makedirs(self.EXPORT_PATH)
 
-        # Get current context and builder from doc.
-        context = self.context
-
         # Save the intended extension into the context, so it knows what we'll
         # be saving to.
-        context.fileType = path.split('.')[-1]
+        self.context.fileType = path.split('.')[-1]
 
         # Find the maximum document page size to this in all page sizes of the
         # document.
@@ -76,7 +73,7 @@ class PageMapView(BaseView):
 
         # Make sure that canvas is empty, there may have been another document
         # building in this context.
-        context.newPage(w=w, h=h, doc=self.doc)
+        self.context.newPage(w=w, h=h, doc=self.doc)
 
         for pn, pages in self.doc.getSortedPages():
             #if pageSelection is not None and not page.y in pageSelection:
@@ -108,11 +105,11 @@ class PageMapView(BaseView):
 
             #  Make page in context, actual page may be smaller if showing
             #  cropmarks.
-            context.newPage(pw, ph)
+            self.context.newPage(pw, ph)
             # If page['frameDuration'] is set and saving as movie or animated
             # gif, then set the global frame duration.
             # Set the duration of this page, in case exporting GIF.
-            context.frameDuration(page.frameDuration)
+            self.context.frameDuration(page.frameDuration)
 
             # View may have a background defined. Build with page bleed, if it
             # is defined.
@@ -120,8 +117,8 @@ class PageMapView(BaseView):
 
             if fillColor is not noColor:
                 bt, br, bb, bl = page.bleed
-                context.fill(fillColor)
-                context.rect(page.bleedLeft, page.bleedBottom, pw+br+bl, ph+bt+bb)
+                self.context.fill(fillColor)
+                self.context.rect(page.bleedLeft, page.bleedBottom, pw+br+bl, ph+bt+bb)
 
             if self.drawBefore is not None: # Call if defined
                 self.drawBefore(page, self, origin)
@@ -169,7 +166,7 @@ class PageMapView(BaseView):
         #if frameDuration is not None and (fileName.endswith('.mov') or fileName.endswith('.gif')):
         #    frameDuration(frameDuration)
 
-        context.saveDrawing(path, multiPage=multiPage)
+        self.context.saveDrawing(path, multiPage=multiPage)
 
     #   D R A W B O T  S U P P O R T
 
@@ -254,10 +251,9 @@ class PageMapView(BaseView):
         if ((self.showFrame and e.isPage) or e.showFrame) and \
                 self.pl >= self.viewMinInfoPadding and self.pr >= self.viewMinInfoPadding and \
                 self.pt >= self.viewMinInfoPadding and self.pb >= self.viewMinInfoPadding:
-            context = self.context
-            context.fill(noColor)
-            context.stroke(color(0, 0, 1), pt(0.5))
-            context.rect(origin[0], origin[1], e.w, e.h)
+            self.context.fill(noColor)
+            self.context.stroke(color(0, 0, 1), pt(0.5))
+            self.context.rect(origin[0], origin[1], e.w, e.h)
 
     def drawPadding(self, e, origin):
         """Draw the page frame of its current padding.
@@ -277,16 +273,13 @@ class PageMapView(BaseView):
         """
         pt, pr, pb, pl = e.padding
         if ((self.showPadding and e.isPage) or e.showPadding) and (pt or pr or pb or pl):
-            context = self.context
-
             p = pointOffset(e.origin, origin)
             p = e._applyScale(self, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
-
-            context.fill(noColor)
-            context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
+            self.context.fill(noColor)
+            self.context.stroke(self.css('viewPaddingStroke', color(0.2, 0.2, 1)),
                                    self.css('viewPaddingStrokeWidth', 0.5))
-            context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
+            self.context.rect(px+pl, py+pb, e.w-pl-pr, e.h-pt-pb)
             e._restoreScale(self)
 
     def drawNameInfo(self, e, origin, path):
@@ -308,7 +301,6 @@ class PageMapView(BaseView):
         >>> view.drawNameInfo(e, (0, 0), path)
         """
         if (self.showNameInfo and e.isPage) or e.showNameInfo:
-            context = self.context
             # Position of text is based on crop mark size.
             cmDistance = self.css('viewCropMarkDistance')
             cmSize = self.css('viewCropMarkSize') - cmDistance
@@ -338,7 +330,7 @@ class PageMapView(BaseView):
             if path is not None:
                 # We're only interested in the file name.
                 s += ' | ' + path.split('/')[-1]
-            bs = context.newString(s, style=dict(font=self.css('viewNameFont'),
+            bs = self.context.newString(s, style=dict(font=self.css('viewNameFont'),
                 textFill=blackColor, fontSize=fontSize))
             # Draw on top of page.
             self.context.text(bs, (self.pl + cmDistance,
@@ -419,7 +411,8 @@ class PageMapView(BaseView):
         ax2 = xt - cos(hookedAngle-arrowAngle) * arrowSize
         ay2 = yt + sin(hookedAngle-arrowAngle) * arrowSize
 
-        b = self.b
+        # FIXME: don't use builder, use context.
+        b = self.context.b
         b.newPath()
         self.setFillColor(noColor)
         b.moveTo((xs, ys))
