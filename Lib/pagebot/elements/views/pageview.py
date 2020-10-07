@@ -510,7 +510,6 @@ class PageView(BaseView):
         p = e._applyScale(self, p)
         # Ignore z-axis for now.
         px, py, _ = p = e._applyAlignment(p)
-        print('draw flow', e)
 
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
             fmf = 0.15

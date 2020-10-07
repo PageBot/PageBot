@@ -23,8 +23,8 @@ from pagebot.toolbox.units import point2D, units, pt
 class Polygon(Element):
     """The Polygon element is a simple implementation of the polygon DrawBot
     function. More complex path-like elements inherit from the Path element.
-    The (w, y) dependent on the point positions in the self.points list.
-    The (x, y) position defines the relative position of the path on output."""
+    The (w, y) dependent on the point positions in the self.points list.  The
+    (x, y) position defines the relative position of the path on output."""
 
     def __init__(self, points=None, closed=True, **kwargs):
         self.closed = closed
@@ -56,155 +56,6 @@ class Polygon(Element):
         if self.h:
             self._set_scale(1, newH/self.h)
     h = property(_get_h, _set_h)
-
-    def translate(self, p):
-        """
-        >>> pn = Polygon(x=120, y=130)
-        >>> pn.rect(10, 10, 200, 360)
-        >>> pn.x, pn.left
-        (120pt, 120pt)
-        >>> pn.box
-        (130pt, 140pt, 200pt, 360pt)
-        >>> pn.translate((120, 10)) # Move the position of the embedded points, not (self.x, self.y)
-        >>> pn.x, pn.left
-        (120pt, 120pt)
-        >>> pn.box
-        (250pt, 150pt, 200pt, 360pt)
-        """
-        dx, dy = point2D(p)
-        points = []
-        for point in self.points:
-            points.append((point[0] + dx, point[1] + dy))
-        self.points = points
-
-    def _set_scale(self, sx, sy=None):
-        """
-        >>> pn = Polygon(x=33, y=44)
-        >>> pn.rect(10, 10, 200, 360)
-        >>> pn.x, pn.left
-        (33pt, 33pt)
-        >>> pn.box # Element position + point positions
-        (43pt, 54pt, 200pt, 360pt)
-        >>> pn._set_scale(0.6)
-        >>> pn.x, pn.left
-        (33pt, 33pt)
-        >>> pn.box
-        (39pt, 50pt, 120pt, 216pt)
-        """
-        points = []
-
-        if sy is None:
-            sy = sx
-
-        for point in self.points:
-            px = point[0] * sx # Scale relative to (self.x, self.y) origin
-            py = point[1] * sy
-            points.append((px, py))
-
-        self.points = points
-
-    def _get_box(self):
-        """ Get the (x, y, w, h) box of all points.
-
-        >>> e = Polygon()
-        >>> e.rect(100, 100, 220, 330)
-        >>> e.points
-        [(100pt, 100pt), (100pt, 430pt), (320pt, 430pt), (320pt, 100pt)]
-
-        >>> e.box
-        (100pt, 100pt, 220pt, 330pt)
-        """
-        x = y = XXXL
-        w = h = 0
-        if not self.points:
-            return pt(0, 0, 0, 0)
-        for point in self.points:
-            x = min(x, self.x+point[0])
-            y = min(y, self.y+point[1])
-            w = max(w, self.x+point[0]-x)
-            h = max(h, self.y+point[1]-y)
-        return x, y, w, h # (x, y) including (self.x, self.y)
-    box = property(_get_box)
-
-    def rect(self, x, y, w, h):
-        """Creates a rectangle polygon.
-
-        >>> e = Polygon()
-        >>> e.rect(10, 10, 220, 330)
-        >>> e.points
-        [(10pt, 10pt), (10pt, 340pt), (230pt, 340pt), (230pt, 10pt)]
-        >>> e.block
-        (220pt, 330pt)
-        """
-        self.points = []
-        self.append((x, y)) # Relative offset to (self.x, self.y)
-        self.append((x, y+h))
-        self.append((x+w, y+h))
-        self.append((x+w, y))
-        self.closePath = True
-
-    def _get_block(self):
-        """Answers the bounding box of the contained points,
-        relative to (self.x, self.y).
-
-        >>> e = Polygon(x=125, y=230)
-        >>> e.append((0, 0))
-        >>> e.append((100, 0))
-        >>> e.append((50, 80))
-        >>> e.closePath = True
-        >>> e.points
-        [(0pt, 0pt), (100pt, 0pt), (50pt, 80pt)]
-        >>> e.block
-        (100pt, 80pt)
-        """
-        return self.box[2:]
-    block = property(_get_block)
-
-    def getBezierPath(self, p=None):
-        """Answers a BezierPath representation, in the data-format of self.context,
-        translated to optional position p
-
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> e = Polygon(context=context)
-        >>> e.rect(100, 100, 300, 400) # Relative to e.x, e.y
-        >>> bp = e.getBezierPath((150, 150))
-        >>> from fontTools.pens.basePen import BasePen
-        >>> isinstance(bp, BasePen)
-        True
-        """
-        if p is None:
-            p = self.x, self.y
-        """
-        # create a bezier path
-        path = self.context.b.BezierPath()
-        # draw a triangle
-        # move to a point
-        path.moveTo((200, 200))
-        # line to a point
-        path.lineTo((200, 300))
-        path.lineTo((400, 300))
-        path.lineTo((400, 100))
-        path.lineTo((300, 50))
-        # close the path
-        path.closePath()
-        # save the graphics state so the clipping happens only
-        # temporarily
-        return path
-        """
-        context = self.context # Should not be None
-        assert context is not None
-        path = context.newPath()
-        if self.points:
-            for pIndex, point in enumerate(self.points):
-                px = point[0] + p[0]
-                py = point[1] + p[1]
-                if pIndex == 0:
-                    path.moveTo((px, py))
-                else:
-                    path.lineTo((px, py))
-        path.closePath()
-        return path
 
     #   D R A W B O T / F L A T  S U P P O R T
 
@@ -254,7 +105,8 @@ class Polygon(Element):
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
-        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
+        self.draw(view, origin)
+        #view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     #   H T M L  /  C S S  S U P P O R T
 
@@ -263,6 +115,161 @@ class Polygon(Element):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
         # TODO: Needs a solution, SVG or pixels?
+
+    def translate(self, p):
+        """
+        >>> pn = Polygon(x=120, y=130)
+        >>> pn.rect(10, 10, 200, 360)
+        >>> pn.x, pn.left
+        (120pt, 120pt)
+        >>> pn.box
+        (130pt, 140pt, 200pt, 360pt)
+        >>> # Move the position of the embedded points, not (self.x, self.y).
+        >>> pn.translate((120, 10))
+        >>> pn.x, pn.left
+        (120pt, 120pt)
+        >>> pn.box
+        (250pt, 150pt, 200pt, 360pt)
+        """
+        dx, dy = point2D(p)
+        points = []
+        for point in self.points:
+            points.append((point[0] + dx, point[1] + dy))
+        self.points = points
+
+    def _set_scale(self, sx, sy=None):
+        """
+        >>> pn = Polygon(x=33, y=44)
+        >>> pn.rect(10, 10, 200, 360)
+        >>> pn.x, pn.left
+        (33pt, 33pt)
+        >>> # Element position + point positions.
+        >>> pn.box
+        (43pt, 54pt, 200pt, 360pt)
+        >>> pn._set_scale(0.6)
+        >>> pn.x, pn.left
+        (33pt, 33pt)
+        >>> pn.box
+        (39pt, 50pt, 120pt, 216pt)
+        """
+        points = []
+
+        if sy is None:
+            sy = sx
+
+        for point in self.points:
+            # Scale relative to (self.x, self.y) origin.
+            px = point[0] * sx
+            py = point[1] * sy
+            points.append((px, py))
+
+        self.points = points
+
+    def _get_box(self):
+        """ Get the (x, y, w, h) box of all points.
+
+        >>> e = Polygon()
+        >>> e.rect(100, 100, 220, 330)
+        >>> e.points
+        [(100pt, 100pt), (100pt, 430pt), (320pt, 430pt), (320pt, 100pt)]
+
+        >>> e.box
+        (100pt, 100pt, 220pt, 330pt)
+        """
+        x = y = XXXL
+        w = h = 0
+        if not self.points:
+            return pt(0, 0, 0, 0)
+        for point in self.points:
+            x = min(x, self.x+point[0])
+            y = min(y, self.y+point[1])
+            w = max(w, self.x+point[0]-x)
+            h = max(h, self.y+point[1]-y)
+        # (x, y) including (self.x, self.y).
+        return x, y, w, h
+
+    box = property(_get_box)
+
+    def rect(self, x, y, w, h):
+        """Creates a rectangle polygon.
+
+        >>> e = Polygon()
+        >>> e.rect(10, 10, 220, 330)
+        >>> e.points
+        [(10pt, 10pt), (10pt, 340pt), (230pt, 340pt), (230pt, 10pt)]
+        >>> e.block
+        (220pt, 330pt)
+        """
+        self.points = []
+        # Relative offset to (self.x, self.y).
+        self.append((x, y))
+        self.append((x, y+h))
+        self.append((x+w, y+h))
+        self.append((x+w, y))
+        self.closePath = True
+
+    def _get_block(self):
+        """Answers the bounding box of the contained points,
+        relative to (self.x, self.y).
+
+        >>> e = Polygon(x=125, y=230)
+        >>> e.append((0, 0))
+        >>> e.append((100, 0))
+        >>> e.append((50, 80))
+        >>> e.closePath = True
+        >>> e.points
+        [(0pt, 0pt), (100pt, 0pt), (50pt, 80pt)]
+        >>> e.block
+        (100pt, 80pt)
+        """
+        return self.box[2:]
+    block = property(_get_block)
+
+    def getBezierPath(self, p=None):
+        """Answers a BezierPath representation, in the data-format of self.context,
+        translated to optional position p.
+
+        >>> from pagebot.contexts import getContext
+        >>> context = getContext()
+        >>> e = Polygon(context=context)
+        >>> e.rect(100, 100, 300, 400) # Relative to e.x, e.y
+        >>> bp = e.getBezierPath((150, 150))
+        >>> from fontTools.pens.basePen import BasePen
+        >>> isinstance(bp, BasePen)
+        True
+        """
+        if p is None:
+            p = self.x, self.y
+        """
+        # create a bezier path
+        path = self.context.b.BezierPath()
+        # draw a triangle
+        # move to a point
+        path.moveTo((200, 200))
+        # line to a point
+        path.lineTo((200, 300))
+        path.lineTo((400, 300))
+        path.lineTo((400, 100))
+        path.lineTo((300, 50))
+        # close the path
+        path.closePath()
+        # save the graphics state so the clipping happens only
+        # temporarily
+        return path
+        """
+        context = self.context # Should not be None
+        assert context is not None
+        path = context.newPath()
+        if self.points:
+            for pIndex, point in enumerate(self.points):
+                px = point[0] + p[0]
+                py = point[1] + p[1]
+                if pIndex == 0:
+                    path.moveTo((px, py))
+                else:
+                    path.lineTo((px, py))
+        path.closePath()
+        return path
 
 class Mask(Polygon):
     """Masks don't draw by themselves, unless a fill color or stroke color

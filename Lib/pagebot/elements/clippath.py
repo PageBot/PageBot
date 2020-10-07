@@ -15,8 +15,7 @@
 #     clippath.py
 #
 class ClipPath:
-
-    #   C L I P  P A T H
+    """A vector path to mask a shape."""
 
     def _get_clipPath(self):
         """Answers the self._clipPath value. It not set, then look for a
@@ -25,7 +24,7 @@ class ClipPath:
         """
 
         """
-        >>> from pagebot.conditions import *
+        TODO: complete this.
         >>> from pagebot import getContext
         >>> from pagebot.document import Document
         >>> context = getContext()
@@ -42,8 +41,10 @@ class ClipPath:
                 # the clipPath to the current position upon usage.
                 self._clipPath = mask.getBezierPath()
         return self._clipPath
+
     def _set_clipPath(self, clipPath):
         self._clipPath = clipPath
+
     clipPath = property(_get_clipPath, _set_clipPath)
 
     def _get_childClipPath(self):

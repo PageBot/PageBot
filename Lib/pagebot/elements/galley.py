@@ -26,7 +26,7 @@ class Galley(Element):
     """A Galley is a sticky sequential flow of elements, where the parts can
     have different widths (like headlines, images and tables) or responsive
     width, such as images and formatted text volumes. Size is calculated
-    dynamically, since one of the enclosed elements may change width or height
+    dynamically, because one of the enclosed elements may change width or height
     at any time during the composition process. Also the sequence may change by
     slicing, adding or removing elements by the Composer. Because the Galley is
     an Element, it can contain other galley instances recursively."""
@@ -61,17 +61,23 @@ class Galley(Element):
 
     def appendElement(self, e):
         """Add element to the list of child elements. Note that elements can be
-        added multiple times.  If the element is alread placed in another
-        container, then remove it from its current parent.  This relation and
+        added multiple times. If the element is alread placed in another
+        container, then remove it from its current parent. This relation and
         position is lost. The position e is supposed to be filled already in
         local position."""
         eParent = e.parent
         if not eParent is None:
-            eParent.removeElement(e) # Remove from current parent, if there is one.
-        self._elements.append(e) # Possibly add to self again, will move it to the top of the element stack.
-        e.setParent(self) # Set parent of element without calling this method again.
-        if e.eId: # Store the element by unique element id, if it is defined.
+            # Remove from current parent, if there is one.
+            eParent.removeElement(e)
+            # Possibly add to self again, will move it to the top of the
+            # element stack.
+        self._elements.append(e)
+        # Set parent of element without calling this method again.
+        e.setParent(self)
+        # Store the element by unique element id, if it is defined.
+        if e.eId:
             self._eIds[e.eId] = e
+
         # If this is a text box, then set self.lastText
         if e.isText:
             self.lastText = e
@@ -81,7 +87,8 @@ class Galley(Element):
         """Answers the enclosing rectangle of all elements in the galley."""
         w = self.w or 0
         h = self.h or 0
-        if w and h: # Galley has fixed/forced size:
+        # Galley has fixed/forced size:
+        if w and h:
             return w, h
         # No fixed size set. Calculate required size from contained elements.
         for e in self.elements:
@@ -106,8 +113,8 @@ class Galley(Element):
     def newText(self, bs):
         """Creates a new *self.TEXTBOX_CLASS* instance, filled with the *fs*
         BabelString. The actual type of string depends on the current content.
-        Appends the element to *self* (also setting self.lastText) and
-        answer the element."""
+        Appends the element to *self* (also setting self.lastText) and answer
+        the element."""
         tb = self.TEXTBOX_CLASS(bs, parent=self)
         self.appendElement(tb) # Will set the self.lastText by local self.appendElement(tb)
         return tb
@@ -147,7 +154,7 @@ class Galley(Element):
             for e in self.elements:
                 if not e.show:
                     continue
-                # @@@ Find space and do more composition
+                # Find space and do more composition.
                 if hasattr(e, hook):
                     getattr(e, hook)(view, (px, py + gy), **kwargs)
                 else:
@@ -165,7 +172,8 @@ class Galley(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, path, drawElements=True, **kwargs):
-        if self.drawBefore is not None: # Call if defined
+        # Call if defined.
+        if self.drawBefore is not None:
             self.drawBefore(self, view)
 
         if drawElements:
@@ -185,7 +193,8 @@ class Column(Galley):
         context = view.context # Get current context.
         b = context.b
 
-        # Use self.cssClass if defined, otherwise self class. #id is ignored if None
+        # Uses self.cssClass if defined, otherwise self class. ID is ignored if
+        # None.
         b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
 
         if self.drawBefore is not None: # Call if defined
@@ -198,7 +207,7 @@ class Column(Galley):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)
 
-        b._div() # self.cssClass or self.__class__.__name__
+        b._div()
 
 if __name__ == '__main__':
     import doctest
