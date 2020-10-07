@@ -513,8 +513,6 @@ class PageView(BaseView):
         # Ignore z-axis for now.
         px, py, _ = p = e._applyAlignment(p)
 
-        #print(e.showFlowConnections)
-
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
             fmf = 0.15
             #self.css('viewFlowCurvatureFactor', 0.15)
