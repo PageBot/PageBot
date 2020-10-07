@@ -370,4 +370,3 @@ class Showings:
         self.style['showImageReference'] = bool(showImageReference)
 
     showImageReference = property(_get_showImageReference, _set_showImageReference)
-

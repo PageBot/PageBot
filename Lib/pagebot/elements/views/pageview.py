@@ -32,7 +32,6 @@ from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, QUIRE_SPREAD,
     BASE_INSIDE, DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
     ECI_GrayConL, COLORBAR_LEFT, COLORBAR_RIGHT)
 from pagebot.toolbox.units import pt, upt, pointOffset, point2D
-from pagebot.elements.quire import Quire
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -181,15 +180,14 @@ class PageView(BaseView):
                 self.drawBefore(page, self, origin)
 
             # If there is meta info requested for the background,
-            # then draw that now here.
+            # draw it.
             self.drawPageMetaInfoBackground(page, origin)
 
-            # Since self already adjust origin, scale, etc. we don't use the
-            # page.build here. Instead we calle the drawing of its elements
-            # too.
+            # Because self already adjusts the origin, scale, etc. we don't use
+            # the page.build, but we call its child elements build.
             page.buildChildElements(self, origin, **kwargs)
 
-            # If there is meta info request at the foreground, then draw it.
+            # If there is meta info request for the foreground, draw it.
             self.drawPageMetaInfo(page, origin)
 
             if self.drawAfter is not None: # Call if defined
@@ -231,8 +229,8 @@ class PageView(BaseView):
     #   D R A W I N G  P A G E  M E T A  I N F O
 
     def drawPageMetaInfo(self, page, origin, path=None):
-        """Draw the foreground meta info of the page, depending on the settings
-        of the flags.
+        """Draw the foreground meta info of the page, depending on the
+        settings.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -264,8 +262,8 @@ class PageView(BaseView):
         self.drawBaselines(page, origin, background=False)
 
     def drawPageMetaInfoBackground(self, page, origin, path=None):
-        """Draws the foreground meta info of the page, depending on the settings
-        of the flags.
+        """Draws the foreground meta info of the page, depending on the
+        settings.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -512,6 +510,7 @@ class PageView(BaseView):
         p = e._applyScale(self, p)
         # Ignore z-axis for now.
         px, py, _ = p = e._applyAlignment(p)
+        print('draw flow', e)
 
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
             fmf = 0.15

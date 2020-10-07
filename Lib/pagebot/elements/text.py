@@ -366,9 +366,7 @@ class Text(Element, TextConditions, TextAlignments):
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
-        # Depends on css flag 'showElementInfo'.
-        view.drawElementInfo(self, origin)
-        view.drawElementOrigin(self, origin)
+        self.draw(view, origin)
 
     def copy(self, parent=None):
         """Answers a full copy of `self`, where the "unique" fields are set to

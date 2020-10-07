@@ -780,8 +780,15 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
+        self.draw(view, origin)
+
+    def draw(self, view, origin):
+        """Element draw function based on style settings."""
         # Depends on flag 'view.showElementInfo'.
         view.drawElementInfo(self, origin)
+        view.drawElementOrigin(self, origin)
+        view.drawFlowConnections(self, origin)
+
 
     def buildElement(self, view, p, drawElements=True, **kwargs):
         """Main drawing method for elements to draw their content and the

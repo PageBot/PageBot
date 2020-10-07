@@ -52,16 +52,13 @@ class Oval(Element):
         context.fill(self.css('fill', noColor))
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         context.oval(px, py, self.w, self.h)
-
         if drawElements:
             self.buildChildElements(view, p, **kwargs)
-
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
-        view.drawElementInfo(self, origin)
-        view.drawElementOrigin(self, origin)
+        self.draw(view, origin)
 
     def build_inds(self, view, origin, drawElements=True):
         """It is better to have a separate InDesignContext build tree, because

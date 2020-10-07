@@ -230,6 +230,7 @@ class PageMapView(BaseView):
             self.drawElementOrigin(page, origin)
         self.drawGrid(page, origin, background=background)
         self.drawBaselines(page, origin, background=background)
+        self.drawFlowConnections(page, origin)
 
     def drawFrame(self, e, origin):
         """Draws the page frame if the the flag is on and if there is enough
@@ -455,7 +456,7 @@ class PageMapView(BaseView):
             context.rect(x+e.w, y, max(1,mr), e.h)
             context.rect(x-ml, y-mb, ml+e.w+mr, max(1,mb))
             context.rect(x-ml, y+e.h, ml+e.w+mr, max(1,mt))
-}
+
     def drawElementInfo(self, e, origin):
         """For debugging this will make the elements show their info. The css
         flag "showOrigin" defines if the origin marker of an element is
