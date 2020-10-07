@@ -24,7 +24,7 @@ from pagebot.filepaths import getResourcesPath
 from pagebot.toolbox.color import color, noColor, blackColor, registrationColor
 from pagebot.elements.views.baseview import BaseView
 from pagebot.elements.quire import Quire
-from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, QUIRE_SPREAD, #ORIGIN,
+from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, QUIRE_SPREAD,
     BOTTOM_FOLD, TOP_FOLD, LEFT_FOLD, RIGHT_FOLD,
     GRID_COL, GRID_ROW, GRID_SQR,
     GRID_COL_BG, GRID_ROW_BG, GRID_SQR_BG, BASE_LINE, BASE_LINE_BG,
@@ -32,6 +32,7 @@ from pagebot.constants import (TOP, RIGHT, BOTTOM, LEFT, QUIRE_SPREAD, #ORIGIN,
     BASE_INSIDE, DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH,
     ECI_GrayConL, COLORBAR_LEFT, COLORBAR_RIGHT)
 from pagebot.toolbox.units import pt, upt, pointOffset, point2D
+from pagebot.elements.quire import Quire
 from pagebot.toolbox.transformer import *
 
 class PageView(BaseView):
@@ -512,14 +513,16 @@ class PageView(BaseView):
         # Ignore z-axis for now.
         px, py, _ = p = e._applyAlignment(p)
 
+        #print(e.showFlowConnections)
+
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
-            fmf = 0.15#self.css('viewFlowCurvatureFactor', 0.15)
+            fmf = 0.15
+            #self.css('viewFlowCurvatureFactor', 0.15)
             for startE in e.elements:
                 nextE = startE.next
                 if nextE is not None:
                     # For all the flow sequences found in the page, draw flow
-                    # arrows at offset (ox, oy) This offset is defined by
-                    # optional
+                    # arrows at offset (ox, oy).
                     sx = startE.right
                     sy = startE.bottom
                     nx = nextE.left
@@ -537,7 +540,8 @@ class PageView(BaseView):
 
                     context.newPath()
                     context.moveTo((sx, sy))
-                    context.curveTo((xb1, yb1), (xb2, yb2), (nx, ny)) #((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+                    context.curveTo((xb1, yb1), (xb2, yb2), (nx, ny))
+                    #((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
                     context.drawPath()
 
     def drawArrow(self, e, xs, ys, xt, yt, onText=1, startMarker=False,
@@ -590,7 +594,8 @@ class PageView(BaseView):
         context.newPath()
         context.fill(noColor)
         context.moveTo((xs, ys))
-        context.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
+        # End in middle of arrow head.
+        context.curveTo((xb1, yb1), (xb2, yb2), ((ax1+ax2)/2, (ay1+ay2)/2))
         context.drawPath()
 
         #  Draw the arrow head.
@@ -643,15 +648,15 @@ class PageView(BaseView):
             pw, ph = e.w, e.h
 
             if (self.showElementInfo and e.isPage) or e.showElementInfo:
-                self.drawInfo(e, px, py, pw, ph)
+                self.drawInfoBox(e, px, py, pw, ph)
 
             if (self.showDimensions and e.isPage) or e.showDimensions:
                 self.drawDimensions(px, py, pw, ph)
 
             e._restoreScale(self)
 
-    def drawInfo(self, e, px, py, pw, ph):
-        # Draw box with element info.
+    def drawInfoBox(self, e, px, py, pw, ph):
+        """Draw box with element info."""
         style = dict(font=self.css('viewInfoFont'),
                     fontSize=self.css('viewInfoFontSize'),
                     leading=self.css('viewInfoLeading'),
@@ -678,8 +683,9 @@ class PageView(BaseView):
         self.context.text(bs, (tpx+Pd, tpy+th))
 
     def drawDimensions(self, px, py, pw, ph):
-        # TODO: Make separate arrow function and better positions
-        # Draw width and height measures
+        """Draws width and height measures."""
+        # TODO: Make separate arrow function and improve positions.
+
         self.context.fill(noColor)
         self.context.stroke(blackColor, w=pt(0.25))
         S = self.css('viewInfoOriginMarkerSize', pt(5))
@@ -688,6 +694,7 @@ class PageView(BaseView):
         self.context.line((px,    py - 0.5*S), (px,      py - 3.5*S))
         self.context.line((px+pw, py - 0.5*S), (px+pw,   py - 3.5*S))
         self.context.line((px,    py - 2*S),   (px+pw,   py - 2*S))
+
         # Arrow heads
         self.context.line((px,    py - 2*S),   (px+S,    py - 1.5*S))
         self.context.line((px,    py - 2*S),   (px+S,    py - 2.5*S))
@@ -706,6 +713,7 @@ class PageView(BaseView):
         self.context.line((px+pw+0.5*S, py),    (px+pw+3.5*S, py))
         self.context.line((px+pw+0.5*S, py+ph), (px+pw+3.5*S, py+ph))
         self.context.line((px+pw+2*S,   py),    (px+pw+2*S,   py+ph))
+
         # Arrow heads
         self.context.line((px+pw+2*S, py+ph),   (px+pw+2.5*S, py+ph-S))
         self.context.line((px+pw+2*S, py+ph),   (px+pw+1.5*S, py+ph-S))

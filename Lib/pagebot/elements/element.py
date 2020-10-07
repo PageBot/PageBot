@@ -20,14 +20,7 @@ import copy
 
 from pagebot.conditions.score import Score
 from pagebot.style import makeStyle, getRootStyle
-from pagebot.constants import (MIDDLE, CENTER, RIGHT, TOP, BOTTOM, LEFT, FRONT,
-        BACK, XALIGNS, YALIGNS, ZALIGNS, XTEXTALIGNS, YTEXTALIGNS,
-        DEFAULT_FONT_SIZE, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH, XXXL,
-        DEFAULT_LANGUAGE, ONLINE, INLINE, OUTLINE, GRID_OPTIONS, BASE_OPTIONS,
-        DEFAULT_GRID, DEFAULT_BASELINE, DEFAULT_COLOR_BARS, DEFAULT_LEADING,
-        DEFAULT_TRACKING, DEFAULT_REGISTRATIONMARKS, DEFAULT_CROPMARKS,
-        DEFAULT_MININFOPADDING, VIEW_PRINT, VIEW_PRINT2, VIEW_DEBUG,
-        VIEW_DEBUG2, VIEW_FLOW)
+from pagebot.constants import *
 from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.contexts.basecontext.bezierpath import BezierPath
@@ -45,10 +38,11 @@ from pagebot.elements.conditions import Conditions
 from pagebot.elements.flow import Flow
 from pagebot.elements.imaging import Imaging
 from pagebot.elements.shrinking import Shrinking
+from pagebot.elements.showings import Showings
 from pagebot.elements.template import Template
 
 class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
-        Template):
+        Template, Showings):
     """The base element object."""
 
     # Initializes the default Element behavior flags. These flags can be
@@ -84,7 +78,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
             xAlign=None, yAlign=None, zAlign=None, proportional=None,
             # Viewing parameters, local overwrite on self.doc.view parameters
-            showBaselineGrid=None, showCropMarks=None,
+            showBaselineGrid=None, showCropMarks=None, showFlowConnections=None,
             showRegistrationMarks=None, showPadding=None,
             viewPaddingStroke=None, viewPaddingStrokeWidth=None,
             showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
@@ -365,6 +359,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         self.showPadding = showPadding
         self.showMargin = showMargin
         self.showFrame = showFrame
+        self.showFlowConnections = showFlowConnections
         self.viewFrameStroke = viewFrameStroke
         self.viewFrameStrokeWidth = viewFrameStrokeWidth
         self.viewPaddingStroke = viewPaddingStroke
@@ -4861,156 +4856,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
         return score
 
-    #   S H O W I N G  P R O P E R T I E S (stored as style attribute, mostly used by views)
-
-    #   Note that the viewing property values are NOT inherited by self.css(...) following
-    #   the element tree upwards. Instead they are local parameters for each element, page
-    #   or view.
-
-    def setShowings(self, *args):
-        """Sets the showing flags of self (often a View instance) to predefined
-        flags, depending on a type of stage of usage."""
-        setNames = set(args)
-
-        self.show = True
-        self.showSpread = False
-        self.viewMinInfoPadding = 0
-        self.showCropMarks = False
-        self.showRegistrationMarks = False
-        self.showColorBars = False
-        self.showOrigin = False
-        self.showPadding = False # Show the (inside) frame of padding
-        self.showFrame = False # Showing the element boundaries.
-        self.showMargin = False # Showing the (outside) frame of margin.
-        self.showNameInfo = False
-        self.showElementInfo = False
-        self.showMissingElement = False
-        self.showGrid = False
-        self.showBaselineGrid = False
-        self.showTextLeading = False
-        self.showFlowConnections = False
-        self.showTextOverflowMarker = False
-        self.showImageReference = False
-        self.cssVerbose = False
-
-        if VIEW_PRINT in setNames:
-            # View settings flags to True for print (such as crop marks and
-            # registration marks).
-            self.showSpread = True
-            self.viewMinInfoPadding = DEFAULT_MININFOPADDING
-            self.showCropMarks = DEFAULT_CROPMARKS
-            self.showRegistrationMarks = DEFAULT_REGISTRATIONMARKS
-            self.showNameInfo = True
-            if self.isView:
-                self.padding = DEFAULT_MININFOPADDING
-
-        if VIEW_PRINT2 in setNames:
-            # Extended show options for printing
-            self.showColorBars = True
-
-        if VIEW_DEBUG in setNames:
-            # View settings flags to True that are useful for debugging a document
-            self.showPadding = True
-            self.showMargin = True
-            self.showFrame = True
-            self.showGrid = DEFAULT_GRID
-            self.showBaselineGrid = DEFAULT_BASELINE
-            self.showTextLeading = True
-
-        if VIEW_DEBUG2 in setNames:
-            self.showOrigin = True
-            self.showElementInfo = True
-            self.showMissingElement = True
-            self.cssVerbose = True
-
-        if VIEW_FLOW in setNames:
-            self.showFlowConnections = True
-            self.showTextOverflowMarker = True
-            self.showImageReference = True
-
-        #else VIEW_NONE in setNames: # View settings are all off.
-
-    def _get_show(self):
-        """Set flag for drawing or interpretation with conditional.
-
-        >>> e = Element(show=False) # Set a separate attribute
-        >>> e.show
-        False
-        >>> e.show = True
-        >>> e.show
-        True
-        >>> e = Element(style=dict(show=False)) # Set through local style
-        >>> e.show
-        False
-        >>> e1 = Element()
-        >>> e1.show # Default is True
-        True
-        >>> i = e.appendElement(e1) # Add to parent, inheriting show == False
-        >>> e1.show
-        False
-        """
-        return self.css('show', True) # Inherited
-    def _set_show(self, showFlag):
-        self.style['show'] = showFlag # Hiding rest of css for this value.
-    show = property(_get_show, _set_show)
-
-    def _get_showSpread(self):
-        """Boolean value. If True, show even pages on left of fold, odd on the right.
-        Gap distance between the spread pages is defined by the page margins."""
-        return self.style.get('showSpread', False) # Not inherited
-    def _set_showSpread(self, spread):
-        self.style['showSpread'] = bool(spread)
-    showSpread = property(_get_showSpread, _set_showSpread)
-
-    # Document/page stuff
-    def _get_viewMinInfoPadding(self):
-        """Unit value. # Minimum padding needed to show meta info. Otherwise truncated
-        to 0 and not showing meta info."""
-        #base = dict(base=self.parentW, em=self.em) # In case relative units, use this as base for %
-        return units(self.style.get('viewMinInfoPadding', 0))#, base=base) # Not inherited
-    def _set_viewMinInfoPadding(self, viewMinInfoPadding):
-        self.style['viewMinInfoPadding'] = units(viewMinInfoPadding)
-    viewMinInfoPadding = property(_get_viewMinInfoPadding, _set_viewMinInfoPadding)
-
-    def _get_showCropMarks(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks
-        around the elemment."""
-        return self.style.get('showCropMarks') or {} # Not inherited
-
-    def _set_showCropMarks(self, showCropMarks):
-        if not showCropMarks:
-            showCropMarks = {}
-        elif not isinstance(showCropMarks, (set, list, tuple, dict)):
-            showCropMarks = DEFAULT_CROPMARKS
-        assert isinstance(showCropMarks, (set, list, tuple, dict))
-        self.style['showCropMarks'] = showCropMarks
-
-    showCropMarks = property(_get_showCropMarks, _set_showCropMarks)
-
-    def _get_showRegistrationMarks(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show
-        registration  marks around the elemment."""
-        return self.style.get('showRegistrationMarks') or {} # Not inherited
-
-    def _set_showRegistrationMarks(self, showRegistrationMarks):
-        if not showRegistrationMarks:
-            showRegistrationMarks = {}
-        elif not isinstance(showRegistrationMarks, (set, list, dict, tuple)):
-            showRegistrationMarks = DEFAULT_REGISTRATIONMARKS
-        assert isinstance(showRegistrationMarks, (set, list, tuple, dict))
-        self.style['showRegistrationMarks'] = showRegistrationMarks
-
-    showRegistrationMarks = property(_get_showRegistrationMarks, _set_showRegistrationMarks)
-
-    def _get_viewFrameStroke(self):
-        """Answers local setting of frame stroke color, used if self.showFrame
-        is True. Note that this is independent from the element border
-        showing."""
-        return self.style.get('viewFrameStroke') # Not inherited
-    def _set_viewFrameStroke(self, stroke):
-        self.style['viewFrameStroke'] = stroke
-    viewFrameStroke = property(_get_viewFrameStroke, _set_viewFrameStroke)
-
     def _get_viewFrameStrokeWidth(self):
         """Answers local setting of frame stroke width, used if self.showFrame
         is True. Note that this is independent from the element border
@@ -5024,14 +4869,17 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Answers local setting of padding stroke color, used if
         self.showPadding is True."""
         return self.style.get('viewPaddingStroke') # Not inherited
+
     def _set_viewPaddingStroke(self, stroke):
         self.style['viewPaddingStroke'] = stroke
+
     viewPaddingStroke = property(_get_viewPaddingStroke, _set_viewPaddingStroke)
 
     def _get_viewPaddingStrokeWidth(self):
         """Answers local setting of padding stroke width, used if
         self.showFrame is True."""
         return self.style.get('viewPaddingStrokeWidth') # Not inherited
+
     def _set_viewPaddingStrokeWidth(self, strokeWidth):
         self.style['viewPaddingStrokeWidth'] = strokeWidth
     viewPaddingStrokeWidth = property(_get_viewPaddingStrokeWidth, _set_viewPaddingStrokeWidth)
@@ -5040,14 +4888,17 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Answers local setting of margin stroke color, used if
         self.showMargin is True."""
         return self.style.get('viewMarginStroke') # Not inherited
+
     def _set_viewMarginStroke(self, stroke):
         self.style['viewMarginStroke'] = stroke
+
     viewMarginStroke = property(_get_viewMarginStroke, _set_viewMarginStroke)
 
     def _get_viewMarginStrokeWidth(self):
         """Answers local setting of margin stroke width, used if
         self.showMargin is True."""
         return self.style.get('viewMarginStrokeWidth') # Not inherited
+
     def _set_viewMarginStrokeWidth(self, strokeWidth):
         self.style['viewMarginStrokeWidth'] = strokeWidth
     viewMarginStrokeWidth = property(_get_viewMarginStrokeWidth, _set_viewMarginStrokeWidth)
@@ -5056,6 +4907,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Sets value, containing the selection of color bars that should be
         shown. See pagebot.constants for the names of the options."""
         return set(self.style.get('showColorBars') or []) # Not inherited
+
     def _set_showColorBars(self, showColorBars):
         if not showColorBars:
             showColorBars = []
@@ -5067,6 +4919,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             else:
                 showColorBars = [] # Don't show them
         self.style['showColorBars'] = set(showColorBars)
+
     showColorBars = property(_get_showColorBars, _set_showColorBars)
 
     def _get_showOrigin(self):
@@ -5080,40 +4933,50 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     def _get_showPadding(self):
         """Boolean value. If True show padding of the page or other elements."""
         return self.style.get('showPadding', False) # Not inherited
+
     def _set_showPadding(self, showPadding):
         self.style['showPadding'] = bool(showPadding)
+
     showPadding = property(_get_showPadding, _set_showPadding)
 
     def _get_showMargin(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         margin of the page or other elements."""
         return self.style.get('showMargin', False) # Not inherited
+
     def _set_showMargin(self, showMargin):
         self.style['showMargin'] = bool(showMargin)
+
     showMargin = property(_get_showMargin, _set_showMargin)
 
     def _get_showFrame(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding,
         show frame of the page or other elements as self.size."""
         return self.style.get('showFrame', False) # Not inherited
+
     def _set_showFrame(self, showFrame):
         self.style['showFrame'] = bool(showFrame)
+
     showFrame = property(_get_showFrame, _set_showFrame)
 
     def _get_showNameInfo(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding,
         show the name of the page or other elements."""
         return self.style.get('showNameInfo', False) # Not inherited
+
     def _set_showNameInfo(self, showNameInfo):
         self.style['showNameInfo'] = bool(showNameInfo)
+
     showNameInfo = property(_get_showNameInfo, _set_showNameInfo)
 
     def _get_showElementInfo(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding,
         show the meta info of the page or other elements."""
         return self.style.get('showElementInfo', False) # Not inherited
+
     def _set_showElementInfo(self, showElementInfo):
         self.style['showElementInfo'] = bool(showElementInfo)
+
     showElementInfo = property(_get_showElementInfo, _set_showElementInfo)
 
     def _get_showIdClass(self):
@@ -5121,16 +4984,20 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         if they are defined.
         """
         return self.style.get('showIdClass', False) # Not inherited
+
     def _set_showIdClass(self, showIdClass):
         self.style['showIdClass'] = bool(showIdClass)
+
     showIdClass = property(_get_showIdClass, _set_showIdClass)
 
     def _get_showDimensions(self):
         """Boolean value. If True and enough space by self.viewMinInfoPadding, show
         the dimensions of the page or other elements."""
         return self.style.get('showDimensions', False) # Not inherited
+
     def _set_showDimensions(self, showDimensions):
         self.style['showDimensions'] = bool(showDimensions)
+
     showDimensions = property(_get_showDimensions, _set_showDimensions)
 
     def _get_showMissingElement(self):
@@ -5197,14 +5064,16 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         self.style['showTextLeading'] = bool(showTextLeading)
     showTextLeading = property(_get_showTextLeading, _set_showTextLeading)
 
-    #   Flow stuff
+    #   Flow connections.
 
     def _get_showFlowConnections(self):
         """Boolean value. If True show connection between elements the overflow
         text lines."""
         return self.style.get('showFlowConnections', False) # Not inherited
+
     def _set_showFlowConnections(self, showFlowConnections):
         self.style['showFlowConnections'] = bool(showFlowConnections)
+
     showFlowConnections = property(_get_showFlowConnections, _set_showFlowConnections)
 
     def _get_showTextOverflowMarker(self):
@@ -5214,6 +5083,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _set_showTextOverflowMarker(self, showTextOverflowMarker):
         self.style['showTextOverflowMarker'] = bool(showTextOverflowMarker)
+
     showTextOverflowMarker = property(_get_showTextOverflowMarker, _set_showTextOverflowMarker)
 
     #   Spread stuff
