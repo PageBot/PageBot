@@ -34,7 +34,7 @@ from pagebot.toolbox.transformer import *
 class PageMapView(BaseView):
     """The PageMapView contains the set of Quire instances to export the pages
     as documents. A View is just another kind of container, kept by a Document
-    to make a certain presentation of the page tree. The PageView typically
+    to make a certain presentation of the page tree. The MapView typically
     holds Quire elements that make one-directional links to document pages in
     order to compose them in spreads or folding compositions."""
     viewId = 'Page'
@@ -337,7 +337,7 @@ class PageMapView(BaseView):
                 self.pb + e.h + cmSize - fontSize*2))
 
 
-    def drawFlowConnections(self, e, origin, b):
+    def drawFlowConnections(self, e, origin):
         """If rootStyle.showFlowConnections is True, draw the flow connections
         on the page, using their stroke / width settings of the style."""
         px, py, _ = pointOffset(self.point, origin) # Ignore z-axis for now.
