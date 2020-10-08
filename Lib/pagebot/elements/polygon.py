@@ -60,8 +60,10 @@ class Polygon(Element):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin, drawElements=True, **kwargs):
-        context = self.context # Get current context and builder.
-        b = context.b # This is a bit more efficient than self.b once we got context
+        # Get current context and builder.
+        context = self.context
+        # This is a bit more efficient than self.b once we got context
+        #b = context.b
 
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -80,9 +82,8 @@ class Polygon(Element):
 
         #context.fill(self.css('fill'))
         #context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
-        bezierPath = self.getBezierPath(p)
-        # FIXME: don't use builder, use context.
-        b.drawPath(bezierPath)
+        path = self.getPath(p)
+        context.drawPath(path)
 
         # Debugging where it moved.
         #context.b.fill(0, 0, 1, 0.5)
@@ -107,7 +108,6 @@ class Polygon(Element):
         self._restoreRotation(view, p)
         self._restoreScale(view)
         self.draw(view, origin)
-        #view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     #   H T M L  /  C S S  S U P P O R T
 
@@ -226,38 +226,22 @@ class Polygon(Element):
         return self.box[2:]
     block = property(_get_block)
 
-    def getBezierPath(self, p=None):
+    def getPath(self, p=None):
         """Answers a BezierPath representation, in the data-format of self.context,
         translated to optional position p.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
-        >>> e = Polygon(context=context)
-        >>> e.rect(100, 100, 300, 400) # Relative to e.x, e.y
-        >>> bp = e.getBezierPath((150, 150))
+        >>> poly = Polygon(context=context)
+        >>> poly.rect(100, 100, 300, 400) # Relative to e.x, e.y
+        >>> bp = poly.getPath((150, 150))
         >>> from fontTools.pens.basePen import BasePen
         >>> isinstance(bp, BasePen)
         True
         """
         if p is None:
             p = self.x, self.y
-        """
-        # create a bezier path
-        path = self.context.b.BezierPath()
-        # draw a triangle
-        # move to a point
-        path.moveTo((200, 200))
-        # line to a point
-        path.lineTo((200, 300))
-        path.lineTo((400, 300))
-        path.lineTo((400, 100))
-        path.lineTo((300, 50))
-        # close the path
-        path.closePath()
-        # save the graphics state so the clipping happens only
-        # temporarily
-        return path
-        """
+
         context = self.context # Should not be None
         assert context is not None
         path = context.newPath()
