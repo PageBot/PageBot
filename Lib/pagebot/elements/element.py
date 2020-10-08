@@ -47,11 +47,14 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     # Initializes the default Element behavior flags. These flags can be
     # overwritten by inheriting classes, or dynamically in instances, e.g.
-    # where the settings of Text.nextBox and Text.nextPage define if a
-    # Text instance can operate as a flow.
+    # where the settings of Text.nextBox and Text.nextPage define if a Text
+    # instance can operate as a flow.
     isText = False
     isText = False
+
     #isFlow property answers if nextElement or prevElement is defined.
+    # isFlow = False
+
     # Set to True by Page-like elements.
     isPage = False
     isView = False
@@ -62,30 +65,31 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     PATH_CLASS = BezierPath
     STRING_CLASS = BabelString
 
-    def __init__(self, x=0, y=0, z=0, xy=None, xyz=None, w=DEFAULT_WIDTH,
-            h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None, wh=None, whd=None,
-            left=None, top=None, right=None, bottom=None, sId=None, lib=None,
-            t=None, timeMarks=None, parent=None, name=None, cssClass=None,
-            cssId=None, title=None, description=None, theme=None,
-            keyWords=None, language=None, style=None, conditions=None,
-            solve=False, framePath=None, elements=None, template=None,
-            nextElement=None, prevElement=None, nextPage=None, clipPath=None,
-            prevPage=None, thumbPath=None, bleed=None, padding=None, pt=0,
-            pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None, mt=0, mr=0, mb=0,
-            ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1, scale=None,
-            borders=None, borderTop=None, borderRight=None, borderBottom=None,
-            borderLeft=None, shadow=None, gradient=None, drawBefore=None,
-            radius=None, drawAfter=None, htmlCode=None, htmlPaths=None,
-            xAlign=None, yAlign=None, zAlign=None, proportional=None,
-            # Viewing parameters, local overwrite on self.doc.view parameters
-            showBaselineGrid=None, showCropMarks=None, showFlowConnections=None,
-            showRegistrationMarks=None, showPadding=None,
-            viewPaddingStroke=None, viewPaddingStrokeWidth=None,
-            showMargin=None,viewMarginStroke=None, viewMarginStrokeWidth=None,
-            showFrame=None, viewFrameStroke=None, viewFrameStrokeWidth=None,
-            context=None, **kwargs):
+    def __init__(self, context=None, x=0, y=0, z=0, xy=None, xyz=None,
+            w=DEFAULT_WIDTH, h=DEFAULT_HEIGHT, d=DEFAULT_DEPTH, size=None,
+            wh=None, whd=None, left=None, top=None, right=None, bottom=None,
+            sId=None, lib=None, t=None, timeMarks=None, parent=None, name=None,
+            cssClass=None, cssId=None, title=None, description=None,
+            theme=None, keyWords=None, language=None, style=None,
+            conditions=None, solve=False, framePath=None, elements=None,
+            template=None, nextElement=None, prevElement=None, nextPage=None,
+            clipPath=None, prevPage=None, thumbPath=None, bleed=None,
+            padding=None, pt=0, pr=0, pb=0, pl=0, pzf=0, pzb=0, margin=None,
+            mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1,
+            scale=None, borders=None, borderTop=None, borderRight=None,
+            borderBottom=None, borderLeft=None, shadow=None, gradient=None,
+            drawBefore=None, radius=None, drawAfter=None, htmlCode=None,
+            htmlPaths=None, xAlign=None, yAlign=None, zAlign=None,
+            proportional=None,
+            # Viewing parameters, local overwrite on self.doc.view parameters.
+            showBaselineGrid=None, showCropMarks=None,
+            showFlowConnections=None, showRegistrationMarks=None,
+            showPadding=None, viewPaddingStroke=None,
+            viewPaddingStrokeWidth=None, showMargin=None,viewMarginStroke=None,
+            viewMarginStrokeWidth=None, showFrame=None, viewFrameStroke=None,
+            viewFrameStrokeWidth=None, **kwargs):
 
-        """Base initialize function for all Element constructors. Element
+        """Base initialize function for all Element constructors. Elements
         always have a location, even if not defined here. Values that are
         passed to the contructor (except for the keyword arguments), have
         default values if they aren't assigned by the parent class.
@@ -788,7 +792,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         view.drawElementInfo(self, origin)
         view.drawElementOrigin(self, origin)
         view.drawFlowConnections(self, origin)
-
 
     def buildElement(self, view, p, drawElements=True, **kwargs):
         """Main drawing method for elements to draw their content and the

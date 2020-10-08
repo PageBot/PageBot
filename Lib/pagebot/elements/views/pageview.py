@@ -283,7 +283,6 @@ class PageView(BaseView):
         self.drawBaselines(page, origin, background=True)
         self.drawFlowConnections(page, origin)
 
-
     def drawFrame(self, e, origin):
         """Draws the page frame if the the flag is on and if there ie padding
         enough to show other meta info. Otherwise the padding is truncated to
@@ -504,18 +503,23 @@ class PageView(BaseView):
 
     def drawFlowConnections(self, e, origin):
         """If rootStyle.showFlowConnections is True, draw the flow connections
-        on the page, using their stroke / width settings of the style."""
+        on the page, using their stroke / width settings of the style. Only
+        works for nested elements"""
         context = self.context
         p = pointOffset(e.origin, origin)
         p = e._applyScale(self, p)
+
         # Ignore z-axis for now.
         px, py, _ = p = e._applyAlignment(p)
 
         if (self.showFlowConnections and e.isPage) or e.showFlowConnections:
-            fmf = 0.15
             #self.css('viewFlowCurvatureFactor', 0.15)
+            fmf = 0.15
+
             for startE in e.elements:
                 nextE = startE.next
+                print('drawFlow', nextE)
+
                 if nextE is not None:
                     # For all the flow sequences found in the page, draw flow
                     # arrows at offset (ox, oy).
@@ -536,6 +540,7 @@ class PageView(BaseView):
 
                     context.newPath()
                     context.moveTo((sx, sy))
+                    #print('moveto', sx, sy)
                     context.curveTo((xb1, yb1), (xb2, yb2), (nx, ny))
                     #((ax1+ax2)/2, (ay1+ay2)/2)) # End in middle of arrow head.
                     context.drawPath()

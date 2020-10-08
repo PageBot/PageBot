@@ -18,14 +18,17 @@ from pagebot.constants import DEFAULT_BASELINE_COLOR, DEFAULT_BASELINE_WIDTH
 from pagebot.toolbox.units import units
 
 class Flow:
-    """If the element is part of a flow, then answer the sequence."""
+    """If the element is part of a flow, then answer the sequence.
+
+    FIXME: nextElement should be a reference to an object.
+    """
 
     def _get_next(self):
         """If self if part of a flow, answer the next element, defined by
         self.nextElement. If self.nextPage is defined too, then search on the
         indicated page.
 
-        >>> from pagebot.elements import Element
+        >>> from pagebot.elements.element import Element
         >>> from pagebot.document import Document
         >>> doc = Document(autoPages=3)
         >>> page = doc[1]
@@ -66,6 +69,7 @@ class Flow:
             # FIXME: causes cyclical import.
             #from pagebot.elements import Element
             #if isinstance(self.nextPage, Element):
+            #if isinstance(self.nextPage, Page):
             #    page = self.nextPage
 
             if self.nextPage:
@@ -92,7 +96,7 @@ class Flow:
         """Answers if self is part of a flow, which means that either
         self.prevElement or self.nextElement is not None.
 
-        >>> from pagebot.elements import Element
+        >>> from pagebot.elements.element import Element
         >>> e = Element()
         >>> e.isFlow
         False
@@ -108,6 +112,7 @@ class Flow:
         self.nextPage is defined, then
 
         >>> from pagebot.document import Document
+        >>> from pagebot.elements.element import Element
         >>> doc = Document(autoPages=3)
         >>> page = doc[1]
         >>> e1_1 = Element(parent=page, name='e1', nextElement='e2')
@@ -179,7 +184,7 @@ class Flow:
         """Answers the baseline grid distance, as defined in the (parent) style.
 
         >>> from pagebot.toolbox.units import mm, p
-        >>> from pagebot.elements import Element
+        >>> from pagebot.elements.element import Element
         >>> e = Element()
         >>> # Undefined without style or parent style.
         >>> e.baselineGrid is None
@@ -206,7 +211,7 @@ class Flow:
     def _get_baselineGridStart(self):
         """Answers the baseline grid startf, as defined in the (parent) style.
 
-        >>> from pagebot.elements import Element
+        >>> from pagebot.elements.element import Element
         >>> e = Element()
         >>> # Undefined without style or parent style.
         >>> e.baselineGridStart is None
@@ -233,16 +238,19 @@ class Flow:
         the overall settings, as the baseline grid always runs from top of the
         element or page.
 
-        >>> from pagebot.elements import Element
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.toolbox.units import pt
         >>> e = Element(baselineGrid=pt(12), baselineGridStart=pt(22))
         >>> e.baselineGrid, e.baselineGridStart
         (12pt, 22pt)
-        """
-
-        """
         >>> e.baseY()
-        22pt
+        122pt
         >>> e.baseY(23)
-        298pt
+        -154pt
         """
         return self.h - self.baselineGrid * lineIndex + self.baselineGridStart
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
