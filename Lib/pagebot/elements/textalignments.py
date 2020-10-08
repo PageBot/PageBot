@@ -63,3 +63,8 @@ class TextAlignments:
 
     def isDescenderOnBottom(self, tolerance=0, index=0):
         return True
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

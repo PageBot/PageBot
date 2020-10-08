@@ -91,3 +91,8 @@ class TextConditions:
         # Implemented for elements that support text boxes. Default is to do
         # nothing for non-text elements.
         pass
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

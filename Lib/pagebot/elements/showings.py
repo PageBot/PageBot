@@ -370,3 +370,8 @@ class Showings:
         self.style['showImageReference'] = bool(showImageReference)
 
     showImageReference = property(_get_showImageReference, _set_showImageReference)
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

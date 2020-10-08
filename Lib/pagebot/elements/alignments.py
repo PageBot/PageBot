@@ -1789,3 +1789,8 @@ class Alignments:
     def fit2BleedTop(self):
         self.h += self.parent.h - self.mTop + self.bleedTop
         return True
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

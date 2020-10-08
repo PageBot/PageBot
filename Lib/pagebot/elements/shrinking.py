@@ -57,3 +57,8 @@ class Shrinking:
     def shrink2BlockSideTop(self):
         self.h += self.parent.h - self.mTop
         return True
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

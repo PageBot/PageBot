@@ -83,3 +83,8 @@ class Template:
                 self.appendElement(e.copy(parent=self))
 
     template = property(_get_template, _set_template)
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

@@ -20,10 +20,10 @@ from pagebot.toolbox.color import noColor
 class DocWrap(Element):
     """The DocWrap is used to create a watershed between a Document instance
     (which is not an Element by itself) and the Document that self is part of.
-    This way we can avoid the mixing between rootStyles and also it allows
-    the output of documents to be cached and places on a page, independent from
-    the parent page settings itself.
-    """
+    This way we can avoid the mixing between rootStyles and also it allows the
+    output of documents to be cached and places on a page, independent from the
+    parent page settings itself."""
+
     def __init__(self, document, docCacheType=None, pn=None, **kwargs):
         """Store document, to by used as background drawing for self.
         Note that as with any Element, child elements can be added for display.
@@ -63,12 +63,11 @@ class DocWrap(Element):
     def buildElement(self, view, p, drawElements=True, **kwargs):
         """Find the referred page of self.wrappedDocument and continue the
         building there. Since the page does not change parent, all local styles
-        and references are exactly the same, as if the wrapped document is building.
-        """
+        and references are exactly the same, as if the wrapped document is
+        building."""
         # FIXME: Hack for now, to reset outline drawing, caused by previous view drawing.
         view.context.stroke(noColor)
         view.context.fill(noColor)
-
         page = self.wrappedDocument[self.pn]
         page.buildElement(view, p, drawElements, **kwargs)
 

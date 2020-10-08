@@ -377,3 +377,8 @@ class Conditions:
             r2 = gridRows[row + rowSpan - 1]
             return abs(self.h - (r2[0] - r1[0] + r2[1])) <= tolerance
         return False
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

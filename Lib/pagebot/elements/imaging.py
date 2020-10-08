@@ -106,3 +106,8 @@ class Imaging:
         assert isinstance(resolutionFactors, dict)
         self.style['resolutionFactors'] = resolutionFactors
     resolutionFactors = property(_get_resolutionFactors, _set_resolutionFactors)
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

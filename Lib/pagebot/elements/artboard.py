@@ -17,9 +17,7 @@
 from pagebot.elements.group import Group
 
 class Artboard(Group):
-    """ArtBoard is compatible with the SketchApp element, default identical to Group.
-
-    """
+    """ArtBoard is compatible with the SketchApp element, default identical to Group."""
 
 if __name__ == '__main__':
     import doctest
