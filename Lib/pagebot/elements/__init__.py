@@ -51,6 +51,7 @@ from pagebot.elements.dating.calendarmonth import CalendarMonth
 from pagebot.elements.artboard import Artboard
 
 # Element that holds a number of styled BezierPath instances to draw.
+from pagebot.elements.paths.glyphpath import GlyphPath
 from pagebot.elements.paths.pbpaths import Paths
 
 # Table elements
@@ -186,6 +187,9 @@ def newPaths(paths=None, **kwargs):
     frame. The paths can be a single BezierPath instance or a list / tuple of
     instances. Not be confused with the filePath "path" in Image."""
     return Paths(paths, **kwargs)
+
+def newGlyphPath(glyph, **kwargs):
+    return GlyphPath(glyph, **kwargs)
 
 def newImage(path=None, **kwargs):
     """Creates Image element as position (x, y) and optional width, height (w,

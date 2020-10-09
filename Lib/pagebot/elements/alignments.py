@@ -46,6 +46,7 @@ class Alignments:
         starting at column index col.
 
         >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.elements.element import Element
         >>> gridX = (pt(100, 10), pt(200, 20), pt(300, 30), pt(400, 40), pt(500, 50))
         >>> e1 = Element(padding=30, w=600, gridX=gridX)
         >>> e1.getGridColumns()
@@ -95,6 +96,7 @@ class Alignments:
     def top2Grid(self):
         """Move the top of self to rounded grid
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=105, h=200, parent=e1)
         >>> e2.top
@@ -116,6 +118,7 @@ class Alignments:
     def bottom2Grid(self):
         """Move the top of self to rounded grid
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(baselineGridStart=100, baselineGrid=10, h=1000)
         >>> e2 = Element(y=105, h=200, parent=e1)
         >>> e2.bottom
@@ -138,6 +141,8 @@ class Alignments:
         """Answer the distance to the parent grid, where vertical alignment
         decides where is measured.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.toolbox.units import pt
         >>> e1 = Element(baselineGridStart=100, baselineGrid=50, h=1000)
         >>> e2 = Element(y=130, h=200, parent=e1)
         >>> e2.distance2Grid
@@ -163,6 +168,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.center2Center() # Element without parent answers False
         False
@@ -191,6 +198,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.center2CenterSides() # Element without parent answers False
         False
@@ -217,6 +226,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.center2Left() # Element without parent answers False
         False
@@ -243,6 +254,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.center2SideLeft() # Element without parent answers False
         False
@@ -269,6 +282,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.center2Right() # Element without parent answers False
         False
@@ -295,6 +310,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.center2SideRight() # Element without parent answers False
         False
@@ -321,6 +338,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import RIGHT, CENTER, LEFT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.left2Center() # Element without parent answers False
         False
@@ -347,6 +366,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import RIGHT, CENTER, LEFT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetry
         >>> e1.left2Center() # Element without parent answers False
         False
@@ -373,6 +394,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import RIGHT, CENTER, LEFT
         >>> e1 = Element(w=500, pl=50)
         >>> e1.left2Left() # Element without parent answers False
         False
@@ -399,6 +422,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import RIGHT, CENTER, LEFT
         >>> e1 = Element(w=500, pl=50)
         >>> e1.left2SideLeft() # Element without parent answers False
         False
@@ -435,6 +460,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import RIGHT, CENTER, LEFT
         >>> e1 = Element(w=500, padding=50)
         >>> e1.left2Right() # Element without parent answers False
         False
@@ -461,6 +488,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import RIGHT, CENTER, LEFT
         >>> e1 = Element(w=500, padding=50)
         >>> e1.left2SideRight() # Element without parent answers False
         False
@@ -487,6 +516,8 @@ class Alignments:
         Note that this different from self.right2Center if the left
         and right padding of parent is not identical.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
         >>> e1.right2Center() # Element without parent answers False
         False
@@ -513,6 +544,8 @@ class Alignments:
         Note that this different from self.right2Center if the left
         and right padding of parent is not identical.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80) # Force non-symmetric padding
         >>> e1.right2CenterSides() # Element without parent answers False
         False
@@ -539,6 +572,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, padding=50)
         >>> e1.right2Left() # Element without parent answers False
         False
@@ -564,6 +599,8 @@ class Alignments:
         """Move right of self to left position of parent. The position of e2
         element origin depends on the horizontal alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, padding=50)
         >>> e1.right2SideLeft() # Element without parent answers False
         False
@@ -590,6 +627,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, pl=30, pr=80)
         >>> e1.right2Right() # Element without parent answers False
         False
@@ -616,6 +655,8 @@ class Alignments:
         The position of e2 element origin depends on the horizontal
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> e1 = Element(w=500, padding=50)
         >>> e1.right2SideRight() # Element without parent answers False
         False
@@ -649,6 +690,8 @@ class Alignments:
     def origin2Center(self):
         """Move origin of the element to the padding center of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT
         >>> e1 = Element(w=500, pl=30, pr=80)
         >>> e1.origin2Center() # Element without parent answers False
         False
@@ -665,6 +708,8 @@ class Alignments:
     def origin2CenterSides(self):
         """Move origin of the element to the sides center of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT
         >>> e1 = Element(w=500, pl=30, pr=80)
         >>> e1.origin2CenterSides() # Element without parent answers False
         False
@@ -681,6 +726,8 @@ class Alignments:
     def origin2Left(self):
         """Move origin of the element to the padding left of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT
         >>> e1 = Element(w=500, pl=30, pr=80)
         >>> e1.origin2Left() # Element without parent answers False
         False
@@ -697,6 +744,8 @@ class Alignments:
     def origin2SideLeft(self):
         """Move origin of the element to the left side of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT
         >>> e1 = Element(w=500, pl=30, pr=80)
         >>> e2 = Element(w=120, parent=e1, xAlign=LEFT)
         >>> success = e2.origin2SideLeft()
@@ -709,6 +758,8 @@ class Alignments:
     def origin2Right(self):
         """Move origin of the element to the right padding of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT
         >>> e1 = Element(w=500, pl=30, pr=80)
         >>> e1.origin2Right() # Element without parent answers False
         False
@@ -725,6 +776,8 @@ class Alignments:
     def origin2SideRight(self):
         """Move origin of the element to the right padding of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import LEFT
         >>> e1 = Element(w=500, pl=30, pr=80)
         >>> e1.origin2SideRight() # Element without parent answers False
         False
@@ -746,6 +799,7 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.bottom2Bottom() # Element without parent answers False
         False
@@ -791,6 +845,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> # Element without parent answers False.
         >>> e1.bottom2SideBottom()
@@ -845,6 +901,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80,)
         >>> e1.bottom2Top() # Element without parent answers False
         False
@@ -890,6 +948,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.middle2Bottom() # Element without parent answers False
         False
@@ -935,6 +995,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.middle2SideBottom() # Element without parent answers False
         False
@@ -981,6 +1043,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, BOTTOM, MIDDLE
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.middle2Top() # Element without parent answers False
         False
@@ -1026,6 +1090,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.middle2SideTop() # Element without parent answers False
         False
@@ -1071,6 +1137,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.middle2Middle() # Element without parent answers False
         False
@@ -1116,6 +1184,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.middle2MiddleSides() # Element without parent answers False
         False
@@ -1162,6 +1232,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical
         alignment type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import BOTTOM, TOP, MIDDLE
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.top2Middle() # Element without parent answers False
         False
@@ -1207,6 +1279,8 @@ class Alignments:
         The position of e2 element origin depends on the vertical alignment
         type.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import BOTTOM, TOP, MIDDLE
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.top2MiddleSides() # Element without parent answers False
         False
@@ -1249,6 +1323,8 @@ class Alignments:
     def origin2Bottom(self):
         """Move origin of the element to the padding bottom of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.origin2Bottom() # Element without parent answers False
         False
@@ -1276,6 +1352,8 @@ class Alignments:
     def origin2SideBottom(self):
         """Move origin of the element to the padding bottom of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.origin2SideBottom() # Element without parent answers False
         False
@@ -1305,6 +1383,7 @@ class Alignments:
         """
 
         """
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.origin2Top() # Element without parent answers False
         False
@@ -1330,6 +1409,7 @@ class Alignments:
     def origin2SideTop(self):
         """Move origin of the element to the top side of the parent.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.origin2SideTop() # Element without parent answers False
         False
@@ -1357,6 +1437,7 @@ class Alignments:
     def origin2Middle(self):
         """Move origin of the element to the top side of the parent.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.origin2Middle() # Element without parent answers False
         False
@@ -1384,6 +1465,7 @@ class Alignments:
     def origin2MiddleSides(self):
         """Move origin of the element to the sides middle of the parent.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.origin2MiddleSides() # Element without parent answers False
         False
@@ -1408,6 +1490,8 @@ class Alignments:
     def bottom2Middle(self):
         """Move margin bottom of the element to the padding middle of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.bottom2Middle() # Element without parent answers False
         False
@@ -1451,6 +1535,8 @@ class Alignments:
     def bottom2MiddleSides(self):
         """Move margin bottom of the element to the sides middle of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.bottom2MiddleSides() # Element without parent answers False
         False
@@ -1494,6 +1580,8 @@ class Alignments:
     def top2Bottom(self):
         """Move margin top of the element to the padding bottom of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import BOTTOM, TOP, MIDDLE
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.top2Bottom() # Element without parent answers False
         False
@@ -1537,6 +1625,8 @@ class Alignments:
     def top2Top(self):
         """Move margin top of the element to the padding top of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import BOTTOM, TOP, MIDDLE
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.top2Top() # Element without parent answers False
         False
@@ -1580,6 +1670,8 @@ class Alignments:
     def top2SideTop(self):
         """Move margin top of the element to the top side of the parent.
 
+        >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import BOTTOM, TOP, MIDDLE
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.top2SideTop() # Element without parent answers False
         False
@@ -1712,6 +1804,7 @@ class Alignments:
         without moving the left position. Text implements it's own method
         to make the text fit by adjusting the size.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
         >>> e1.x, e1.y, e1.w, e1.h # Default position and size
@@ -1729,6 +1822,7 @@ class Alignments:
         without moving the left position. The scale the height according to the
         original ratio.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
         >>> e1.x, e1.y, e1.w, e1.h # Default position and size
@@ -1749,6 +1843,7 @@ class Alignments:
         """Make the right side of self fit the right side of the parent,
         without moving the left position.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
         >>> e1.x, e1.y, e1.w, e1.h # Default position and size
@@ -1771,6 +1866,7 @@ class Alignments:
         """Make the top side of self fit the top padding of the parent, without
         moving the bottom position.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(x=100, y=20, w=100, h=50)
         >>> e2 = Element(w=300, h=300, elements=[e1], padding=10)
         >>> e1.x, e1.y, e1.w, e1.h # Default position and size
