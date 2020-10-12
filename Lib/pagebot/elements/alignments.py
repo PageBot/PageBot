@@ -800,6 +800,7 @@ class Alignments:
         alignment type.
 
         >>> from pagebot.elements.element import Element
+        >>> from pagebot.constants import TOP, MIDDLE, BOTTOM
         >>> e1 = Element(h=500, pt=30, pb=80)
         >>> e1.bottom2Bottom() # Element without parent answers False
         False
