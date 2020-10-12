@@ -60,34 +60,23 @@ class Polygon(Element):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin, drawElements=True, **kwargs):
-        # Get current context and builder.
-        context = self.context
-        # This is a bit more efficient than self.b once we got context
-        #b = context.b
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         self._applyRotation(view, p)
-
         self.buildFrame(view, p) # Draw optional frame or borders.
-
-        # Let the view draw frame info for debugging, in case view.showFrame == True
-        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
         view.drawPageMetaInfoBackground(self, p)
-
-        if self.drawBefore is not None: # Call if defined
+        if self.drawBefore is not None:
             self.drawBefore(self, view, p)
-
-        #context.fill(self.css('fill'))
-        #context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
-        path = self.getPath(p)
-        context.drawPath(path)
+        #self.context.fill(self.css('fill'))
+        #self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
+        #path = self.getPath(p)
+        #self.context.drawPath(path)
+        self.context.polygon(*self.points)
 
         # Debugging where it moved.
-        #context.b.fill(0, 0, 1, 0.5)
-        #context.b.rect(px, py, self.w, self.h)
+        #self.context.b.fill(0, 0, 1, 0.5)
+        #self.context.b.rect(px, py, self.w, self.h)
 
         if drawElements:
             # If there are child elements, recursively draw them over the pixel image.
@@ -104,7 +93,6 @@ class Polygon(Element):
         # Supposedly drawing outside rotation/scaling mode, so the origin of
         # the element is visible.
         view.drawElementOrigin(self, origin)
-
         self._restoreRotation(view, p)
         self._restoreScale(view)
         self.draw(view, origin)
@@ -112,10 +100,10 @@ class Polygon(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, drawElements=True):
-        """Drawing HTML Polygon through SVG?"""
-        context = self.context # Get current context and builder.
-        b = context.b # This is a bit more efficient than self.b once we got context
-        # TODO: Needs a solution, SVG or pixels?
+        """Drawing HTML Polygon through SVG?
+
+        TODO: implement, SVG or pixels?
+        """
 
     def translate(self, p):
         """
@@ -227,8 +215,8 @@ class Polygon(Element):
     block = property(_get_block)
 
     def getPath(self, p=None):
-        """Answers a BezierPath representation, in the data-format of self.context,
-        translated to optional position p.
+        """Answers a BezierPath representation, in the data-format of
+        self.context, translated to optional position p.
 
         >>> from pagebot.contexts import getContext
         >>> context = getContext()

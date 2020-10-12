@@ -1056,8 +1056,7 @@ class FlatContext(BaseContext):
         the coordinates to a Flat polygon to be rendered.
 
         NOTE: We are not using Flat.ellipse, transform won't work. Instead, we
-        transform the points and then render as a polygon.
-        """
+        transform the points and then render as a polygon."""
         shape = self._getShape()
 
         if shape is not None:
@@ -1083,8 +1082,7 @@ class FlatContext(BaseContext):
         for the difference.
 
         NOTE: We are not using Flat.ellipse, transform won't work. Instead, we
-        make a new Bézier path and transform the points.
-        """
+        make a new Bézier path and transform the points."""
         shape = self._getShape()
 
         if shape is not None:
@@ -1150,6 +1148,10 @@ class FlatContext(BaseContext):
             x0, y0 = self.getTransformed(*p0)
             x1, y1 = self.getTransformed(*p1)
             self.page.place(shape.line(x0, y0, x1, y1))
+
+
+    def polygon(self, *points, **kwargs):
+        pass
 
     #   P A T H
 

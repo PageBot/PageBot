@@ -77,9 +77,8 @@ class BaseContext(AbstractContext):
         # Stack of graphic states.
         self._gState = []
 
-        #self.page = None
         self._pages = []
-        self.style = None # Current style dictionary
+        self.style = None
         self.units = Pt.UNIT
 
     def __repr__(self):
@@ -151,7 +150,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import px
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(pt(100), pt(100))
        >>> context.newPage(100, 100)
         """
@@ -166,11 +165,10 @@ class BaseContext(AbstractContext):
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
-        """
-        TODO: Should scale an image at `path` and save it to another file with Pillow.
-        """
+        """TODO: Should scale an image at `path` and save it to another file
+        with Pillow."""
         # FIXME: scale with PIL
-        #context = getContext() # Get default Flat or DrawBot context
+        #context = getContext()
         #return context.scaleImage(path, w, h, index=index,
         #    showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
         #    force=force)
@@ -207,7 +205,7 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.rect(pt(0), pt(0), pt(100), pt(100))
         >>> context.rect(0, 0, 100, 100)
@@ -222,40 +220,41 @@ class BaseContext(AbstractContext):
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.oval(pt(0), pt(0), pt(100), pt(100))
         >>> context.oval(0, 0, 100, 100)
         """
+        # Render units to points.
         xpt, ypt, wpt, hpt = upt(x, y, w, h)
-        self.b.oval(xpt, ypt, wpt, hpt) # Render units to points.
+        self.b.oval(xpt, ypt, wpt, hpt)
 
     def circle(self, x, y, r):
         """Circle draws a `circle` with (x, y) as middle point and radius r.
         TODO: draw as path?
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.circle(pt(100), pt(200), pt(50))
         >>> context.circle(100, 200, 50)
         """
+        # Render units to points.
         xpt, ypt, rpt = upt(x, y, r)
-        self.b.oval(xpt-rpt, ypt-rpt, 2*rpt, 2*rpt) # Render units to points.
-        #self.b.oval(xpt, ypt, 2*rpt, 2*rpt) # Render units to points.
+        self.b.oval(xpt-rpt, ypt-rpt, 2*rpt, 2*rpt)
 
     # Path.
 
     def newPath(self):
         """Makes a new Bezierpath to draw in and answers it. This will not
         initialize self._bezierpath, which is accessed by the property
-        self.bezierpath.  This method is using a BezierPath class path for
-        drawing. For a more rich environment use BezierPath(context) instead.
+        self.bezierpath. This method uses a BezierPath class path to draw.  For
+        a more rich environment use BezierPath(context) instead.
 
         NOTE: PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> path = context.newPath()
         """
@@ -269,11 +268,11 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.moveTo(pt(100, 100))
         >>> context.moveTo((100, 100))
-        >>> # Drawing on a separate path
+        >>> # Drawing on a separate path.
         >>> path = context.newPath()
         >>> path.moveTo(pt(100, 100))
         >>> path.curveTo(pt(100, 200), pt(200, 200), pt(200, 100))
@@ -281,17 +280,18 @@ class BaseContext(AbstractContext):
         >>> context.drawPath(path)
 
         """
+        # Render units point tuple to tuple of values.
         ppt = upt(point2D(p))
-        self.bezierpath.moveTo(ppt) # Render units point tuple to tuple of values
+        self.bezierpath.moveTo(ppt)
 
     def lineTo(self, p):
         """Line to point p in the open path. Create a new self._bezierpath if none
         is open.
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
-        >>> # Create a new self._bezierpath by property self.bezierpath
+        >>> # Create a new self._bezierpath by property self.bezierpath.
         >>> context.moveTo(pt(100, 100))
         >>> context.lineTo(pt(100, 200))
         >>> context.closePath()
@@ -302,8 +302,9 @@ class BaseContext(AbstractContext):
         >>> path.closePath()
         >>> context.drawPath(path)
         """
+        # Render units point tuple to tuple of values.
         ppt = upt(point2D(p))
-        self.bezierpath.lineTo(ppt) # Render units point tuple to tuple of values
+        self.bezierpath.lineTo(ppt)
 
 
     # FIXME: should get n points, add curveToOne(bcp1, bcp2, p).
@@ -313,7 +314,7 @@ class BaseContext(AbstractContext):
         open.
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> hasattr(context, 'newPath')
         True
         >>> context.newPage(420, 420)
@@ -344,7 +345,6 @@ class BaseContext(AbstractContext):
         return self.b.quadTo(bcp, p)
     '''
 
-
     def arc(self, center, radius, startAngle, endAngle, clockwise):
         # TODO: call on self.bezierpath.
         return self.b.arc(center, radius, startAngle, endAngle, clockwise)
@@ -358,7 +358,7 @@ class BaseContext(AbstractContext):
         PageBot function.
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> # Creates. a new self._bezierpath by property self.bezierpath.
         >>> context.moveTo(pt(100, 100))
@@ -379,8 +379,10 @@ class BaseContext(AbstractContext):
         """Draws the BezierPath. Scaled image is drawn on (x, y), in that
         order. Use self._bezierpath if path is omitted. PageBot function.
 
+        NOTE: Flat uses native shape, Y-coordinates need to be inverted.
+
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> path = context.newPath()
         >>> path.points
         ()
@@ -420,7 +422,7 @@ class BaseContext(AbstractContext):
 
         """
         FIXME: oval gives different results.
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> path = context.newPath()
         >>> path.oval(160-50, 160-50, 100, 100) # path.oval draws directly on the path
         >>> #len(path.points) #6
@@ -465,6 +467,7 @@ class BaseContext(AbstractContext):
 
         self.scale(sx, sy)
         self.translate(xpt/sx, ypt/sy)
+
         # Set fill and stroke if they are defined by attribute or by path.style
         # Otherwise ignore and use the setting as defined already in the
         # graphic state.
@@ -490,7 +493,7 @@ class BaseContext(AbstractContext):
         BezierPath(context).
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.line(pt(100, 100), pt(200, 200))
         >>> context.line((100, 100), (200, 200))
@@ -518,7 +521,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.fill(color(0.5)) # Same as setFillColor
         >>> context.fill(color('red'))
@@ -559,7 +562,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.color import color
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.stroke(color(0.5)) # Same as setStrokeColor
         >>> context.stroke(color('red'))
@@ -700,7 +703,7 @@ class BaseContext(AbstractContext):
         then convert.
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.rotate(40)
         """
@@ -753,7 +756,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.newPage(420, 420)
         >>> context.fontSize(pt(12))
         """
@@ -881,7 +884,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.toolbox.loremipsum import loremIpsum
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> style = dict(font='PageBot-Regular', fontSize=pt(24))
         >>> bs = context.newString(loremIpsum(), style, w=pt(400))
         >>> bs.w
@@ -950,7 +953,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> bs = context.newString('ABCD', dict(fontSize=pt(12)))
         >>> bs, bs.__class__.__name__
         ($ABCD$, 'BabelString')
@@ -1009,7 +1012,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.contexts import getContext
         >>> from pagebot.document import Document
         >>> from pagebot.toolbox.transformer import path2Dir
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> doc = Document(w=100, h=100, context=context, autoPages=12)
         >>> filePath = '_export/TestPDFPages.pdf'
         >>> doc.export(filePath)
@@ -1030,7 +1033,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot.document import Document
         >>> from pagebot.filepaths import getResourcesPath
         >>> #from pagebot.toolbox.transformer import path2Dir
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> #doc = Document(w=123, h=345, context=context, autoPages=1)
         >>> resourcesPath = getResourcesPath()
         >>> path = resourcesPath + '/images/cookbot1.jpg'
@@ -1093,7 +1096,7 @@ class BaseContext(AbstractContext):
         TODO: move to elements.
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.bluntCornerRect(pt(0), pt(0), pt(100), pt(100))
         >>> context.bluntCornerRect(0, 0, 100, 100)
         """
@@ -1118,7 +1121,7 @@ class BaseContext(AbstractContext):
         TODO: move to elements.
 
         >>> from pagebot import getContext
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> context.roundedRect(pt(0), pt(0), pt(100), pt(100))
         >>> context.roundedRect(0, 0, 100, 100)
         """
@@ -1206,7 +1209,7 @@ class BaseContext(AbstractContext):
 
         >>> from pagebot import getContext
         >>> from pagebot.filepaths import getResourcesPath
-        >>> context = getContext() # Get default Flat or DrawBot context
+        >>> context = getContext()
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
         >>> #imo = context.getImageObject(path)
         """
