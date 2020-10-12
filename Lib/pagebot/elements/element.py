@@ -39,10 +39,9 @@ from pagebot.elements.flow import Flow
 from pagebot.elements.imaging import Imaging
 from pagebot.elements.shrinking import Shrinking
 from pagebot.elements.showings import Showings
-from pagebot.elements.template import Template
 
 class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
-        Template, Showings):
+        Showings):
     """The base element object."""
 
     # Initializes the default Element behavior flags. These flags can be
@@ -1610,7 +1609,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         >>> from pagebot.document import Document
         >>> from pagebot.toolbox.color import color
         >>> doc = Document()
-        >>> doc.addStyle('body', force=True, style=dict(name='body', fill=color('red'))) # Add named style to document
+        >>> # Add named style to document.
+        >>> doc.addStyle('body', force=True, style=dict(name='body', fill=color('red')))
         >>> page = doc[1]
         >>> e = Element(parent=page)
         >>>
@@ -4948,6 +4948,73 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         self.style['doExport'] = bool(doExport)
     doExport = property(_get_doExport, _set_doExport)
 
+    # Apply template.
+
+    def applyTemplate(self, template, elements=None):
+        """Copy relevant info from template: w, h, elements, style, conditions
+        when element is created. Don't call later.
+
+        >>> from pagebot.toolbox.units import mm, pt
+        >>> from pagebot.elements.template import Template
+        >>> e = Element(name='TestElement')
+        >>> t = Template(xy=pt(11, 12), size=(100, mm(200)))
+        >>> e.applyTemplate(t)
+        >>> e.x, e.y, e.w, e.h
+        (11pt, 12pt, 100pt, 200mm)
+        """
+        # Set template value by property call, copying all template elements
+        # and attributes.
+        self.template = template
+
+        if elements is not None:
+            # Add optional list of additional elements.
+            for e in elements or []:
+                # Add cross reference searching for eId of elements.
+                self.appendElement(e)
+
+    def _get_template(self):
+        """Property get/set for e.template.
+
+        >>> from pagebot.elements.template import Template
+        >>> e = Element(name='TestElement')
+        >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
+        >>> e.applyTemplate(t)
+        >>> e.template
+        <Template>
+        """
+        return self._template
+
+    def _set_template(self, template):
+        # Clear all existing child elements in self.
+        self.clearElements()
+        # Keep template reference to clone pages or if additional template info
+        # is needed later.
+        self._template = template
+
+        # Copy optional template stuff
+        if template is not None:
+            # Copy elements from the template and put them in the designated
+            # positions.
+            self.w = template.w
+            self.h = template.h
+            self.padding = template.padding
+            self.margin = template.margin
+            self.prevElement = template.prevElement
+            self.nextElement = template.nextElement
+            self.nextPage = template.nextPage
+
+            # Copy style items.
+            for  name, value in template.style.items():
+                self.style[name] = value
+
+            # Copy condition list. Does not have to be deepCopy, condition
+            # instances are multi-purpose.
+            self.conditions = copy.copy(template.conditions)
+
+            for e in template.elements:
+                self.appendElement(e.copy(parent=self))
+
+    template = property(_get_template, _set_template)
 if __name__ == '__main__':
     import doctest
     import sys

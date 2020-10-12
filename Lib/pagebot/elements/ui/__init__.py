@@ -34,7 +34,8 @@ from pagebot.elements.oval import Circle
 # Page elements
 from pagebot.elements.image import Image
 from pagebot.elements.galley import Galley, Column
-from pagebot.elements.page import Page, Template
+from pagebot.elements.page import Page
+from pagebot.elements.template import Template
 # Placeholder element, typically for Templates. Shows name.
 from pagebot.elements.placer import Placer
 

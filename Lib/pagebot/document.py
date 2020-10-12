@@ -19,7 +19,8 @@ import codecs
 from pagebot import getContext
 from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
 from pagebot.conditions.score import Score
-from pagebot.elements.page import Page, Template
+from pagebot.elements.page import Page
+from pagebot.elements.template import Template
 from pagebot.elements.views import viewClasses, defaultViewClass
 from pagebot.style import getRootStyle
 from pagebot.themes import DEFAULT_THEME_CLASS
@@ -343,7 +344,6 @@ class Document:
         check, so the caller can overwrite existing templates. Answer the
         template as convenience of the caller.
 
-        >>> from pagebot.elements.page import Template
         >>> name ='TestTemplate'
         >>> t = Template(w=200, h=300, name=name)
         >>> doc = Document(name='TestDoc')

@@ -14,75 +14,35 @@
 #
 #     template.py
 #
-import copy
 
-class Template:
+import weakref
+from pagebot.elements.page import Page
 
-    def applyTemplate(self, template, elements=None):
-        """Copy relevant info from template: w, h, elements, style, conditions
-        when element is created. Don't call later.
+class Template(Page):
 
-        >>> from pagebot.toolbox.units import mm
-        >>> from pagebot.elements import Template
-        >>> e = Element(name='TestElement')
-        >>> t = Template(xy=pt(11, 12), size=(100, mm(200)))
-        >>> e.applyTemplate(t)
-        >>> e.x, e.y, e.w, e.h
-        (11pt, 12pt, 100pt, 200mm)
-        """
-        # Set template value by property call, copying all template elements
-        # and attributes.
-        self.template = template
+    def __repr__(self):
+        return '<Template>'
 
-        if elements is not None:
-            # Add optional list of additional elements.
-            for e in elements or []:
-                # Add cross reference searching for eId of elements.
-                self.appendElement(e)
+    def _get_parent(self):
+        """Answers the parent of the element, if it exists, by weakref
+        reference. Answer None of there is not parent defined or if the parent
+        not longer exists."""
+        if self._parent is not None:
+            return self._parent()
+        return None
 
-    def _get_template(self):
-        """Property get/set for e.template.
+    def _set_parent(self, parent):
+        """Set the parent of the template. Don't call self.appendParent here,
+        as we don't want the parent to add self to the page/element list. Just
+        a simple reference, to connect to styles, etc."""
+        if parent is not None:
+            parent = weakref.ref(parent)
+        self._parent = parent
+    parent = property(_get_parent, _set_parent)
 
-        >>> from pagebot.elements import Template
-        >>> e = Element(name='TestElement')
-        >>> t = Template(name='MyTemplate', x=11, y=12, w=100, h=200)
-        >>> e.applyTemplate(t)
-        >>> e.template
-        <Template>
-        """
-        return self._template
+    def draw(self, origin, view):
+        raise ValueError('Templates cannot draw themselves in a view. Apply the template to a page first.')
 
-    def _set_template(self, template):
-        # Clear all existing child elements in self.
-        self.clearElements()
-        # Keep template reference to clone pages or if additional template info
-        # is needed later.
-        self._template = template
-
-        # Copy optional template stuff
-        if template is not None:
-            # Copy elements from the template and put them in the designated
-            # positions.
-            self.w = template.w
-            self.h = template.h
-            self.padding = template.padding
-            self.margin = template.margin
-            self.prevElement = template.prevElement
-            self.nextElement = template.nextElement
-            self.nextPage = template.nextPage
-
-            # Copy style items.
-            for  name, value in template.style.items():
-                self.style[name] = value
-
-            # Copy condition list. Does not have to be deepCopy, condition
-            # instances are multi-purpose.
-            self.conditions = copy.copy(template.conditions)
-
-            for e in template.elements:
-                self.appendElement(e.copy(parent=self))
-
-    template = property(_get_template, _set_template)
 
 if __name__ == '__main__':
     import doctest

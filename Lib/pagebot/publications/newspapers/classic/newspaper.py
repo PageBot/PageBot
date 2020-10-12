@@ -19,7 +19,7 @@ from pagebot.publications.newspapers.classic.article import Article
 from pagebot.constants import *
 from pagebot.elements import newRect, newText
 from pagebot.contributions.filibuster.blurb import Blurb
-from pagebot.elements.page import Template
+from pagebot.elements.template import Template
 from pagebot.conditions import *
 from pagebot.fonttoolbox.objects.family import getFontPaths
 from pagebot.toolbox.units import pt
