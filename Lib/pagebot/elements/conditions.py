@@ -137,6 +137,7 @@ class Conditions:
     def isOriginOnSideTop(self, tolerance=0):
         """Answers if the origin of self is on the top side of self.parent.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(w=200, h=400)
         >>> e2 = Element(w=50, h=50, parent=e1)
         >>> #FIX e1.isOriginOnSideTop()
@@ -154,6 +155,7 @@ class Conditions:
     def isOriginOnMiddle(self, tolerance=0):
         """Answers if the origin of self is on the top side of self.parent.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(w=200, h=400)
         >>> e2 = Element(w=50, h=50, parent=e1)
         >>> e1.isOriginOnMiddle()
@@ -174,6 +176,7 @@ class Conditions:
     def isRightOnCenter(self, tolerance=0):
         """Answers if the right size of `self` is on the middle of the parent.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(x=100, w=200) # e1.right == 300
         >>> e2 = Element(w=600, elements=[e1])
 
@@ -325,6 +328,7 @@ class Conditions:
         between col and col+colSpan.
 
         >>> from pagebot.toolbox.units import pt
+        >>> from pagebot.elements.element import Element
         >>> gridX = (pt(100, 10), pt(200, 20), pt(300, 30), pt(400, 40), pt(500, 50))
         >>> e1 = Element(padding=30, w=600, gridX=gridX)
         >>> e1.getGridColumns()
