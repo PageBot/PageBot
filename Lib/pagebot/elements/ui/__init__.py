@@ -42,13 +42,8 @@ from pagebot.elements.placer import Placer
 # Artboard (SketchApp compatible, content element on pages.)
 from pagebot.elements.artboard import Artboard
 
-# Path and mask elements
-#OLD from pagebot.elements.paths.pbpath import Path
-#OLD from pagebot.elements.bezierpath import BezierPath # Element drawing context.BezierPath instance.
-#from pagebot.elements.paths.glyphpath import GlyphPath
-
 # Element that holds a number of styled BezierPath instances to draw.
-from pagebot.elements.paths.pbpaths import Paths
+from pagebot.elements.pbpaths import Paths
 
 # Table elements
 from pagebot.elements.table import Table
