@@ -14,9 +14,7 @@
 #
 #     pbpage.py
 #
-import weakref
 import os
-
 from pagebot.elements.element import Element
 from pagebot.elements.galley import Galley
 from pagebot.toolbox.units import pointOffset

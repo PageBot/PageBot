@@ -92,23 +92,30 @@ class Showings:
     def _get_show(self):
         """Set flag for drawing or interpretation with conditional.
 
-        >>> e = Element(show=False) # Set a separate attribute
+
+        >>> from pagebot.elements.element import Element
+        >>> # Set a separate attribute.
+        >>> e = Element(show=False)
         >>> e.show
         False
         >>> e.show = True
         >>> e.show
         True
-        >>> e = Element(style=dict(show=False)) # Set through local style
+        >>> # Set through local style.
+        >>> e = Element(style=dict(show=False))
         >>> e.show
         False
         >>> e1 = Element()
-        >>> e1.show # Default is True
+        >>> # Default is True.
+        >>> e1.show
         True
-        >>> i = e.appendElement(e1) # Add to parent, inheriting show == False
+        >>> # Add to parent, inheriting show == False.
+        >>> i = e.appendElement(e1)
         >>> e1.show
         False
         """
-        return self.css('show', True) # Inherited
+        # Inherited.
+        return self.css('show', True)
 
     def _set_show(self, showFlag):
         self.style['show'] = showFlag # Hiding rest of css for this value.
@@ -118,7 +125,8 @@ class Showings:
     def _get_showSpread(self):
         """Boolean value. If True, show even pages on left of fold, odd on the right.
         Gap distance between the spread pages is defined by the page margins."""
-        return self.style.get('showSpread', False) # Not inherited
+        # Not inherited.
+        return self.style.get('showSpread', False)
 
     def _set_showSpread(self, spread):
         self.style['showSpread'] = bool(spread)
@@ -138,8 +146,8 @@ class Showings:
     viewMinInfoPadding = property(_get_viewMinInfoPadding, _set_viewMinInfoPadding)
 
     def _get_showCropMarks(self):
-        """Boolean value. If True and enough space by self.viewMinInfoPadding, show crop marks
-        around the elemment."""
+        """Boolean value. If True and enough space by self.viewMinInfoPadding,
+        show crop marks around the elemment."""
         return self.style.get('showCropMarks') or {} # Not inherited
 
     def _set_showCropMarks(self, showCropMarks):
