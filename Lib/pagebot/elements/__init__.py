@@ -52,8 +52,8 @@ from pagebot.elements.dating.calendarmonth import CalendarMonth
 from pagebot.elements.artboard import Artboard
 
 # Element that holds a number of styled BezierPath instances to draw.
-from pagebot.elements.paths.glyphpath import GlyphPath
-from pagebot.elements.paths.pbpaths import Paths
+from pagebot.elements.glyphpath import GlyphPath
+from pagebot.elements.pbpaths import Paths
 
 # Table elements
 from pagebot.elements.table import Table

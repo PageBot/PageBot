@@ -15,7 +15,7 @@
 #     glyphpath.py
 #
 
-from pagebot.elements.paths.pbpaths import Paths
+from pagebot.elements.pbpaths import Paths
 from pagebot.toolbox.units import pointOffset, units
 from pagebot.toolbox.color import noColor
 from pagebot.constants import DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
@@ -75,9 +75,7 @@ class GlyphPath(Paths):
     h = property(_get_h, _set_h)
 
     def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
-
         context = self.context # Get current context
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.

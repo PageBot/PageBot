@@ -212,37 +212,8 @@ class Polygon(Element):
         (100pt, 80pt)
         """
         return self.box[2:]
+
     block = property(_get_block)
-
-    def getPath(self, p=None):
-        """Answers a BezierPath representation, in the data-format of
-        self.context, translated to optional position p.
-
-        >>> from pagebot.contexts import getContext
-        >>> context = getContext()
-        >>> poly = Polygon(context=context)
-        >>> poly.rect(100, 100, 300, 400) # Relative to e.x, e.y
-        >>> bp = poly.getPath((150, 150))
-        >>> from fontTools.pens.basePen import BasePen
-        >>> isinstance(bp, BasePen)
-        True
-        """
-        if p is None:
-            p = self.x, self.y
-
-        context = self.context # Should not be None
-        assert context is not None
-        path = context.newPath()
-        if self.points:
-            for pIndex, point in enumerate(self.points):
-                px = point[0] + p[0]
-                py = point[1] + p[1]
-                if pIndex == 0:
-                    path.moveTo((px, py))
-                else:
-                    path.lineTo((px, py))
-        path.closePath()
-        return path
 
 class Mask(Polygon):
     """Masks don't draw by themselves, unless a fill color or stroke color
@@ -262,11 +233,9 @@ class Mask(Polygon):
     def build(self, view, origin, drawElements=True, **kwargs):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         self._applyRotation(view, p)
 
         doDraw = False

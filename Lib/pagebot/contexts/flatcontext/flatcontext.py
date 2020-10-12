@@ -1035,7 +1035,6 @@ class FlatContext(BaseContext):
         """Renders Pagebot FlatBuilder shape to a Flat shape."""
         #if self._fill is noColor and self._stroke is noColor:
         #    self._fill = whiteColor
-
         shape = self.b.shape()
 
         if self._fill and self._fill != noColor:
@@ -1124,7 +1123,7 @@ class FlatContext(BaseContext):
             cp2 = self.getTransformed(x, y0 + offsetY)
             p = self.getTransformed(x, y0)
             path.curveTo(cp1, cp2, p)
-            self.drawPath()
+            self.drawShape()
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
@@ -1151,7 +1150,21 @@ class FlatContext(BaseContext):
 
 
     def polygon(self, *points, **kwargs):
-        pass
+        """Answers a BezierPath representation, in the data-format of
+        self.context, translated to optional position p."""
+        path = self.newPath()
+        p = points[0]
+
+        for pIndex, point in enumerate(points):
+            px = point[0] + p[0]
+            py = point[1] + p[1]
+            if pIndex == 0:
+                path.moveTo((px, py))
+            else:
+                path.lineTo((px, py))
+        path.closePath()
+        self.drawPath(path)
+
 
     #   P A T H
 
@@ -1161,9 +1174,16 @@ class FlatContext(BaseContext):
         self._bezierpath = FlatBezierPath(self.b)
         return self._bezierpath
 
+    def drawGlyphPath(self, glyph):
+        """Converts the cubic commands to a drawable path."""
+        path = self.getGlyphPath(glyph)
+        self.drawShape()
+
     def drawPath(self, path=None, p=None, sx=1, sy=None):
-        """Renders the path object as a Flat vector graphic."""
-        # FIXME: path parameter not used.
+        pass
+
+    def drawShape(self):
+        """Renders the existing Bézier path as a Flat vector graphic."""
         shape = self._getShape()
 
         if shape is not None:
