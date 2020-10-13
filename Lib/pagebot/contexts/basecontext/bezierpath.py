@@ -126,12 +126,14 @@ class BezierPath:
         >>> path.isOpenPath
         False
         """
-        assert self.isOpenPath, ('%s.addPoints: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__)
+        msg = '%s.addPoints: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__
+        assert self.isOpenPath, msg
         for point in args:
             self.addPoint(point, **kwargs)
 
     def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
-        assert isinstance(point, (list, tuple, BaseBezierPoint)), ('%s.addPoint: Point "%s" is not a tuple or a Point' % self.__class__.__name__)
+        msg = '%s.addPoint: Point "%s" is not a tuple or a Point' % self.__class__.__name__
+        assert isinstance(point, (list, tuple, BaseBezierPoint)), msg
         if isinstance(point, (list, tuple)):
             px, py = upt(point2D(point))
         else:
@@ -141,7 +143,8 @@ class BezierPath:
             smooth = smooth or point.smooth
             identifier = identifier or point.identifier
 
-        self.bp.addPoint((px, py), segmentType=segmentType, smooth=smooth, name=name, identifier=identifier, **kwargs)
+        self.bp.addPoint((px, py), segmentType=segmentType, smooth=smooth,
+                name=name, identifier=identifier, **kwargs)
 
     def endPath(self):
         """End the path if it is open.
@@ -290,7 +293,7 @@ class BezierPath:
     #   Pen drawing
 
     def drawToPen(self, pen):
-        """Draw the content of the current path onto the pen.
+        """Draws the content of the current path onto the pen.
 
         >>> from pagebot import getContext
         >>> class Pen:

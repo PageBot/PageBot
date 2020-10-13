@@ -16,13 +16,14 @@
 #
 
 from fontTools.pens.pointPen import PointToSegmentPen
+from fontTools.pens.boundsPen import BoundsPen
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebezierpath import BaseBezierPath
 from pagebot.constants import MOVETO, LINETO, CURVETO, CLOSEPATH
 
 class FlatBezierPath(BaseBezierPath):
     """Bézier path that implements commands like Flat, but with the same API
-    as DrawBot.BezierPath.
+    as DrawBot.BezierPath, based on the FontTools pen implementation.
 
     >>> import flat
     >>> path = FlatBezierPath(flat)
@@ -48,19 +49,21 @@ class FlatBezierPath(BaseBezierPath):
     def __repr__(self):
         return '<FlatBezierPath>'
 
-    # FontTools PointToSegmentPen routines..
+    # FontTools PointToSegmentPen routines.
 
     def beginPath(self, identifier=None):
         """Begin using the path as a so called point pen and start a new subpath."""
         self._pointToSegmentPen = PointToSegmentPen(self)
         self._pointToSegmentPen.beginPath()
 
-    def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
+    def addPoint(self, point, segmentType=None, smooth=False, name=None,
+            identifier=None, **kwargs):
         """Use the path as a point pen and add a point to the current subpath.
         `beginPath` must have been called prior to adding points with
         `addPoint` calls."""
         if not hasattr(self, "_pointToSegmentPen"):
-            raise PageBotError("path.beginPath() must be called before the path can be used as a point pen")
+            msg = "path.beginPath() must be called before the path can be used as a point pen."
+            raise PageBotError(msg)
         self._pointToSegmentPen.addPoint(
             point,
             segmentType=segmentType,
@@ -87,14 +90,13 @@ class FlatBezierPath(BaseBezierPath):
             del self._pointToSegmentPen
             pointToSegmentPen.endPath()
         else:
-            raise PageBotError("path.beginPath() must be called before the path can be used as a point pen")
+            msg = "path.beginPath() must be called before the path can be used as a point pen."
+            raise PageBotError(msg)
 
-    def drawToPen(self, pen):
-        """Draws the Bézier path into a pen."""
-        contours = self.contours
-
-        for contour in contours:
-            contour.drawToPen(pen)
+    def draw(self, pen):
+        """Draws the contours with **pen**."""
+        pointPen = PointToSegmentPen(pen)
+        self.drawToPointPen(pointPen)
 
     def drawToPointPen(self, pointPen):
         """Draws the Bézier path into a point pen."""
@@ -102,6 +104,13 @@ class FlatBezierPath(BaseBezierPath):
 
         for contour in contours:
             contour.drawToPointPen(pointPen)
+
+    def drawToPen(self, pen):
+        """Draws the Bézier path into a pen."""
+        contours = self.contours
+
+        for contour in contours:
+            contour.drawToPen(pen)
 
     # Curve.
 
@@ -253,6 +262,9 @@ class FlatBezierPath(BaseBezierPath):
 
     def bounds(self):
         """Returns the bounding box of the path."""
+        pen = BoundsPen(self)
+        self.draw(pen)
+        return pen.bounds
 
     def controlPointBounds(self):
         """Returns the bounding box of the path including the offcurve

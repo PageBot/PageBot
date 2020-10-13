@@ -54,7 +54,7 @@ class Paths(Element):
     >>> context.drawPath(path2, p=(200, 200))
     >>> context.drawPath(path2, p=(0, 200))
     >>> context.drawPath(path2, p=(200, 0))
-    >>> context.saveImage('_export/DrawBotPath1.pdf')
+    >>> #context.saveImage('_export/DrawBotPath1.pdf')
     >>> size = pt(1000, 1000)
     >>> doc = Document(size=size, padding=30, context=context)
     >>> view = doc.view
@@ -80,7 +80,7 @@ class Paths(Element):
         Element.__init__(self, **kwargs)
 
     def rect(self, x, y, w, h):
-        path = BezierPath(self.context)
+        path = BezierPath(context=self.context)
         path.rect(x, y, w, h)
         self.paths.append(path)
 
