@@ -12,10 +12,11 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     bppaths.py
+#     paths.py
 #
-#     The Paths element holds an ordered list of BezierPath elements, where each can
-#     have its own optional style, that overwrites the generic style of self.
+#     The Paths element holds an ordered list of BezierPath elements, where
+#     each can have its own optional style, that overwrites the generic style
+#     of self.
 #
 from pagebot.elements.element import Element
 from pagebot.contexts.basecontext.bezierpath import BezierPath
@@ -23,6 +24,8 @@ from pagebot.toolbox.units import pointOffset#, upt
 
 class Paths(Element):
     """Draw rectangle, default identical to Element itself.
+
+    NOTE: class Mask(Paths) is deprecated; use Mask(Polygon) instead.
 
     >>> from pagebot.document import Document
     >>> from pagebot.toolbox.color import color
@@ -33,7 +36,6 @@ class Paths(Element):
     >>> path1.style['fill'] = color(1, 0, 0)
     >>> path1.oval(100, 100, 200, 200)
     >>> context.drawPath(path1)
-
     >>> path2 = BezierPath(context=context) # Leaves current self._path untouched
     >>> path2.style['fill'] = color(rgb='blue') # Add color with the path style.
     >>> len(path2.points)
@@ -45,15 +47,14 @@ class Paths(Element):
     >>> path2.lineTo((ox, oy+100))
     >>> path2.lineTo((ox, oy))
     >>> path2.closePath()
-    >>> path2.oval(160-50, 160-50, 100, 100) # path.oval does draw directly on the path
+    >>> path2.oval(160-50, 160-50, 100, 100) # path.oval draws directly on the path.
     >>> len(path2.points)
-    10
+    19
     >>> context.drawPath(path2, p=(0, 0)) # Draw self._path with various offsets
     >>> context.drawPath(path2, p=(200, 200))
     >>> context.drawPath(path2, p=(0, 200))
     >>> context.drawPath(path2, p=(200, 0))
     >>> context.saveImage('_export/DrawBotPath1.pdf')
-
     >>> size = pt(1000, 1000)
     >>> doc = Document(size=size, padding=30, context=context)
     >>> view = doc.view
@@ -150,19 +151,18 @@ class Paths(Element):
     def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         self._applyRotation(view, p)
 
         # No automatic frame drawing on Paths elements
         #self.buildFrame(view, p) # Draw optional frame or borders.
 
-        # Let the view draw frame info for debugging, in case view.showFrame == True
-        # and self.isPage or if self.showFrame. Mark that we are drawing background here.
-        view.drawPageMetaInfo(self, p, background=True)
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # background here.
+        view.drawPageMetaInfoBackground(self, p, origin)
 
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
@@ -183,14 +183,10 @@ class Paths(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
-        view.drawPageMetaInfo(self, p, background=False)
-
+        view.drawPageMetaInfo(self, p)
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
-
-# class Mask(Paths) is deprecated.
-# Use Mask(Polygon) instead.
 
 if __name__ == '__main__':
     import doctest

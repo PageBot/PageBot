@@ -98,7 +98,7 @@ python3 $PWD/elements/newspapers/__init__.py
 #python3 $PWD/elements/newspapers/articles.py
 python3 $PWD/elements/newspapers/headers.py
 python3 $PWD/elements/glyphpath.py
-python3 $PWD/elements/pbpaths.py
+python3 $PWD/elements/paths.py
 #python3 $PWD/elements/ui/....py
 python3 $PWD/elements/variablefonts/animationframe.py
 python3 $PWD/elements/variablefonts/basefontshow.py

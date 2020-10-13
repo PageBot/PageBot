@@ -43,7 +43,7 @@ from pagebot.elements.placer import Placer
 from pagebot.elements.artboard import Artboard
 
 # Element that holds a number of styled BezierPath instances to draw.
-from pagebot.elements.pbpaths import Paths
+from pagebot.elements.paths import Paths
 
 # Table elements
 from pagebot.elements.table import Table

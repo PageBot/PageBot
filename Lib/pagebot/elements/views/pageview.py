@@ -257,7 +257,6 @@ class PageView(BaseView):
         self.drawColorBars(page, origin)
         self.drawRegistrationMarks(page, origin)
         self.drawCropMarks(page, origin)
-
         self.drawGrid(page, origin, background=False)
         self.drawBaselines(page, origin, background=False)
 
