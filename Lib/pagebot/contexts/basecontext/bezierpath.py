@@ -132,7 +132,7 @@ class BezierPath:
             self.addPoint(point, **kwargs)
 
     def addPoint(self, point, segmentType=None, smooth=False, name=None, identifier=None, **kwargs):
-        msg = '%s.addPoint: Point "%s" is not a tuple or a Point' % self.__class__.__name__
+        msg = '%s.addPoint: Point "%s" is not a tuple or a Point' % (self.__class__.__name__, point)
         assert isinstance(point, (list, tuple, BaseBezierPoint)), msg
         if isinstance(point, (list, tuple)):
             px, py = upt(point2D(point))
