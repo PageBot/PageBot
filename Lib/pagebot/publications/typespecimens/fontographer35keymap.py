@@ -59,8 +59,11 @@ class GlyphSquare(Element):
     def build(self, view, origin, **kwargs):
         """Draw the text on position (x, y). Draw background rectangle and/or
         frame if fill and/or stroke are defined."""
-        context = view.context # Get current context
-        b = context.b
+        f = findFont('Bungee-Regular')
+        labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
+        # Make the styles for the strings on the page.
+        labelStyle = dict(font=labelFont, fontSize=pt(6), textFill=0, xTextAlign=CENTER)
+        glyphStyle = dict(font=f, fontSize=SQSIZE, textFill=0)
         # Get the page position, depending on the floated origin of the element.
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -71,39 +74,39 @@ class GlyphSquare(Element):
         # of fonts.
         width = self.glyph.width/f.info.unitsPerEm * SQSIZE
         # Draw the vertical width line. Not dashed for now.
-        context.fill(None)
-        context.stroke(color(1, 0, 0), w=0.5)
-        context.line((px+width, py), (px+width, py+SQSIZE))
+        self.context.fill(None)
+        self.context.stroke(color(1, 0, 0), w=0.5)
+        self.context.line((px+width, py), (px+width, py+SQSIZE))
         # Calculate the position of the baseline of the glyph in the square,
         # using font.info.descender from bottom of the square.
         baseline = py - f.info.descender/f.info.unitsPerEm * SQSIZE
         # Create the string in size SQSIZE showing the glyph.
-        t = context.newString(chr(self.uCode), style=glyphStyle)
+        t = self.context.newString(chr(self.uCode), style=glyphStyle)
         # Set stroke color and stroke width for baseline and draw it.
-        context.stroke(color(0, 0, 0.5), w=0.5)
-        context.line((px, baseline), (px+SQSIZE, baseline))
+        self.context.stroke(color(0, 0, 0.5), w=0.5)
+        self.context.line((px, baseline), (px+SQSIZE, baseline))
         # Draw the glyph.
-        context.text(t, (px, baseline))
+        self.context.text(t, (px, baseline))
         # Construct the label from the original glyph, unicode and glyph name
         # (if available)
-        label = context.newString('%s (%d) %s' % (chr(self.uCode),
+        label = self.context.newString('%s (%d) %s' % (chr(self.uCode),
             self.uCode, self.glyph.name), style=labelStyle)
         # Get the size of the generated formatted string to center it.
         # Draw the label.
         tw,th = label.size
-        context.text(label, (px + SQSIZE/2 - tw/2, py-pt(7)))
+        self.context.text(label, (px + SQSIZE/2 - tw/2, py-pt(7)))
         # Construct the rotated width string on left and right side.
-        widthLabel = context.newString('Width: %d' % self.glyph.width,
+        widthLabel = self.context.newString('Width: %d' % self.glyph.width,
             style=labelStyle)
-        leftLabel = context.newString('Offset: %d' % self.glyph.leftMargin,
+        leftLabel = self.context.newString('Offset: %d' % self.glyph.leftMargin,
             style=labelStyle)
-        context.save() # Save the graphics state
+        self.context.save() # Save the graphics state
         # Translate the origin to the current position of self, so we can rotate.
-        context.translate(px, py)
-        context.rotate(90) # Rotate clockwise vertical
-        context.text(widthLabel, (0, -SQSIZE-pt(7))) # Draw labels on these positions
-        context.text(leftLabel, (0, pt(3)))
-        context.restore() # Restore the graphics state
+        self.context.translate(px, py)
+        self.context.rotate(90) # Rotate clockwise vertical
+        self.context.text(widthLabel, (0, -SQSIZE-pt(7))) # Draw labels on these positions
+        self.context.text(leftLabel, (0, pt(3)))
+        self.context.restore() # Restore the graphics state
 
         self._restoreScale(view)
 
@@ -113,19 +116,13 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
     >>> specimen = Fontographer35KeyMap(w=500, h=1000, autoPages=1)
     >>> doc = specimen.newDocument(name='fontographer 35 keymap')
     >>> page = doc[1]
+    >>> score = page.solve()
+    >>> doc.export('_export/fontographer35keymap.pdf')
 
     """
     # Standard page size for now.
     # Substitute the name or file name of the font to show if locally installed.
     # In this example we use the font that come with PageBot.
-    f = findFont('Bungee-Regular')
-    labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
-    # Make the styles for the strings on the page.
-    labelStyle = dict(font=labelFont, fontSize=pt(6), textFill=0, xTextAlign=CENTER)
-    glyphStyle = dict(font=f, fontSize=SQSIZE, textFill=0)
-    titleStyle = dict(font=labelFont, fontSize=pt(20), textFill=0, xTextAlign=CENTER)
-    fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2),
-        textFill=blackColor)
 
     def newSampleDocument(self, autoPages=None, **kwargs):
         f = findFont('PageBot-Regular')
@@ -137,7 +134,8 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         page.padding = PADDING
         header = newRect(h=inch(1), padding=pt(8), mb=inch(0.6), parent=page,
             fill=0.4, conditions=[Fit2Width(), Top2Top()])
-        title = context.newString('Key map', style=titleStyle)
+        titleStyle = dict(font=labelFont, fontSize=pt(20), textFill=0, xTextAlign=CENTER)
+        title = self.context.newString('Key map', style=titleStyle)
         mr = pt(8)
         newText(title, w=page.pw*0.35, fill=0.5, parent=header,
             pt=pt(12), # Padding top
@@ -149,7 +147,11 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
             conditions=[Left2Left(), Fit2Height()])
         t = 'Size: %s  Font: %s\nNotice: © %s\nPrinted by PageBot on %s' % \
             (pt(SQSIZE), font.path.split('/')[-1], font.info.copyright, now().datetime)
-        fontInfo = context.newString(t, style=fontInfoStyle)
+
+        labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
+        fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2),
+            textFill=blackColor)
+        fontInfo = self.context.newString(t, style=fontInfoStyle)
         newText(fontInfo, fill=1, parent=header, margin=0, w=page.pw*0.65-3*mr,
             padding=pt(4),
             borderTop=dict(stroke=blackColor, strokeWidth=SHADOW),
