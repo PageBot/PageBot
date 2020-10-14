@@ -44,10 +44,10 @@ MAX_PAGES = XXXL # For debugging, set to the amount of pages to export
 SHADOW = pt(2) # Thicknes of "shadow" lines in header.
 
 class GlyphSquare(Element):
-    """The GlyphSquare element is the self-contained "info-graphic" showing
-    each glyph in the original Fontographer 3.5 style. Element float towards a
-    position on the page, defined by conditions. When page.solve() is
-    executed, the elements find their positions, comparable to the CSS float
+    """The GlyphSquare element is the self-contained infographic showing each
+    glyph in the original Fontographer 3.5 style. Element float towards a
+    position on the page, defined by conditions. When page.solve() is executed,
+    the elements find their positions, comparable to the CSS float
     parameters."""
 
     def __init__(self, glyph, uCode, **kwargs):
@@ -58,7 +58,7 @@ class GlyphSquare(Element):
     def build(self, view, origin, **kwargs):
         """Draw the text on position (x, y). Draw background rectangle and/or
         frame if fill and/or stroke are defined."""
-        f = findFont('Bungee-Regular')
+        f = findFont('PageBot-Regular')
         labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
         # Make the styles for the strings on the page.
         labelStyle = dict(font=labelFont, fontSize=pt(6), textFill=0, xTextAlign=CENTER)
@@ -106,7 +106,6 @@ class GlyphSquare(Element):
         self.context.text(widthLabel, (0, -SQSIZE-pt(7))) # Draw labels on these positions
         self.context.text(leftLabel, (0, pt(3)))
         self.context.restore() # Restore the graphics state
-
         self._restoreScale(view)
 
 class Fontographer35KeyMap(BaseTypeSpecimen):
@@ -126,18 +125,17 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
     def newSampleDocument(self, autoPages=None, **kwargs):
         f = findFont('PageBot-Regular')
         doc = self.newDocument(autoPages=autoPages or 1, **kwargs)
-        page = doc[1]
         context = doc.context
-        self.makeHeader(context, page, f)
+        self.makePages(doc, f)
         return doc
 
-    def makeHeader(self, context, page, font):
+    def makeHeader(self, doc, page, font):
         labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
         page.padding = PADDING
         header = newRect(h=inch(1), padding=pt(8), mb=inch(0.6), parent=page,
             fill=0.4, conditions=[Fit2Width(), Top2Top()])
         titleStyle = dict(font=labelFont, fontSize=pt(20), textFill=0, xTextAlign=CENTER)
-        title = context.newString('Key map', style=titleStyle)
+        title = doc.context.newString('Key map', style=titleStyle)
         mr = pt(8)
         newText(title, w=page.pw*0.35, fill=0.5, parent=header,
             pt=pt(12), # Padding top
@@ -152,7 +150,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
 
         fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2),
             textFill=blackColor)
-        fontInfo = context.newString(t, style=fontInfoStyle)
+        fontInfo = doc.context.newString(t, style=fontInfoStyle)
         newText(fontInfo, fill=1, parent=header, margin=0, w=page.pw*0.65-3*mr,
             padding=pt(4),
             borderTop=dict(stroke=blackColor, strokeWidth=SHADOW),
@@ -162,13 +160,15 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         page.solve()
 
     def addGlyphSquare(self, page, font, uCode, glyphName):
+        squareIndex = 0
+
         if uCode < 32: # Skip control characters
             return
         if squareIndex >= SQUARES:
-            if len(doc) >= (MAX_PAGES or XXXL):
+            if len(self.doc) >= (MAX_PAGES or XXXL):
                 return
             squareIndex = 0
-            page = doc.newPage()
+            page = self.doc.newPage()
             self.makeHeader(page, font)
 
         squareIndex += 1
@@ -178,7 +178,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         # later be checked for the position status by
         # doc.solve()-->page.solve()
         GlyphSquare(glyph, uCode, name='square-%s' % glyphName, w=SQSIZE, h=SQSIZE,
-            ml=self.SQML, mr=self.SQMR, mb=self.SQMB,
+            ml=SQML, mr=SQMR, mb=SQMB,
             borders=dict(strokeWidth=pt(0.5), line=ONLINE, stroke=0, dash=(1,1)),
             parent=page, fill=color(0.95, a=0.8), stroke=noColor,
             conditions=[Right2Right(), Float2Top(), Float2Left()],
@@ -188,8 +188,9 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         u"""Create the elements (header and a grid of GlyphSquares) for each page.
         Add as many pages as needed to accommodate all glyphs in the font.
         """
-        page = doc[1] # Get the first (automatic) generated page from the document,
-        self.makeHeader(page, font) # Make the heading block for this page.
+        print('make pages')
+        page = doc[1]
+        self.makeHeader(doc, page, font)
 
         # Keep track on the amount of squares on the page, checking currently
         # agains the fixed value of SQUARES (8x8 in the original Fontographer
