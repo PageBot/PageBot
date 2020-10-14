@@ -5,7 +5,7 @@ matrix:
     - os: linux
       language: python
       dist: trusty
-      python: 3.8
+      python: 3.6
       before_install:
         - python --version
         - pip install --upgrade pip
@@ -24,12 +24,11 @@ matrix:
       addons:
           homebrew:
               update: true
-              packages: python3
+              packages: python3.8
       before_install:
         - brew link --overwrite python
         - python --version
-        - python3.8 --version
-        - python3.9 --version
+        - python3 --version
         - pip3.8 install --upgrade pip
       install:
         - ./scripts/osx.sh

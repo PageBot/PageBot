@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev
 export PWD="Lib/pagebot"
-export PY="python3.8"
+export PY="python3"
 
 $PY $PWD/__init__.py
 

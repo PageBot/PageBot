@@ -8,6 +8,6 @@ set -ev
 python --version
 #pyenv versions
 #pyenv global system 3.6
-pip3.8 install --upgrade pip
-pip3.8 install pylint
-pip3.8 install -r requirements.txt
+pip3 install --upgrade pip
+pip3 install pylint
+pip3 install -r requirements.txt
