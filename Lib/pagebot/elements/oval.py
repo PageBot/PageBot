@@ -35,10 +35,11 @@ class Oval(Element):
         (500pt, 3pt)
         """
         context = self.context # Get current context and builder.
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
+        #p = pointOffset(self.origin, origin)
+        #p = self._applyScale(view, p)
+        #px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        p = self.getPosition(view, origin)
+        px, py, _ = p
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case
@@ -51,7 +52,7 @@ class Oval(Element):
 
         context.fill(self.css('fill', noColor))
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
-        context.oval(px, py, self.w, self.h)
+        context.oval(px - self.w / 2, py - self.h / 2, self.w, self.h)
         if drawElements:
             self.buildChildElements(view, p, **kwargs)
         if self.drawAfter is not None: # Call if defined

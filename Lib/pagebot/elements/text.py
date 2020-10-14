@@ -337,7 +337,13 @@ class Text(Element, TextConditions, TextAlignments):
             return
 
         context = view.context # Get current context
-        x, p = self.getElementPosition(view, origin)
+
+        # Stores scaled x-value first; text is already aligned.
+        p = pointOffset(self.origin, origin)
+        x, _, _, = self._applyScale(view, p)
+
+        # Determines frame position.
+        p = self.getPosition(view, origin)
         px, py, _ = p
 
         # TODO: Add Element clipping stuff here.
@@ -911,7 +917,6 @@ class Text(Element, TextConditions, TextAlignments):
             b.addHtml(html)
 
         if self.drawBefore is not None:
-            # Call if defined.
             self.drawBefore(self, view)
 
         if drawElements:

@@ -64,10 +64,13 @@ class Polygon(Element):
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
         self._applyRotation(view, p)
+
         self.buildFrame(view, p) # Draw optional frame or borders.
+
         view.drawPageMetaInfoBackground(self, p)
         if self.drawBefore is not None:
             self.drawBefore(self, view, p)
+
         #self.context.fill(self.css('fill'))
         #self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         #path = self.getPath(p)

@@ -53,9 +53,7 @@ class Rect(Element):
         (500pt, 3pt)
         """
         context = self.context # Get current context and builder.
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        p = self.getPosition(view, origin)
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case
@@ -68,6 +66,7 @@ class Rect(Element):
 
         context.fill(self.css('fill', noColor))
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
+        px, py, _ = p
         context.rect(px, py, self.w, self.h)
 
         if drawElements:

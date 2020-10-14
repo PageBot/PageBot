@@ -680,15 +680,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             return self.parent.getElementPage()
         return None
 
-    def getElementPosition(self, view, origin):
-        """Applies various offsets and transformations to determine final
-        coordinates at which to place an element on a page."""
-        p = pointOffset(self.origin, origin)
-        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        self._applyRotation(view, p)
-        return x, p
-
     def getElementByName(self, name):
         """Answers the first element in the offspring list that fits the name.
         Answers None if it cannot be found.
@@ -735,20 +726,25 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             e.prepare_flat(view)
 
     def getPosition(self, view, origin):
+        """Applies various offsets and transformations to determine final
+        coordinates at which to place an element on a page."""
         p = pointOffset(self.origin, origin)
-        x, _, _, = p = self._applyScale(view, p) # Text is already aligned
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
+        self._applyScale(view, p)
+        self._applyAlignment(p)
         self._applyRotation(view, p)
-        return x, p
+        return p
 
     def build(self, view, origin, drawElements=True, **kwargs):
         """Default drawing method just drawing the frame. Probably will be
         redefined by inheriting element classes."""
+
+        '''
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p) # Ignore z-axis for now.
         px, py, _ = p = self._applyAlignment(p)
-
         self._applyRotation(view, p)
+        '''
+        p = self.getPosition(view, origin)
 
         # Draw optional frame or borders.
         self.buildFrame(view, p)
@@ -759,12 +755,11 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         view.drawPageMetaInfoBackground(self, p)#, background=True)
         view.drawElementFrame(self, p)
 
-        # Call if defined.
         if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
         # Draw the actual element content. Inheriting elements classes can
-        # redefine this method only to fill in drawing behavior. @p is the
+        # redefine this method only to fill in drawing behaviour. @p is the
         # transformed position to draw in the main canvas.
         self.buildElement(view, p, drawElements, **kwargs)
 
@@ -777,8 +772,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         # foreground here.
         view.drawPageMetaInfo(self, p)
 
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
-        # the element is visible.
+        # Drawing outside rotation/scaling mode, so the origin of the element
+        # is visible.
         view.drawElementOrigin(self, origin)
 
         self._restoreRotation(view, p)
