@@ -48,14 +48,10 @@ class VariableGlyphs(Element):
         self.location = copy(location)
 
     def build(self, view, origin, **kwargs):
-
         c = self.context
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-
-        # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p, **kwargs)
 
         if self.drawBefore is not None: # Call if defined
@@ -72,15 +68,9 @@ class VariableGlyphs(Element):
         glyphPathScale = self.fontSize/self.font.info.unitsPerEm
         context.drawGlyphPath(c, self.font.ttFont, self.glyphNames[0], px, py,
                       self.location, glyphPathScale, fillColor)
-
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p)
-
+        self.buildChildElements(view, p)
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
-
-
 
 if __name__ == '__main__':
     import doctest

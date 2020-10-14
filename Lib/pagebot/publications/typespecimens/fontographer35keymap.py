@@ -34,12 +34,23 @@ from pagebot.publications.typespecimens.basetypespecimen import BaseTypeSpecimen
 from pagebot.elements import *
 from pagebot.conditions import *
 
-# The GlyphSquare element is the self-contained "info-graphic" showing each glyph
-# in the original Fontographer 3.5 style.
-# Element float towards a position on the page, defined by conditions.
-# When page.solve() is executed, the elements find their positions,
-# comparable to the CSS float parameters.
+W, H = A4
+SQUARES = 8*8
+PADDING = 36, 42, 60, 56 # Padding page "margins"
+SQSIZE = pt(36) # Standard size of the Fontographer grid glyph squares
+SQMR = 14 # Margins to position element identical to origina layout.
+SQMB = 46
+SQML = 12
+MAX_PAGES = XXXL # For debugging, set to the amount of pages to export
+SHADOW = pt(2) # Thicknes of "shadow" lines in header.
+
 class GlyphSquare(Element):
+    """The GlyphSquare element is the self-contained "info-graphic" showing
+    each glyph in the original Fontographer 3.5 style. Element float towards a
+    position on the page, defined by conditions. When page.solve() is
+    executed, the elements find their positions, comparable to the CSS float
+    parameters."""
+
     def __init__(self, glyph, uCode, **kwargs):
         Element.__init__(self,  **kwargs)
         self.glyph = glyph # Glyph object. Can be used for additional information later.
@@ -100,21 +111,11 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
     """
 
     >>> specimen = Fontographer35KeyMap(w=500, h=1000, autoPages=1)
-    >>> doc = specimen.newDocument()
+    >>> doc = specimen.newDocument(name='fontographer 35 keymap')
     >>> page = doc[1]
 
     """
     # Standard page size for now.
-    W, H = A4
-    SQUARES = 8*8
-    PADDING = 36, 42, 60, 56 # Padding page "margins"
-    SQSIZE = pt(36) # Standard size of the Fontographer grid glyph squares
-    SQMR = 14 # Margins to position element identical to origina layout.
-    SQMB = 46
-    SQML = 12
-    MAX_PAGES = XXXL # For debugging, set to the amount of pages to export
-    SHADOW = pt(2) # Thicknes of "shadow" lines in header.
-
     # Substitute the name or file name of the font to show if locally installed.
     # In this example we use the font that come with PageBot.
     f = findFont('Bungee-Regular')
@@ -127,9 +128,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         textFill=blackColor)
 
     def newSampleDocument(self, autoPages=None, **kwargs):
-
         f = findFont('PageBot-Regular')
-
         doc = self.newDocument(autoPages=autoPages or 1, **kwargs)
         page = doc[1]
         self.makeHeader(page, f)
@@ -171,8 +170,10 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
 
         squareIndex += 1
         glyph = f[glyphName]
-        # Create an element for this glyph. Note the conditions that will
-        # later be checked for the position status by doc.solve()-->page.solve()
+
+        # Creates an element for this glyph. Note the conditions that will
+        # later be checked for the position status by
+        # doc.solve()-->page.solve()
         GlyphSquare(glyph, uCode, name='square-%s' % glyphName, w=SQSIZE, h=SQSIZE,
             ml=self.SQML, mr=self.SQMR, mb=self.SQMB,
             borders=dict(strokeWidth=pt(0.5), line=ONLINE, stroke=0, dash=(1,1)),
@@ -192,7 +193,6 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         squareIndex = 0
         for uCode, glyphName in sorted(font.cmap.items()):
             page = self.addGlyphSquare(page, uCode, glyphName)
-
 
 if __name__ == '__main__':
     import doctest

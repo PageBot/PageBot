@@ -286,7 +286,8 @@ class VariableCircle(Element):
     #   D R A W B O T  S U P P O R T
 
     def build(self, view, origin, **kwargs):
-        """Draw the circle info-graphic, showing most info about the variable font as can be interpreted from the file."""
+        """Draws the circle info-graphic, showing most info about the variable
+        font as can be interpreted from the file."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -300,9 +301,8 @@ class VariableCircle(Element):
         # Draw actual circle
         self._drawFontCircle(px, py)
 
-        if drawElements:
-            for e in self.elements:
-                e.build(view, p, **kwargs)
+        for e in self.elements:
+            e.build(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
