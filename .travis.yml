@@ -17,6 +17,7 @@ matrix:
         - ./scripts/doctests-linux.sh
         - ./scripts/doctests.sh
     - os: osx
+      #osx_image: xcode12.2
       language: sh
       env:
           - HOMEBREW_NO_ANALYTICS=1
@@ -24,12 +25,12 @@ matrix:
       addons:
           homebrew:
               update: true
-              packages: python3.8
+              packages: python3.9
       before_install:
         - brew link --overwrite python
         - python --version
         - python3 --version
-        - pip3.8 install --upgrade pip
+        - pip3 install --upgrade pip
       install:
         - ./scripts/osx.sh
       script:
