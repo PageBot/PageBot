@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ev
-python3 -m doctest doctests/context-osx.txt
-python3 -m doctest doctests/composer-osx.txt
-python3 -m doctest doctests/babelstring-osx.txt
-python3 -m doctest doctests/image-osx.txt
+export PY="python3.8"
+$PY -m doctest doctests/context-osx.txt
+$PY -m doctest doctests/composer-osx.txt
+$PY -m doctest doctests/babelstring-osx.txt
+$PY -m doctest doctests/image-osx.txt
