@@ -55,9 +55,6 @@ class Rect(Element):
         context = self.context # Get current context and builder.
         p = self.getPosition(view, origin)
         self.buildFrame(view, p) # Draw optional frame or borders.
-
-        # Let the view draw frame info for debugging, in case
-        # view.showFrame == True
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None:
@@ -73,8 +70,8 @@ class Rect(Element):
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
-        self._restoreScale(view)
-        self.draw(view, origin)
+        self.restore(view, p)
+        self.drawMeta(view, origin)
 
     def build_inds(self, view, origin):
         """It is better to have a separate InDesignContext build tree, since we

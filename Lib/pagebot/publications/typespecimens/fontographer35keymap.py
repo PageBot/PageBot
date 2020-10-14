@@ -159,17 +159,17 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         )
         page.solve()
 
-    def addGlyphSquare(self, page, font, uCode, glyphName):
+    def addGlyphSquare(self, doc, page, font, uCode, glyphName):
         squareIndex = 0
 
         if uCode < 32: # Skip control characters
             return
         if squareIndex >= SQUARES:
-            if len(self.doc) >= (MAX_PAGES or XXXL):
+            if len(doc) >= (MAX_PAGES or XXXL):
                 return
             squareIndex = 0
-            page = self.doc.newPage()
-            self.makeHeader(page, font)
+            page = doc.newPage()
+            self.makeHeader(doc, page, font)
 
         squareIndex += 1
         glyph = font[glyphName]
@@ -188,7 +188,6 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         u"""Create the elements (header and a grid of GlyphSquares) for each page.
         Add as many pages as needed to accommodate all glyphs in the font.
         """
-        print('make pages')
         page = doc[1]
         self.makeHeader(doc, page, font)
 
@@ -197,7 +196,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         # layout) TODO: Make this responsive to the size of the page.
         squareIndex = 0
         for uCode, glyphName in sorted(font.cmap.items()):
-            self.addGlyphSquare(page, font, uCode, glyphName)
+            self.addGlyphSquare(doc, page, font, uCode, glyphName)
 
 if __name__ == '__main__':
     import doctest

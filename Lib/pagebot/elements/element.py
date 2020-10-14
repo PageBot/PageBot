@@ -737,7 +737,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     def build(self, view, origin, **kwargs):
         """Default drawing method just drawing the frame. Probably will be
         redefined by inheriting element classes."""
-
         p = self.getPosition(view, origin)
         self.buildFrame(view, p)
         view.drawPageMetaInfoBackground(self, p)
@@ -752,20 +751,15 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             # Call if defined.
             self.drawAfter(self, view, p)
 
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # foreground here.
         view.drawPageMetaInfo(self, p)
+        self.restore(view, p)
+        self.drawMeta(view, origin)
 
-        # Drawing outside rotation/scaling mode, so the origin of the element
-        # is visible.
-        view.drawElementOrigin(self, origin)
-
+    def restore(self, view, p):
         self._restoreRotation(view, p)
         self._restoreScale(view)
-        self.draw(view, origin)
 
-    def draw(self, view, origin):
+    def drawMeta(self, view, origin):
         """Element draw function based on style settings."""
         # Depends on flag 'view.showElementInfo'.
         view.drawElementInfo(self, origin)
@@ -4708,6 +4702,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             x = min(e.mLeft, x)
         return x
 
+    # Private alignment, scale and rotation functions.
+
     def _applyAlignment(self, p):
         """Answers point `p` according to the alignment status in the css.
 
@@ -4737,14 +4733,12 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     def _applyRotation(self, view, p):
         """Apply the rotation for angle, where (mx, my) is the rotation center."""
         if self.angle:
-            # FIXME: Not something for the context to do? Unless in build modus.
             px, py, _ = point3D(p)
             self.view.context.rotate(self.angle, center=(px+self.rx, py+self.ry))
 
     def _restoreRotation(self, view, p):
         """Reset graphics state from rotation mode."""
         if self.angle:
-            # FIXME: Not something for the context to do? Unless in build modus.
             px, py, _ = point3D(p)
             self.view.context.rotate(-self.angle, center=(px+self.rx, py+self.ry))
 
@@ -4761,7 +4755,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
         # Make sure these are value scale values.
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1):
-            # FIXME: Not something for the context to do? Unless in build modus.
             self.view.context.saveGraphicState()
             view.scale = sx, sy
             # Scale point in 3 dimensions.
@@ -4772,11 +4765,11 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Reset graphics state from svaed scale mode. Make sure to match the
         call of self._applyScale. If one of (self.scaleX, self.scaleY,
         self.scaleZ) is not 0 or 1, then do the restore."""
-        # FIXME: Not something for the context to do? Unless in build modus.
         sx = self.scaleX
         sy = self.scaleY
         sz = self.scaleZ
-        if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1): # Make sure these are value scale values.
+        # Make sure these are value scale values.
+        if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1):
             self.view.context.restoreGraphicState()
 
     #   S P E L L  C H E C K

@@ -34,31 +34,25 @@ class Oval(Element):
         >>> e.size
         (500pt, 3pt)
         """
-        context = self.context # Get current context and builder.
-        #p = pointOffset(self.origin, origin)
-        #p = self._applyScale(view, p)
-        #px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
         p = self.getPosition(view, origin)
         px, py, _ = p
-        self.buildFrame(view, p) # Draw optional frame or borders.
-
-        # Let the view draw frame info for debugging, in case
-        # view.showFrame == True
+        self.buildFrame(view, p)
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None:
             # Call if defined
             self.drawBefore(self, view, p)
 
-        context.fill(self.css('fill', noColor))
-        context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
-        context.oval(px - self.w / 2, py - self.h / 2, self.w, self.h)
+        self.context.fill(self.css('fill', noColor))
+        self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
+        self.context.oval(px - self.w / 2, py - self.h / 2, self.w, self.h)
         self.buildChildElements(view, p, **kwargs)
+
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
-        self._restoreScale(view)
-        self.draw(view, origin)
+        self.restore(view, p)
+        self.drawMeta(view, origin)
 
     def build_inds(self, view, origin):
         """It is better to have a separate InDesignContext build tree, because

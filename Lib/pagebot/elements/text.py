@@ -372,7 +372,7 @@ class Text(Element, TextConditions, TextAlignments):
 
         self._restoreRotation(view, p)
         self._restoreScale(view)
-        self.draw(view, origin)
+        self.drawMeta(view, origin)
 
     def copy(self, parent=None):
         """Answers a full copy of `self`, where the "unique" fields are set to

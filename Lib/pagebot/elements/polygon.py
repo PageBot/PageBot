@@ -60,14 +60,11 @@ class Polygon(Element):
     #   D R A W B O T / F L A T  S U P P O R T
 
     def build(self, view, origin, **kwargs):
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        self._applyRotation(view, p)
-
+        p = self.getPosition(view, origin)
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         view.drawPageMetaInfoBackground(self, p)
+
         if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
@@ -94,10 +91,8 @@ class Polygon(Element):
 
         # Supposedly drawing outside rotation/scaling mode, so the origin of
         # the element is visible.
-        view.drawElementOrigin(self, origin)
-        self._restoreRotation(view, p)
-        self._restoreScale(view)
-        self.draw(view, origin)
+        self.restore(view, p)
+        self.drawMeta(view, origin)
 
     #   H T M L  /  C S S  S U P P O R T
 
