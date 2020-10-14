@@ -23,9 +23,8 @@
 #     as Variable axis location in design space, changed from latest git,
 #     Option using this layout with UFO.
 #
-from pagebot.toolbox.units import pointOffset, inch, pt, upt, em
+from pagebot.toolbox.units import pointOffset, inch, pt, em
 from pagebot.constants import A4, ONLINE, CENTER, XXXL
-from pagebot.document import Document
 from pagebot.toolbox.color import color, whiteColor, blackColor,  noColor
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.dating import now
@@ -114,7 +113,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
     """
 
     >>> specimen = Fontographer35KeyMap(w=500, h=1000, autoPages=1)
-    >>> doc = specimen.newDocument(name='fontographer 35 keymap')
+    >>> doc = specimen.newSampleDocument(name='fontographer 35 keymap')
     >>> page = doc[1]
     >>> score = page.solve()
     >>> doc.export('_export/fontographer35keymap.pdf')
@@ -128,14 +127,17 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         f = findFont('PageBot-Regular')
         doc = self.newDocument(autoPages=autoPages or 1, **kwargs)
         page = doc[1]
-        self.makeHeader(page, f)
+        context = doc.context
+        self.makeHeader(context, page, f)
+        return doc
 
-    def makeHeader(self, page, font):
+    def makeHeader(self, context, page, font):
+        labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
         page.padding = PADDING
         header = newRect(h=inch(1), padding=pt(8), mb=inch(0.6), parent=page,
             fill=0.4, conditions=[Fit2Width(), Top2Top()])
         titleStyle = dict(font=labelFont, fontSize=pt(20), textFill=0, xTextAlign=CENTER)
-        title = self.context.newString('Key map', style=titleStyle)
+        title = context.newString('Key map', style=titleStyle)
         mr = pt(8)
         newText(title, w=page.pw*0.35, fill=0.5, parent=header,
             pt=pt(12), # Padding top
@@ -148,10 +150,9 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         t = 'Size: %s  Font: %s\nNotice: © %s\nPrinted by PageBot on %s' % \
             (pt(SQSIZE), font.path.split('/')[-1], font.info.copyright, now().datetime)
 
-        labelFont = findFont('Roboto-Regular') # Keep this as label font (or change it)
         fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2),
             textFill=blackColor)
-        fontInfo = self.context.newString(t, style=fontInfoStyle)
+        fontInfo = context.newString(t, style=fontInfoStyle)
         newText(fontInfo, fill=1, parent=header, margin=0, w=page.pw*0.65-3*mr,
             padding=pt(4),
             borderTop=dict(stroke=blackColor, strokeWidth=SHADOW),
@@ -160,7 +161,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         )
         page.solve()
 
-    def addGlyphSquare(self, page, uCode, glyphName):
+    def addGlyphSquare(self, page, font, uCode, glyphName):
         if uCode < 32: # Skip control characters
             return
         if squareIndex >= SQUARES:
@@ -168,10 +169,10 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
                 return
             squareIndex = 0
             page = doc.newPage()
-            makeHeader(page, font)
+            self.makeHeader(page, font)
 
         squareIndex += 1
-        glyph = f[glyphName]
+        glyph = font[glyphName]
 
         # Creates an element for this glyph. Note the conditions that will
         # later be checked for the position status by
@@ -189,12 +190,13 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         """
         page = doc[1] # Get the first (automatic) generated page from the document,
         self.makeHeader(page, font) # Make the heading block for this page.
-        # Keep track on the amount of squares on the page, checking currently agains
-        # the fixed value of SQUARES (8x8 in the original Fontographer layout)
-        # TODO: Make this responsive to the size of the page.
+
+        # Keep track on the amount of squares on the page, checking currently
+        # agains the fixed value of SQUARES (8x8 in the original Fontographer
+        # layout) TODO: Make this responsive to the size of the page.
         squareIndex = 0
         for uCode, glyphName in sorted(font.cmap.items()):
-            page = self.addGlyphSquare(page, uCode, glyphName)
+            self.addGlyphSquare(page, font, uCode, glyphName)
 
 if __name__ == '__main__':
     import doctest
