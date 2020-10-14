@@ -261,8 +261,9 @@ class PageView(BaseView):
         self.drawBaselines(page, origin, background=False)
 
     def drawPageMetaInfoBackground(self, page, origin, path=None):
-        """Draws the foreground meta info of the page, depending on the
-        settings.
+        """Draws the background meta info on the page, depending on the
+        settings -- lets the view draw frame info for debugging, in case
+        view.showFrame == True and self.isPage or if self.showFrame.
 
         >>> from pagebot import getContext
         >>> context = getContext()

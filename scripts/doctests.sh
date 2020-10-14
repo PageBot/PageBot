@@ -151,8 +151,10 @@ $PY $PWD/mathematics/__init__.py
 $PY $PWD/mathematics/transform3d.py
 $PY $PWD/filepaths.py
 
+$PY $PWD/publications/publication.py
 $PY $PWD/publications/typespecimens/__init__.py
 $PY $PWD/publications/typespecimens/basetypespecimen.py
+#$PY $PWD/publications/typespecimens/fontographer35keymap.py
 $PY $PWD/publications/typespecimens/simplespecimen.py
 $PY $PWD/publications/typespecimens/specimens.py
 $PY $PWD/publications/typespecimens/typespecimen.py

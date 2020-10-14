@@ -109,7 +109,7 @@ class TypeListLine(Element):
             self.font.info.familyName, self.font.info.styleName, self.fontSize, len(self.font)
         )
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.div(cssClass=self.cssClass, style="width:100%")
 
@@ -163,7 +163,7 @@ class TypeListLine(Element):
             cssList.append(css)
         return cssList
 
-    def buildElement(self, view, p, drawElements=True, **kwargs):
+    def buildElement(self, view, p, **kwargs):
         """Draw the specimen line, assuming context to be of a drawing type.
         """
         c = self.context
@@ -253,7 +253,7 @@ class TypeList(Group):
                 sampleText=sampleText, fontSize=self.fontSize, labelFont=labelFont,
                 labelFontSize=labelFontSize, parent=self, h=h, **kwargs)
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass=self.cssClass)
@@ -333,7 +333,7 @@ class TypeFeatures(Group):
             if font is not None:
                 self.fonts.append(font)
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass=self.cssClass)
@@ -435,7 +435,7 @@ class TypeGlyphSet(Group):
             if font is not None:
                 self.fonts.append(font)
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass=self.cssClass)
@@ -527,7 +527,7 @@ class Waterfall(Group):
         self.fontSizes = fontSizes
         self.fontDataList = fontDataList
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass=self.cssClass)

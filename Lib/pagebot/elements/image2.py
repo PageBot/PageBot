@@ -111,7 +111,7 @@ class ImageData(Element):
             alpha = 1
         return alpha
 
-    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Draw the image in the calculated scale. Since we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.
@@ -147,8 +147,7 @@ class ImageData(Element):
                 context.image(self.path, p=(px, py), w=self.w, h=self.h, alpha=self._getAlpha())
             # TODO: Draw optional (transparant) forground color?
 
-        if drawElements:
-            self.buildChildElements(view, p, **kwargs)
+        self.buildChildElements(view, p, **kwargs)
 
         self._restoreRotation(view, p)
 
@@ -208,7 +207,7 @@ class Image(Element):
     imageData = property(_get_imageData, _set_imageData)
 
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
@@ -230,33 +229,32 @@ class Image(Element):
         if self.drawBefore is not None: # Call if defined, not part of clipping path.
             self.drawBefore(self, view, p)
 
-        if drawElements:
-            if self.clipPath is not None:
-                # If there is a clipPath defined, use it.
-                clipPath = self.clipPath
-            else:
-                # Otherwise use self.box as clipRect when drawing the child elements.
-                clipPath = context.newPath()
-                # move to a point
-                clipPath.moveTo(upt(px+pl, py+pb))
-                # line to points of the clip rect.
-                clipPath.lineTo(upt(px+pl, py+pb+self.ph))
-                clipPath.lineTo(upt(px+pl+self.pw, py+pr+self.ph))
-                clipPath.lineTo(upt(px+pl+self.pw, py+pb))
-                clipPath.lineTo(upt(px+pl, py+pb))
-                # close the path
-                clipPath.closePath()
+        if self.clipPath is not None:
+            # If there is a clipPath defined, use it.
+            clipPath = self.clipPath
+        else:
+            # Otherwise use self.box as clipRect when drawing the child elements.
+            clipPath = context.newPath()
+            # move to a point
+            clipPath.moveTo(upt(px+pl, py+pb))
+            # line to points of the clip rect.
+            clipPath.lineTo(upt(px+pl, py+pb+self.ph))
+            clipPath.lineTo(upt(px+pl+self.pw, py+pr+self.ph))
+            clipPath.lineTo(upt(px+pl+self.pw, py+pb))
+            clipPath.lineTo(upt(px+pl, py+pb))
+            # close the path
+            clipPath.closePath()
 
-            #context.fill((0, 1, 0))
-            #context.drawPath(clipPath)
+        #context.fill((0, 1, 0))
+        #context.drawPath(clipPath)
 
-            context.save()
-            # set the path as a clipping path
-            #context.clipPath(clipPath)
-            # Build the child elements. Default this is the ImageData instance, but there
-            # may be other elemnents added too in any particular order.
-            self.buildChildElements(view, p)
-            context.restore()
+        context.save()
+        # set the path as a clipping path
+        #context.clipPath(clipPath)
+        # Build the child elements. Default this is the ImageData instance, but there
+        # may be other elemnents added too in any particular order.
+        self.buildChildElements(view, p)
+        context.restore()
 
         if self.drawAfter is not None: # Call if defined, not part of clipping path
             self.drawAfter(self, view, p)

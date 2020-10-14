@@ -734,34 +734,19 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         self._applyRotation(view, p)
         return p
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         """Default drawing method just drawing the frame. Probably will be
         redefined by inheriting element classes."""
 
-        '''
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p) # Ignore z-axis for now.
-        px, py, _ = p = self._applyAlignment(p)
-        self._applyRotation(view, p)
-        '''
         p = self.getPosition(view, origin)
-
-        # Draw optional frame or borders.
         self.buildFrame(view, p)
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # background here.
-        view.drawPageMetaInfoBackground(self, p)#, background=True)
+        view.drawPageMetaInfoBackground(self, p)
         view.drawElementFrame(self, p)
 
         if self.drawBefore is not None:
             self.drawBefore(self, view, p)
 
-        # Draw the actual element content. Inheriting elements classes can
-        # redefine this method only to fill in drawing behaviour. @p is the
-        # transformed position to draw in the main canvas.
-        self.buildElement(view, p, drawElements, **kwargs)
+        self.buildElement(view, p, **kwargs)
 
         if self.drawAfter is not None:
             # Call if defined.
@@ -787,15 +772,20 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         view.drawElementOrigin(self, origin)
         view.drawFlowConnections(self, origin)
 
-    def buildElement(self, view, p, drawElements=True, **kwargs):
-        """Main drawing method for elements to draw their content and the
+    def buildElement(self, view, p, **kwargs):
+        """
+
+        Draws the actual element content. Inheriting elements classes can
+        redefine this method only to fill in drawing behaviour. @p is the
+        transformed position to draw in the main canvas.
+
+        Main drawing method for elements to draw their content and the
         content of their children if they exist. @p is the transformed position
         of the context canvas. To be redefined by inheriting element classes
-        that need to draw more than just their chold elements."""
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel
-            # image.
-            self.buildChildElements(view, p, **kwargs)
+        that need to draw more than just their child elements.
+
+        """
+        self.buildChildElements(view, p, **kwargs)
 
     def buildChildElements(self, view, origin=None, **kwargs):
         """Draws child elements, dispatching depends on the implementation of
@@ -821,7 +811,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         for e in self.elements:
             e.prepare_inds(view)
 
-    def build_inds(self, view, origin, drawElements=True, **kwargs):
+    def build_inds(self, view, origin, **kwargs):
         """It is better to have a separate InDesignContext build tree, since we
         need more information down there than just drawing instructions. This
         way the InDesignContext just gets the PageBot Element passed over,
@@ -829,9 +819,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         p = pointOffset(self.origin, origin)
         p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
         # Inheriting Elements should add their context call here.
-        if drawElements:
-            for e in self.elements:
-                e.build_inds(view, p2D, **kwargs)
+        for e in self.elements:
+            e.build_inds(view, p2D, **kwargs)
 
     #   H T M L  /  S C S S / S A S S  S U P P O R T
 
@@ -900,7 +889,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         )
         return d
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         """Build the HTML/CSS code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent. For
@@ -925,8 +914,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
             # Build child elements, dispatch if they implemented generic or
             # context specific build method.
-            if drawElements:
-                self.buildChildElements(view, path, **kwargs)
+            self.buildChildElements(view, path, **kwargs)
 
             # Call if defined.
             if self.drawAfter is not None:
@@ -959,10 +947,13 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return s
 
     def buildFrame(self, view, p):
-        """Draws the rectangular element space. self.fill defines the color of
-        the element background. Instead of the DrawBot stroke and strokeWidth
-        attributes, use borders or (borderTop, borderRight, borderBottom,
-        borderLeft) attributes."""
+        """Draws optional frame or borders to display element space. self.fill
+        defines the color of the element background. Instead of the DrawBot
+        stroke and strokeWidth attributes, use borders or (borderTop,
+        borderRight, borderBottom, borderLeft) attributes.
+
+        TODO: move to view.
+        """
         c = view.context
         eShadow = self.shadow
 

@@ -25,7 +25,7 @@ class Oval(Element):
 
     #   G E N E R I C  C O N T E X T  S U P P O R T
 
-    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Draws the oval in the current context canvas.
 
         >>> e = Oval(x=0, y=20, w=500, h=3)
@@ -53,15 +53,14 @@ class Oval(Element):
         context.fill(self.css('fill', noColor))
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         context.oval(px - self.w / 2, py - self.h / 2, self.w, self.h)
-        if drawElements:
-            self.buildChildElements(view, p, **kwargs)
+        self.buildChildElements(view, p, **kwargs)
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
 
         self._restoreScale(view)
         self.draw(view, origin)
 
-    def build_inds(self, view, origin, drawElements=True):
+    def build_inds(self, view, origin):
         """It is better to have a separate InDesignContext build tree, because
         we need more information than just drawing instructions. We just pass
         the PageBot Element to the InDesignContext, using it's own API."""
@@ -69,9 +68,8 @@ class Oval(Element):
         p = pointOffset(self.origin, origin)
         px, py = p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
         context.oval(px, py, e=self)
-        if drawElements:
-            for e in self.elements:
-                e.build_inds(view, p2D)
+        for e in self.elements:
+            e.build_inds(view, p2D)
 
 class Circle(Oval):
     def __init__(self, r=None, x=None, y=None, w=None, h=None, xAlign=None,

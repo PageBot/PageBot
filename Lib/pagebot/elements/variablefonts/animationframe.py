@@ -60,7 +60,7 @@ class AnimationFrame(Rect):
         self.sampleText = s or self.SAMPLE
         self.phases = phases or {} # Dictionary for phasing values depending on frame index.
 
-    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame. Probably will be
         redefined by inheriting element classes."""
         c = self.context

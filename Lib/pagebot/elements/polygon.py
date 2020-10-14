@@ -59,7 +59,7 @@ class Polygon(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
@@ -81,9 +81,8 @@ class Polygon(Element):
         #self.context.b.fill(0, 0, 1, 0.5)
         #self.context.b.rect(px, py, self.w, self.h)
 
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p, **kwargs)
+        # If there are child elements, recursively draw them over the pixel image.
+        self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -102,7 +101,7 @@ class Polygon(Element):
 
     #   H T M L  /  C S S  S U P P O R T
 
-    def build_html(self, view, origin=None, drawElements=True):
+    def build_html(self, view, origin=None):
         """Drawing HTML Polygon through SVG?
 
         TODO: implement, SVG or pixels?
@@ -233,7 +232,7 @@ class Mask(Polygon):
             points = [(0, 0), (0, h), (w, h), (w, 0)]
         Polygon.__init__(self, points=points, w=w, h=h, **kwargs)
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
         p = pointOffset(self.origin, origin)

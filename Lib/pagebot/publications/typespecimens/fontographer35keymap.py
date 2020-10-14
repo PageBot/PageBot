@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -5,19 +6,19 @@
 #     P A G E B O T
 #
 #     Licensed under MIT conditions
-#     
+#
 #     Supporting DrawBot, www.drawbot.com
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     Build a type specimen similar as, and tribute to, the good old 
+#     Build a type specimen similar as, and tribute to, the good old
 #     Fontographer 3.5 KeyMap page.
 #
 #     TODO
 #     Make number of GlyphSquares on a page (8x8) dependent on page size.
 #     Make font size options (also needs resonsive layout)
 #     Optional other layout, use of color and adaption to foundry identity.
-#     Optional placement of foundry logo instead of the "Key map" 
+#     Optional placement of foundry logo instead of the "Key map"
 #     Extending functions for showing additional information per glyph, such
 #     as Variable axis location in design space, changed from latest git,
 #     Option using this layout with UFO.
@@ -43,8 +44,8 @@ class GlyphSquare(Element):
         Element.__init__(self,  **kwargs)
         self.glyph = glyph # Glyph object. Can be used for additional information later.
         self.uCode = uCode # Unicode from cmap
-         
-    def build(self, view, origin, drawElements=True, **kwargs):
+
+    def build(self, view, origin, **kwargs):
         """Draw the text on position (x, y). Draw background rectangle and/or
         frame if fill and/or stroke are defined."""
         context = view.context # Get current context
@@ -55,14 +56,14 @@ class GlyphSquare(Element):
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
         # Use the standard frame drawing of Element, using the border settings of self.
         self.buildFrame(view, p) # Draw optional frame or borders.
-        # Calculate the scaled width for self.glyph, depending on the em-square 
+        # Calculate the scaled width for self.glyph, depending on the em-square
         # of fonts.
         width = self.glyph.width/f.info.unitsPerEm * SQSIZE
         # Draw the vertical width line. Not dashed for now.
         context.fill(None)
         context.stroke(color(1, 0, 0), w=0.5)
         context.line((px+width, py), (px+width, py+SQSIZE))
-        # Calculate the position of the baseline of the glyph in the square, 
+        # Calculate the position of the baseline of the glyph in the square,
         # using font.info.descender from bottom of the square.
         baseline = py - f.info.descender/f.info.unitsPerEm * SQSIZE
         # Create the string in size SQSIZE showing the glyph.
@@ -70,24 +71,24 @@ class GlyphSquare(Element):
         # Set stroke color and stroke width for baseline and draw it.
         context.stroke(color(0, 0, 0.5), w=0.5)
         context.line((px, baseline), (px+SQSIZE, baseline))
-        # Draw the glyph. 
+        # Draw the glyph.
         context.text(t, (px, baseline))
-        # Construct the label from the original glyph, unicode and glyph name 
+        # Construct the label from the original glyph, unicode and glyph name
         # (if available)
-        label = context.newString('%s (%d) %s' % (chr(self.uCode), 
+        label = context.newString('%s (%d) %s' % (chr(self.uCode),
             self.uCode, self.glyph.name), style=labelStyle)
-        # Get the size of the generated formatted string to center it. 
+        # Get the size of the generated formatted string to center it.
         # Draw the label.
         tw,th = label.size
         context.text(label, (px + SQSIZE/2 - tw/2, py-pt(7)))
         # Construct the rotated width string on left and right side.
-        widthLabel = context.newString('Width: %d' % self.glyph.width, 
+        widthLabel = context.newString('Width: %d' % self.glyph.width,
             style=labelStyle)
-        leftLabel = context.newString('Offset: %d' % self.glyph.leftMargin, 
+        leftLabel = context.newString('Offset: %d' % self.glyph.leftMargin,
             style=labelStyle)
         context.save() # Save the graphics state
         # Translate the origin to the current position of self, so we can rotate.
-        context.translate(px, py) 
+        context.translate(px, py)
         context.rotate(90) # Rotate clockwise vertical
         context.text(widthLabel, (0, -SQSIZE-pt(7))) # Draw labels on these positions
         context.text(leftLabel, (0, pt(3)))
@@ -121,8 +122,8 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
     # Make the styles for the strings on the page.
     labelStyle = dict(font=labelFont, fontSize=pt(6), textFill=0, xTextAlign=CENTER)
     glyphStyle = dict(font=f, fontSize=SQSIZE, textFill=0)
-    titleStyle = dict(font=labelFont, fontSize=pt(20), textFill=0, xTextAlign=CENTER) 
-    fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2), 
+    titleStyle = dict(font=labelFont, fontSize=pt(20), textFill=0, xTextAlign=CENTER)
+    fontInfoStyle = dict(font=labelFont, fontSize=pt(10), leading=em(1.2),
         textFill=blackColor)
 
     def newSampleDocument(self, autoPages=None, **kwargs):
@@ -135,13 +136,13 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
 
     def makeHeader(self, page, font):
         page.padding = PADDING
-        header = newRect(h=inch(1), padding=pt(8), mb=inch(0.6), parent=page, 
+        header = newRect(h=inch(1), padding=pt(8), mb=inch(0.6), parent=page,
             fill=0.4, conditions=[Fit2Width(), Top2Top()])
         title = context.newString('Key map', style=titleStyle)
         mr = pt(8)
-        newText(title, w=page.pw*0.35, fill=0.5, parent=header, 
+        newText(title, w=page.pw*0.35, fill=0.5, parent=header,
             pt=pt(12), # Padding top
-            mr=mr, # Margin right of the "Key map" text box element   
+            mr=mr, # Margin right of the "Key map" text box element
             borderTop=dict(stroke=whiteColor, strokeWidth=SHADOW),
             borderLeft=dict(stroke=whiteColor, strokeWidth=SHADOW),
             borderRight=dict(stroke=blackColor, strokeWidth=SHADOW),
@@ -157,11 +158,11 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
             conditions=[Right2Right(), Top2Top(), Fit2Height()]
         )
         page.solve()
-        
+
     def addGlyphSquare(self, page, uCode, glyphName):
         if uCode < 32: # Skip control characters
             return
-        if squareIndex >= SQUARES: 
+        if squareIndex >= SQUARES:
             if len(doc) >= (MAX_PAGES or XXXL):
                 return
             squareIndex = 0
@@ -188,7 +189,7 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
         # Keep track on the amount of squares on the page, checking currently agains
         # the fixed value of SQUARES (8x8 in the original Fontographer layout)
         # TODO: Make this responsive to the size of the page.
-        squareIndex = 0 
+        squareIndex = 0
         for uCode, glyphName in sorted(font.cmap.items()):
             page = self.addGlyphSquare(page, uCode, glyphName)
 
@@ -197,4 +198,3 @@ if __name__ == '__main__':
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])
-            

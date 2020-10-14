@@ -212,7 +212,7 @@ class SlideShow(SlideShowBase):
         b.comment('End %s.%s' % (self.cssId, self.cssClass))
 
 class SlideShowGroup(SlideShowBase):
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
 
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
@@ -225,7 +225,7 @@ class SlideShowGroup(SlideShowBase):
 
 class SlideSide(SlideShowBase):
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)

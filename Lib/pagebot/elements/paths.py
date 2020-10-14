@@ -148,7 +148,7 @@ class Paths(Element):
             self.scaleX = self.scaleY = h/bph # Default is proportional scaling
     h = property(_get_h, _set_h)
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
@@ -174,9 +174,8 @@ class Paths(Element):
             context.stroke(path.style.get('stroke', self.stroke), path.style.get('strokeWidth', self.strokeWidth))
             context.drawPath(path, p=p, sx=self.scaleX, sy=self.scaleY)
 
-        if drawElements:
-            # If there are child elements, recursively draw them over the pixel image.
-            self.buildChildElements(view, p, **kwargs)
+        # If there are child elements, recursively draw them over the pixel image.
+        self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

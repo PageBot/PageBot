@@ -47,7 +47,7 @@ class NanoElement(Column):
             b.addHtml('%s | %s' % (self.cssId, self.cssClass))
             b._div()
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         """Build the HTML representation of the element.
 
         >>> from pagebot.contexts import getContext
@@ -160,7 +160,7 @@ class Wrapper(NanoElement):
 class Header(NanoElement):
     """Header on top of the page. Typical container of logo and navigation."""
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.header(cssId=self.cssId, cssClass=self.cssClass)
@@ -184,7 +184,7 @@ class Logo(NanoElement):
             logo = 'Name Here'
         t = Text(logo, parent=self)
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)
@@ -245,7 +245,7 @@ class Navigation(NanoElement):
             else:
                 print('No page or url defined: %s->%s' % (node, node.page))
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         """Builds the recursively nested menu, depending on the structure of the
         pageTree.
 
@@ -294,15 +294,15 @@ class Navigation(NanoElement):
             b.div(cssId=self.cssId, cssClass=self.cssClass)
             b.addHtml('cssId=%s | cssClass=%s' % (self.cssId, self.cssClass))
             b._div()
-        if drawElements:
-            # <nav id="Navigation" class="topnav" role="navigation">
-            b.nav(cssId=self.cssId, cssClass=self.cssClass, role='navigation') # navigation
-            b.div(cssClass=self.cssClass+'-menu') # Allow shrinked container to be positioned in CSS-grid cell.
-            b.ul(cssClass='main-navigation  navmenu')
-            self._buildMenuNode_html(b, self.pageTree)
-            b._ul()
-            b._div()
-            b._nav()
+
+        # <nav id="Navigation" class="topnav" role="navigation">
+        b.nav(cssId=self.cssId, cssClass=self.cssClass, role='navigation') # navigation
+        b.div(cssClass=self.cssClass+'-menu') # Allow shrinked container to be positioned in CSS-grid cell.
+        b.ul(cssClass='main-navigation  navmenu')
+        self._buildMenuNode_html(b, self.pageTree)
+        b._ul()
+        b._div()
+        b._nav()
         b.comment('End %s.%s' % (self.cssId, self.cssClass))
 
 class MobileMenu(NanoElement):
@@ -315,7 +315,7 @@ class MobileMenu(NanoElement):
         NanoElement.__init__(self, cssId=self.TARGET_CSSID, **kwargs)
         self.menuInfo = menuInfo or []
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         """Build the (hidden) menu for th mobile navigation)
         """
         pageTree = self.doc.getPageTree() # Create a nested list of pages by they urls
@@ -344,7 +344,7 @@ class MobileMenu(NanoElement):
 class BurgerButton(NanoElement):
     BURGER = '☰'
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function toggleMobileMenu(eId){
@@ -367,7 +367,7 @@ class BurgerButton(NanoElement):
 # Random selector
 class RandomSelector(NanoElement):
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""function randomSelect(){
@@ -402,7 +402,7 @@ class Collection(NanoElement):
             e.proportional = self.proportional
             e.prepare_html(view)
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         if not self.elements:
             return
         b = self.context.b
@@ -460,7 +460,7 @@ class Info(NanoElement):
         self.infoOpen = infoOpen or self.INFO_OPEN
         self.infoClose = infoClose or self.INFO_CLOSE
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         if not self.elements:
             return
 
@@ -509,7 +509,7 @@ class Cropped(NanoElement):
     growing background container. But is also can be used for normal content,
     that should be positions on a background image.
     """
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s' % (self.cssId, self.cssClass))
         images = self.findAll(cls=Image) # Find all child images inside the tree
@@ -552,7 +552,7 @@ class Movie(NanoElement):
         self.loop = loop
         self.controls = controls
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.div(cssId=self.cssId, cssClass='%s clearfix' % self.cssClass)

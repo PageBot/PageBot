@@ -71,7 +71,7 @@ class GlyphDimensions(BaseFontShow):
         self.f = f # Font instance
         self.glyphName = glyphName or 'H'
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)

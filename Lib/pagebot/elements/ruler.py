@@ -115,7 +115,7 @@ class Ruler(Element):
 
     #   H T M L  /  S A S S  S U P P O R T
 
-    def build_html(self, view, origin=None, drawElements=True, **kwargs):
+    def build_html(self, view, origin=None, **kwargs):
         """Build the Ruler in the current context
 
         >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
@@ -146,8 +146,7 @@ class Ruler(Element):
 
         b.hr(cssClass=self.cssClass) # Use self.cssClass if defined. Ignore if None.
 
-        if drawElements:
-            self.buildChildElements(view, **kwargs)
+        self.buildChildElements(view, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)

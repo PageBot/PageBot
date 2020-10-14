@@ -37,13 +37,13 @@ class CodeBlock(Text):
     def __repr__(self):
         return '<%s:%s>' % (self.__class__.__name__, self.code.replace('\n',';')[:200])
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         """Run the code block. If the view.showSourceCode is True, then just export the code
         for debugging."""
         if not view.showSourceCode:
             self.run()
         else:
-            Text.build(self, view, origin, drawElements, **kwargs)
+            Text.build(self, view, origin, **kwargs)
 
     def run(self, targets=None, verbose=False):
         """Execute the code block. Answer a set of compiled methods, as found in the <code class="Python">...</code>,

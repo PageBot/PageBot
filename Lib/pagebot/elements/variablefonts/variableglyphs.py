@@ -47,7 +47,7 @@ class VariableGlyphs(Element):
             location = {}
         self.location = copy(location)
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
 
         c = self.context
 

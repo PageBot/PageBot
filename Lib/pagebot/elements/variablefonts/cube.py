@@ -69,7 +69,7 @@ class Cube(BaseFontShow):
             axes = {LEFT: 'wght', RIGHT: 'wdth', TOP: 'opsz'}
         self.axes = axes
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context

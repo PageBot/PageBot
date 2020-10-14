@@ -364,7 +364,7 @@ class Image(Element):
         for e in self.elements:
             e.prepare_html(view)
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         # Gets current context.
         context = view.context
         b = context.b
@@ -382,9 +382,8 @@ class Image(Element):
         b.div(cssClass='caption')
 
         # Draw captions if there are any.
-        if drawElements:
-            for e in self.elements:
-                e.build_html(view, path, **kwargs)
+        for e in self.elements:
+            e.build_html(view, path, **kwargs)
         # .caption
         b._div()
 
@@ -395,7 +394,7 @@ class Image(Element):
         # self.cssClass or self.__class__.__name__
         b._div()
 
-    def build_(self, view, origin=ORIGIN, drawElements=True):
+    def build_(self, view, origin=ORIGIN):
         print('pbimage.build_flat')
         '''
         context = view.context
@@ -405,12 +404,11 @@ class Image(Element):
                 alpha=self._getAlpha(), w=self.w, h=self.h,
                 scaleType=self.scaleType, e=self)
 
-        if drawElements:
-            for e in self.elements:
-                e.build_flat(view, p2D)
+        for e in self.elements:
+            e.build_flat(view, p2D)
         '''
 
-    def build_inds(self, view, origin, drawElements=True):
+    def build_inds(self, view, origin):
         """It is better to have a separate InDesignContext build tree, since we
         need more information down there than just drawing instructions.
 
@@ -422,9 +420,8 @@ class Image(Element):
         context.image(self.path, p2D, pageNumber=self.index,
                 alpha=self._getAlpha(), w=self.w, h=self.h,
                 scaleType=self.scaleType, e=self)
-        if drawElements:
-            for e in self.elements:
-                e.build_inds(view, p2D)
+        for e in self.elements:
+            e.build_inds(view, p2D)
 
     def prepare(self, view):
         """Respond to the top-down element broadcast to prepare for build. If
@@ -436,7 +433,7 @@ class Image(Element):
         for e in self.elements:
             e.prepare(view)
 
-    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Draw the image in the calculated (w, h). Because we need to use the
         image by scale transform, all other measure (position, lineWidth) are
         scaled back to their original proportions.
@@ -502,8 +499,7 @@ class Image(Element):
         if self.iw and self.ih:
             self.buildFrame(view, p)
 
-        #if drawElements:
-        #    self.buildChildElements(view, p)
+        #self.buildChildElements(view, p)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

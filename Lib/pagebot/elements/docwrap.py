@@ -60,7 +60,7 @@ class DocWrap(Element):
         pass
     h = property(_get_h, _set_h)
 
-    def buildElement(self, view, p, drawElements=True, **kwargs):
+    def buildElement(self, view, p, **kwargs):
         """Find the referred page of self.wrappedDocument and continue the
         building there. Since the page does not change parent, all local styles
         and references are exactly the same, as if the wrapped document is
@@ -69,7 +69,7 @@ class DocWrap(Element):
         view.context.stroke(noColor)
         view.context.fill(noColor)
         page = self.wrappedDocument[self.pn]
-        page.buildElement(view, p, drawElements, **kwargs)
+        page.buildElement(view, p, **kwargs)
 
 if __name__ == "__main__":
     import doctest

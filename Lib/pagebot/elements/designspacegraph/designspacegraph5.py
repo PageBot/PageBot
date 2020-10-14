@@ -58,7 +58,7 @@ class DesignSpaceGraph(DesignSpace):
         self._cssClass = cssClass
     cssClass = property(_get_cssClass, _set_cssClass)
 
-    def build_html(self, view, path, drawElements=True, **kwargs):
+    def build_html(self, view, path, **kwargs):
         b = self.context.b
         b.comment('Start %s.%s\n' % (self.cssId, self.cssClass))
         b.addJs("""

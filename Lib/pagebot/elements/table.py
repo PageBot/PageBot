@@ -150,7 +150,7 @@ class Table(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
 
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -164,8 +164,7 @@ class Table(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        if drawElements:
-            self.buildChildElements(view, p, **kwargs)
+        self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -175,7 +174,7 @@ class Table(Element):
 
     #   H T M L  /  S A S S  S U P P O R T
 
-    def build_html(self, view, origin=None, drawElements=True, **kwargs):
+    def build_html(self, view, origin=None, **kwargs):
 
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -184,8 +183,7 @@ class Table(Element):
         if self.drawBefore is not None: # Call if defined
             self.drawBefore(self, view, p)
 
-        if drawElements:
-            self.buildChildElements(view, p, **kwargs)
+        self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)

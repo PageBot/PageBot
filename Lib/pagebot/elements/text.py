@@ -293,7 +293,7 @@ class Text(Element, TextConditions, TextAlignments):
 
         return s+'>'
 
-    def build(self, view, origin, drawElements=True, **kwargs):
+    def build(self, view, origin, **kwargs):
         """Draws the text on position (x, y). Draws a background rectangle and
         / or frame if fill and / or stroke are defined.
 
@@ -880,7 +880,7 @@ class Text(Element, TextConditions, TextAlignments):
 
     #   B U I L D  I N D E S I G N
 
-    def build_inds(self, view, origin=None, drawElements=True, **kwargs):
+    def build_inds(self, view, origin=None, **kwargs):
         """It is better to have a separate InDesignContext build tree, because
         we need more information down there than just drawing instructions.
         This way the InDesignContext just gets passed the PageBot Element,
@@ -889,13 +889,12 @@ class Text(Element, TextConditions, TextAlignments):
         p = pointOffset(self.origin, origin)
         p2D = point2D(self._applyAlignment(p)) # Ignore z-axis for now.
         context.textBox(self.bs, p2D, e=self)
-        if drawElements:
-            for e in self.elements:
-                e.build_inds(view, p2D)
+        for e in self.elements:
+            e.build_inds(view, p2D)
 
     #   B U I L D  H T M L
 
-    def build_html(self, view, origin=None, drawElements=True, **kwargs):
+    def build_html(self, view, origin=None, **kwargs):
         """Build the HTML code through WebBuilder (or equivalent) that is
         the closest representation of self. If there are any child elements,
         then also included their code, using the level recursive indent."""
@@ -919,9 +918,8 @@ class Text(Element, TextConditions, TextAlignments):
         if self.drawBefore is not None:
             self.drawBefore(self, view)
 
-        if drawElements:
-            for e in self.elements:
-                e.build_html(view, origin, **kwargs)
+        for e in self.elements:
+            e.build_html(view, origin, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view)

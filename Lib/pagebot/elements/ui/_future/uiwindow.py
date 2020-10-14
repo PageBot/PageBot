@@ -19,7 +19,7 @@ from pagebot.constants import *
 class UIWindow(Element):
     """
     """
-    def __init__(self, callback=None, minW=None, maxW=None, minH=None, maxH=None, 
+    def __init__(self, callback=None, minW=None, maxW=None, minH=None, maxH=None,
             closable=None, **kwargs):
         Element.__init__(self, closable=None, **kwargs)
         self.callback = callback
@@ -31,19 +31,18 @@ class UIWindow(Element):
             closable = True
         self.closable = closable
 
-    def build(self, view, drawElements=True, nsParent=None, **kwargs):
+    def build(self, view, nsParent=None, **kwargs):
         """Draw a button and connect it to a callback function.
         """
         assert nsParent is not None
-        self.window = self.context.window(title=self.title, x=self.x, y=self.y, 
+        self.window = self.context.window(title=self.title, x=self.x, y=self.y,
             w=self.w, h=self.h,
             minW=self.minW, maxW=self.maxW, minH=self.minH, maxH=self.maxH,
             closable=self.closable)
         setattr(nsParent, self.name or 'untitledWindow', self.window)
-        if drawElements:
-            for e in self.elements:
-                e.build(view, nsParent=self.window)
-        
+        for e in self.elements:
+            e.build(view, nsParent=self.window)
+
     def open(self):
         self.window.open()
 

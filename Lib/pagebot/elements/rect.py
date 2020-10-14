@@ -43,7 +43,7 @@ class Rect(Element):
     >>> doc.export('_export/TestRect-%s.pdf' % c.name)
     """
 
-    def build(self, view, origin=ORIGIN, drawElements=True, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Draws the oval in the current context canvas.
 
         >>> e = Rect(x=0, y=20, w=500, h=3)
@@ -68,9 +68,7 @@ class Rect(Element):
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         px, py, _ = p
         context.rect(px, py, self.w, self.h)
-
-        if drawElements:
-            self.buildChildElements(view, p, **kwargs)
+        self.buildChildElements(view, p, **kwargs)
 
         if self.drawAfter is not None: # Call if defined
             self.drawAfter(self, view, p)
@@ -78,7 +76,7 @@ class Rect(Element):
         self._restoreScale(view)
         self.draw(view, origin)
 
-    def build_inds(self, view, origin, drawElements=True):
+    def build_inds(self, view, origin):
         """It is better to have a separate InDesignContext build tree, since we
         need more information down there than just drawing instructions. This
         way the InDesignContext just gets the PageBot Element passed over,
@@ -89,9 +87,8 @@ class Rect(Element):
         px, py = p2D = point2D(self._applyAlignment(p))
         context.rect(px, py, e=self)
 
-        if drawElements:
-            for e in self.elements:
-                e.build_inds(view, p2D)
+        for e in self.elements:
+            e.build_inds(view, p2D)
 
 if __name__ == '__main__':
     import doctest
