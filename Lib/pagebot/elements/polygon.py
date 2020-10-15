@@ -72,7 +72,15 @@ class Polygon(Element):
         #self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         #path = self.getPath(p)
         #self.context.drawPath(path)
-        self.context.polygon(*self.points)
+
+        points = []
+
+        for point in self.points:
+            px = point[0] + p[0]
+            py = point[1] + p[1]
+            points.append((px, py))
+
+        self.context.polygon(*points)
 
         # Debugging where it moved.
         #self.context.b.fill(0, 0, 1, 0.5)

@@ -1153,11 +1153,9 @@ class FlatContext(BaseContext):
         """Answers a BezierPath representation, in the data-format of
         self.context, translated to optional position p."""
         path = self.newPath()
-        p = points[0]
 
         for pIndex, point in enumerate(points):
-            px = point[0] + p[0]
-            py = point[1] + p[1]
+            px, py = point
             if pIndex == 0:
                 path.moveTo((px, py))
             else:
