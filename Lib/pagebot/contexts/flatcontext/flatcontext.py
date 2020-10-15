@@ -1123,7 +1123,7 @@ class FlatContext(BaseContext):
             cp2 = self.getTransformed(x, y0 + offsetY)
             p = self.getTransformed(x, y0)
             path.curveTo(cp1, cp2, p)
-            self.drawShape()
+            self.drawShapePath()
 
     def circle(self, x, y, r):
         """Draws a circle in a square with radius r and (x, y) as center.
@@ -1155,14 +1155,13 @@ class FlatContext(BaseContext):
         path = self.newPath()
 
         for pIndex, point in enumerate(points):
-            px, py = point
+            px, py = self.getTransformed(*point)
             if pIndex == 0:
                 path.moveTo((px, py))
             else:
                 path.lineTo((px, py))
         path.closePath()
-        self.drawPath(path)
-
+        self.drawShapePath()
 
     #   P A T H
 
@@ -1175,12 +1174,13 @@ class FlatContext(BaseContext):
     def drawGlyphPath(self, glyph):
         """Converts the cubic commands to a drawable path."""
         path = self.getGlyphPath(glyph)
-        self.drawShape()
+        self.drawShapePath()
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
+        # TODO
         pass
 
-    def drawShape(self):
+    def drawShapePath(self):
         """Renders the existing Bézier path as a Flat vector graphic."""
         shape = self._getShape()
 

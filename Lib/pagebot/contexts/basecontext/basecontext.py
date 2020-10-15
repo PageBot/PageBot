@@ -380,6 +380,8 @@ class BaseContext(AbstractContext):
         order. Use self._bezierpath if path is omitted. PageBot function.
 
         NOTE: Flat uses native shape, Y-coordinates need to be inverted.
+        TODO: update tests, counting contour points.
+        TODO: add curve tests.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -440,7 +442,7 @@ class BaseContext(AbstractContext):
         if path is None:
             path = self.bezierpath
 
-        # If it's a BezierPath, get the core BezierPath.
+        # If it's a BezierPath, get the BezierPath.
         if hasattr(path, 'bp'):
             bezierPath = path.bp
             # If not forced as attribute, then try to get from the
@@ -452,7 +454,7 @@ class BaseContext(AbstractContext):
             if strokeWidth is None:
                 stroke = path.style.get('strokeWidth')
         else:
-            # Otherwise we assume it is a context core BezierPath instance.
+            # Otherwise we assume it is a context BezierPath instance.
             bezierPath = path
 
         self.save()
@@ -488,9 +490,8 @@ class BaseContext(AbstractContext):
         self.b.clipPath(clipPath)
 
     def line(self, p1, p2):
-        """Draw a line from p1 to p2. This method is using the core BezierPath
-        as path to draw on. For a more rich ennvironment use
-        BezierPath(context).
+        """Draw a line from p1 to p2. This method is using the BezierPath
+        as path to draw on.
 
         >>> from pagebot import getContext
         >>> context = getContext()

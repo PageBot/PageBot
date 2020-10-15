@@ -36,9 +36,15 @@ class FlatBezierPath(BaseBezierPath):
     >>> path.lineTo((100, 100))
     >>> path.lineTo((100, 0))
     >>> path.lineTo((0, 0))
+    >>> path.curveTo((50, 50), (100, 100), (120, 80))
     >>> path.closePath()
-    >>> len(path.contours[-1])
-    5
+    >>> contour = path.contours[-1]
+    >>> len(contour)
+    6
+    >>> contour
+    [[(0.0, 0.0)], [(0.0, 100.0)], [(100.0, 100.0)], [(100.0, 0.0)], [(0.0, 0.0)], [(50.0, 50.0), (100.0, 100.0), (120.0, 80.0)]]
+    >>> contour.points
+    [(0.0, 0.0), (0.0, 100.0), (100.0, 100.0), (100.0, 0.0), (0.0, 0.0), (50.0, 50.0), (100.0, 100.0), (120.0, 80.0)]
     """
 
     def __init__(self, b, path=None, glyphSet=None):

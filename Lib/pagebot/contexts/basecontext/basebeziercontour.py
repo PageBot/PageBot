@@ -24,9 +24,6 @@ class BaseBezierContour(list):
         super().__init__(*args, **kwargs)
         self.open = True
 
-    def __repr__(self):
-        return "<BaseBezierContour>"
-
     def _get_clockwise(self):
         pen = AreaPen()
         pen.endPath = pen.closePath

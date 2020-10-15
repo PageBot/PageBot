@@ -40,23 +40,20 @@ class BezierPath:
     >>> font = findFonts(('Robo', 'Con', 'Bol', 'Ita'))[0]
     >>> font
     <Font Roboto-CondensedBoldItalic>
-    >>> context = getContext('Flat')
+    >>> context = getContext()
     >>> style = dict(font=font, fontSize=100)
     >>> p = BezierPath(context, style=style)
     >>> # TODO: implement rest of Flat Bézier path functions.
     >>> #p.text('H')
     >>> #p.bounds()[1] # Baseline position, H has not ascenders
     #0.0
-    >>> context = getContext('Flat')
+    >>> context = getContext()
     >>> style = dict(font=font, fontSize=100)
     >>> p = BezierPath(context, style=style)
     >>> p.text('H')
     >>> # Baseline position, H has no ascenders.
-    """
-    """
-    TODO: implement for Flat.
     >>> p.bounds()[1]
-    #0.0
+    0.0
     """
 
     def __init__(self, context=None, bezierPath=None, style=None):
@@ -120,11 +117,17 @@ class BezierPath:
         >>> path.isOpenPath # Set by self.
         True
         >>> path.moveTo((0, 0))
-        >>> len(path)
-        1
         >>> path.endPath()
         >>> path.isOpenPath
         False
+        """
+
+        """
+        >>> len(path)
+        1
+        >>> len(path.contours)
+        2
+        >>> contour = path.contours[0]
         """
         msg = '%s.addPoints: Pen path is not open. Call self.beginPath() first.' % self.__class__.__name__
         assert self.isOpenPath, msg

@@ -12,7 +12,7 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     pagemapview.py
+#     mapview.py
 #
 #     Show an overview of thumbnails for everypage in the document
 
@@ -31,8 +31,8 @@ from pagebot.constants import (ORIGIN, GRID_COL, GRID_ROW, GRID_SQR,
 from pagebot.toolbox.units import pt, pointOffset, point2D, asFormatted
 from pagebot.toolbox.transformer import *
 
-class PageMapView(BaseView):
-    """The PageMapView contains the set of Quire instances to export the pages
+class MapView(BaseView):
+    """The MapView contains the set of Quire instances to export the pages
     as documents. A View is just another kind of container, kept by a Document
     to make a certain presentation of the page tree. The MapView typically
     holds Quire elements that make one-directional links to document pages in
