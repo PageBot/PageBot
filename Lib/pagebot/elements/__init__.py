@@ -21,11 +21,9 @@
 from pagebot.elements.element import Element
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
-# Path and mask elements. Generic PageBot equivalent of DrawBot.BezierPath.
-from pagebot.contexts.basecontext.bezierpath import BezierPath, newRectPath
-
 
 # Simple elements.
+from pagebot.elements.bezier import Bezier
 from pagebot.elements.text import Text
 from pagebot.elements.rect import Rect
 from pagebot.elements.group import Group
@@ -180,8 +178,8 @@ def newRuler(**kwargs):
     """Creates a Ruler element."""
     return Ruler(**kwargs)
 
-def newBezierPath(**kwargs):
-    return BezierPath(**kwargs)
+def newBezier(**kwargs):
+    return Bezier(**kwargs)
 
 def newPaths(paths=None, **kwargs):
     """Creates a Paths element, holding BezierPath object(s) in the element

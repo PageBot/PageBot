@@ -1203,6 +1203,7 @@ class BaseContext(AbstractContext):
     #
 
     def BezierPath(self, path=None, glyphSet=None):
+        # FIXME: should be basecontext BezierPath instead.
         return self.b.BezierPath(path=path, glyphSet=glyphSet)
 
     def ImageObject(self, path=None):
