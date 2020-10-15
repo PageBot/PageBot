@@ -17,5 +17,15 @@
 
 from pagebot.elements.element import Element
 
-class Bezier(Element):
-    pass
+class BezierCurve(Element):
+
+    def __init__(self, **kwargs):
+        Element.__init__(self, **kwargs)
+        self.bezierPath = None
+
+    def beginPath(self, identifier=None):
+        self.bezierPath = self.context.newPath()
+        self.bezierPath.beginPath(identifier)
+
+    def closePath(self):
+        self.bezierPath.closePath()

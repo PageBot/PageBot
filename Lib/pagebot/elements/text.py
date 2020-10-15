@@ -56,17 +56,15 @@ class Text(Element, TextConditions, TextAlignments):
     TEXT_MIN_WIDTH = 24
 
     def __init__(self, bs=None, w=None, h=None, size=None, style=None,
-            parent=None, padding=None, conditions=None, xTextAlign=None,
-            xAlign=None, yAlign=None, margin=None, top=None, bottom=None,
-            **kwargs):
-
+            padding=None, xTextAlign=None, xAlign=None, yAlign=None,
+            margin=None, top=None, bottom=None, **kwargs):
 
         # Placeholder, ignoring self.w and self.h until defined.
         self._bs = None
 
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
-        Element.__init__(self, parent=parent, conditions=conditions, **kwargs)
+        Element.__init__(self, **kwargs)
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
 
@@ -293,7 +291,7 @@ class Text(Element, TextConditions, TextAlignments):
 
         return s+'>'
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Draws the text on position (x, y). Draws a background rectangle and
         / or frame if fill and / or stroke are defined.
 

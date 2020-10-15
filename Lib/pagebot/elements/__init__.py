@@ -23,7 +23,7 @@ from pagebot.toolbox.transformer import path2Extension
 from pagebot.constants import IMAGE_TYPES, TEXT_TYPES, FONT_TYPES, MOVIE_TYPES
 
 # Simple elements.
-from pagebot.elements.bezier import Bezier
+from pagebot.elements.beziercurve import BezierCurve
 from pagebot.elements.text import Text
 from pagebot.elements.rect import Rect
 from pagebot.elements.group import Group
@@ -49,7 +49,6 @@ from pagebot.elements.dating.calendarmonth import CalendarMonth
 # Artboard. SketchApp compatible, content element on pages.
 from pagebot.elements.artboard import Artboard
 
-# Element that holds a number of styled BezierPath instances to draw.
 from pagebot.elements.glyphpath import GlyphPath
 from pagebot.elements.paths import Paths
 
@@ -178,8 +177,8 @@ def newRuler(**kwargs):
     """Creates a Ruler element."""
     return Ruler(**kwargs)
 
-def newBezier(**kwargs):
-    return Bezier(**kwargs)
+def newBezierCurve(**kwargs):
+    return BezierCurve(**kwargs)
 
 def newPaths(paths=None, **kwargs):
     """Creates a Paths element, holding BezierPath object(s) in the element
