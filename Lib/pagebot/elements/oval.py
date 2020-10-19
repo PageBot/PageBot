@@ -15,15 +15,12 @@
 #     oval.py
 #
 
-
-from pagebot.constants import ORIGIN, MIDDLE, CENTER
+from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, point2D
 from pagebot.toolbox.color import noColor
 
 class Oval(Element):
-
-    #   G E N E R I C  C O N T E X T  S U P P O R T
 
     def build(self, view, origin=ORIGIN, **kwargs):
         """Draws the oval in the current context canvas.
@@ -55,36 +52,6 @@ class Oval(Element):
         context.oval(px, py, e=self)
         for e in self.elements:
             e.build_inds(view, p2D)
-
-class Circle(Oval):
-    def __init__(self, r=None, x=None, y=None, w=None, h=None, xAlign=None,
-            yAlign=None, **kwargs):
-        """Draws the circle in the current context canvas. Default alignment
-        of the circle is on its middle point (CENTER, MIDDLE). That makes it
-        different from the Oval, which aligns default to bottom-left.
-
-        >>> from pagebot.toolbox.units import pt
-        >>> e = Circle(r=pt(30))
-        >>> e.xy, e.size
-        ((0pt, 0pt), (60pt, 60pt))
-        >>> e.box, e.top, e.right, e.bottom, e.left
-        ((0pt, 0pt, 60pt, 60pt), 30pt, 30pt, -30pt, -30pt)
-        """
-        if r is not None:
-            w = h = 2*r
-        if x is None:
-            x = ORIGIN[0]
-        if y is None:
-            y = ORIGIN[1]
-        Oval.__init__(self, x=x, y=y, w=w, h=h,
-            xAlign=xAlign or CENTER, yAlign=yAlign or MIDDLE, **kwargs)
-
-    def _get_h(self):
-        """Answers the height of the element (same as self.w)."""
-        return self.w
-    def _set_h(self, r):
-        self.w = r
-    h = property(_get_h, _set_h)
 
 if __name__ == '__main__':
     import doctest

@@ -29,7 +29,8 @@ from pagebot.elements.rect import Rect
 from pagebot.elements.group import Group
 from pagebot.elements.line import Line
 from pagebot.elements.mask import  Mask
-from pagebot.elements.oval import Oval, Circle
+from pagebot.elements.oval import Oval
+from pagebot.elements.circle import Circle
 from pagebot.elements.polygon import Polygon
 from pagebot.elements.ruler import Ruler
 from pagebot.elements.docwrap import DocWrap
