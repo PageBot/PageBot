@@ -16,7 +16,7 @@
 #
 from pagebot.elements.element import Element
 from pagebot.constants import XXXL, ORIGIN
-from pagebot.toolbox.units import pointOffset, point2D, units, pt
+from pagebot.toolbox.units import point2D, units, pt
 from pagebot.toolbox.color import noColor
 
 class Polygon(Element):
