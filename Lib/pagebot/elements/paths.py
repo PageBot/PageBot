@@ -148,7 +148,7 @@ class Paths(Element):
             self.scaleX = self.scaleY = h/bph # Default is proportional scaling
     h = property(_get_h, _set_h)
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)

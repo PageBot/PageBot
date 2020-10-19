@@ -19,9 +19,10 @@
 #
 
 from copy import copy
+from pagebot import getContext
+from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.style import makeStyle
-from pagebot import getContext
 from pagebot.toolbox.units import pointOffset
 
 context = getContext()
@@ -47,7 +48,7 @@ class VariableGlyphs(Element):
             location = {}
         self.location = copy(location)
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         c = self.context
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)

@@ -229,7 +229,7 @@ class Mask(Polygon):
             points = [(0, 0), (0, h), (w, h), (w, 0)]
         Polygon.__init__(self, points=points, w=w, h=h, **kwargs)
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
         p = pointOffset(self.origin, origin)
@@ -265,7 +265,6 @@ class Mask(Polygon):
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
-
 
 if __name__ == "__main__":
     import doctest

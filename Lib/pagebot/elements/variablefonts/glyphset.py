@@ -14,6 +14,8 @@
 #
 #     glyphset.py
 #
+
+from pagebot.constants import ORIGIN
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 
@@ -52,7 +54,7 @@ class GlyphSet(BaseFontShow):
         self.f = f # (Variable) font instance
 
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
