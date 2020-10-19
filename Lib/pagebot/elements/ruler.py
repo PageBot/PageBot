@@ -18,7 +18,7 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import units
-from pagebot.constants import DEFAULT_HEIGHT
+from pagebot.constants import DEFAULT_HEIGHT, ORIGIN
 
 class Ruler(Element):
 
@@ -52,7 +52,7 @@ class Ruler(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Build the Ruler in the current context
 
         >>> from pagebot import getContext

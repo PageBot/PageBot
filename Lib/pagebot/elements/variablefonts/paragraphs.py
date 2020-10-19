@@ -16,7 +16,7 @@
 #
 from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
-from pagebot.constants import LEFT
+from pagebot.constants import LEFT, ORIGIN
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.units import pointOffset
 
@@ -93,7 +93,7 @@ Exception raised:
         self.textTag = 'da_text' # Default label where to find (or create) random body text.
         self.labelSize = labelSize # If undefined, then don't draw labels.
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context

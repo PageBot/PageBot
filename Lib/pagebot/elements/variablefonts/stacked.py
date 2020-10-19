@@ -16,7 +16,7 @@
 #
 from random import choice
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
-from pagebot.constants import JUSTIFIED, LEFT
+from pagebot.constants import JUSTIFIED, LEFT, ORIGIN
 from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.units import pointOffset
 
@@ -66,7 +66,7 @@ class Stacked(BaseFontShow):
         self.headlineTag = 'design_headline' # Default label where to find (or create) random headline text.
         self.textTag = 'da_text' # Default label where to find (or create) random body text.
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context

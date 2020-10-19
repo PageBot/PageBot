@@ -17,7 +17,7 @@
 
 
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
-from pagebot.constants import LEFT, RIGHT, TOP, CENTER # Used for axis direction in the cube
+from pagebot.constants import LEFT, RIGHT, TOP, CENTER, ORIGIN
 from pagebot.toolbox.units import pointOffset
 from pagebot.fonttoolbox.objects.font import getInstance
 
@@ -69,7 +69,7 @@ class Cube(BaseFontShow):
             axes = {LEFT: 'wght', RIGHT: 'wdth', TOP: 'opsz'}
         self.axes = axes
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         c = self.context

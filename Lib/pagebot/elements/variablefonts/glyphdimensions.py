@@ -14,14 +14,15 @@
 #
 #     glyphdimensions.py
 #
+
+from pagebot.constants import ORIGIN
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements.variablefonts.basefontshow import BaseFontShow
 
 class GlyphDimensions(BaseFontShow):
-    """Showing the specified (variable) font large glyphs with a variety
-    of optional measures and indicator.
+    """Showing the specified (variable) font large glyphs with a variety of
+    optional measures and indicator."""
 
-    """
     def __init__(self, f, glyphName=None, **kwargs):
 
         """
@@ -71,9 +72,9 @@ class GlyphDimensions(BaseFontShow):
         self.f = f # Font instance
         self.glyphName = glyphName or 'H'
 
-    def build(self, view, origin, **kwargs):
-        """Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
+    def build(self, view, origin=ORIGIN, **kwargs):
+        """Default drawing method just drawing the frame. Probably will be
+        redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.

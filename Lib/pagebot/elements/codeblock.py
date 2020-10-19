@@ -14,6 +14,8 @@
 #
 #     codeblock.py
 #
+
+from pagebot.constants import ORIGIN
 from pagebot.elements.text import Text
 from pagebot.toolbox.color import noColor, color
 
@@ -37,7 +39,7 @@ class CodeBlock(Text):
     def __repr__(self):
         return '<%s:%s>' % (self.__class__.__name__, self.code.replace('\n',';')[:200])
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Run the code block. If the view.showSourceCode is True, then just export the code
         for debugging."""
         if not view.showSourceCode:

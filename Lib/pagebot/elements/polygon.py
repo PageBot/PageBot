@@ -15,7 +15,7 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.constants import XXXL, DEFAULT_WIDTH, DEFAULT_HEIGHT
+from pagebot.constants import XXXL, DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
 from pagebot.toolbox.units import pointOffset
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import point2D, units, pt
@@ -59,7 +59,7 @@ class Polygon(Element):
 
     #   D R A W B O T / F L A T  S U P P O R T
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         p = self.getPosition(view, origin)
         self.buildFrame(view, p) # Draw optional frame or borders.
 

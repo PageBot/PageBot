@@ -16,6 +16,8 @@
 #
 #     Draw the icon with optional information of the included font.
 #
+
+from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, em, upt
 from pagebot.toolbox.color import noColor, blackColor
@@ -88,7 +90,7 @@ class FontIcon(Element):
         self.earFill = earFill
 
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)

@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
+#!/usr/bin/env python3 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -16,6 +15,8 @@
 #
 #     Draw the icon with optional information of the included font.
 #
+
+from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import pointOffset, upt
 from pagebot.toolbox.color import noColor, blackColor
@@ -37,9 +38,11 @@ class FontIcon(Element):
     LABEL_RTRACKING = 0.02
     LABEL_RLEADING = 1.3
 
-    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F', s=1, strokeWidth=None, stroke=noColor,
-            earSize=None, earLeft=True, earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
-            labelFont=None, labelFontSize=None, titleFont=None, titleFontSize=None, show=True, **kwargs):
+    def __init__(self, f, name=None, label=None, title=None, eId=None, c='F',
+            s=1, strokeWidth=None, stroke=noColor, earSize=None, earLeft=True,
+            earFill=None, cFill=0, cStroke=None, cStrokeWidth=None,
+            labelFont=None, labelFontSize=None, titleFont=None,
+            titleFontSize=None, show=True, **kwargs):
         """
         >>> from pagebot.fonttoolbox.objects.font import getFont
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -91,8 +94,7 @@ class FontIcon(Element):
             earFill = self.css("fill")
         self.earFill = earFill
 
-
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Default drawing method just drawing the frame.
         Probably will be redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)

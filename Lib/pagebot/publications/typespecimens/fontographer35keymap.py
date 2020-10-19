@@ -23,8 +23,9 @@
 #     as Variable axis location in design space, changed from latest git,
 #     Option using this layout with UFO.
 #
+
 from pagebot.toolbox.units import pointOffset, inch, pt, em
-from pagebot.constants import A4, ONLINE, CENTER, XXXL
+from pagebot.constants import A4, ONLINE, CENTER, XXXL, ORIGIN
 from pagebot.toolbox.color import color, whiteColor, blackColor,  noColor
 from pagebot.fonttoolbox.objects.font import findFont
 from pagebot.toolbox.dating import now
@@ -55,7 +56,7 @@ class GlyphSquare(Element):
         self.glyph = glyph # Glyph object. Can be used for additional information later.
         self.uCode = uCode # Unicode from cmap
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Draw the text on position (x, y). Draw background rectangle and/or
         frame if fill and/or stroke are defined."""
         f = findFont('PageBot-Regular')

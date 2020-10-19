@@ -21,10 +21,11 @@
 
 from math import pi, sin, cos
 
+from pagebot.constants import ORIGIN
+from pagebot.toolbox.color import blackColor
 from pagebot.toolbox.units import pointOffset
 from pagebot.elements.element import Element
 from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
-from pagebot.toolbox.color import blackColor
 from pagebot.toolbox.units import pt, upt
 
 
@@ -285,7 +286,7 @@ class VariableCircle(Element):
 
     #   D R A W B O T  S U P P O R T
 
-    def build(self, view, origin, **kwargs):
+    def build(self, view, origin=ORIGIN, **kwargs):
         """Draws the circle info-graphic, showing most info about the variable
         font as can be interpreted from the file."""
         p = pointOffset(self.origin, origin)

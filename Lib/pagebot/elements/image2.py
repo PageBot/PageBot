@@ -19,15 +19,15 @@
 #
 import os
 from pagebot.elements.element import Element
-from pagebot.constants import ORIGIN # In case no image is defined.
+from pagebot.constants import ORIGIN
 from pagebot.toolbox.units import pointOffset, point2D, pt, upt
 from pagebot.toolbox.color import noColor
 
 
 class ImageData(Element):
-    """The PixelMap contains the reference to the image data (file or other storage).
+    """The PixelMap contains the reference to the image data (file or other
+    storage)."""
 
-    """
     def __init__(self, path, name=None, x=0, y=0, w=None, h=None, imo=None, **kwargs):
         Element.__init__(self, **kwargs)
 
@@ -42,7 +42,8 @@ class ImageData(Element):
         self.pn = 1
 
     def initializeImageSize(self):
-        """Initialize self._iw and self._ih from the size of the image file if it exists.
+        """Initialize self._iw and self._ih from the size of the image file if
+        it exists.
 
         >>> from pagebot.filepaths import getResourcesPath
         >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
@@ -57,7 +58,8 @@ class ImageData(Element):
             self._iw = self._ih = pt(0) # Undefined or non-existing, there is no image file.
 
     def _get_w(self):
-        """Answers the width of the image if it is defined. If self._w is None, ..."""
+        """Answers the width of the image if it is defined. If self._w is None,
+        ..."""
         if self._w is None:
             return self.parent.w
         return self._w
@@ -74,18 +76,18 @@ class ImageData(Element):
     h = property(_get_h, _set_h)
 
     def _get_iw(self):
-        """Answers the width of the image file. Initialize from the file if self._iw is None.
-        Answer pt(0) if the image file does not exist or the size could not be determined.
-        """
+        """Answers the width of the image file. Initialize from the file if
+        self._iw is None. Answer pt(0) if the image file does not exist or the
+        size could not be determined."""
         if self._iw is None:
             self.initializeImageSize()
         return self._iw
     iw = property(_get_iw)
 
     def _get_ih(self):
-        """Answers the height of the image file. Initialize from the file if self._ih is None.
-        Answer pt(0) if the image file does not exist or the size could not be determined.
-        """
+        """Answers the height of the image file. Initialize from the file if
+        self._ih is None. Answer pt(0) if the image file does not exist or the
+        size could not be determined."""
         if self._ih is None:
             self.initializeImageSize()
         return self._ih
@@ -155,8 +157,8 @@ class ImageData(Element):
         view.drawElementInfo(self, origin)
 
 class Image(Element):
-    """Image is that frame container of a PixelMap, supporting the clipRect, clipPath,
-    size, rotation and position.
+    """Image is that frame container of a PixelMap, supporting the clipRect,
+    clipPath, size, rotation and position.
 
     >>> from pagebot.filepaths import getResourcesPath
     >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
@@ -169,13 +171,14 @@ class Image(Element):
 
     IMAGE_CLASS = ImageData
 
-    def __init__(self, path, clipPath=None, pathFill=None, mask=None, imo=None, **kwargs):
+    def __init__(self, path, clipPath=None, pathFill=None, mask=None, imo=None,
+            **kwargs):
         Element.__init__(self, **kwargs)
-        """The Image element is the container for a single ImageData instance. Since the it is implemented
-        as a normal child element, all operations (such as layout conditions) can be performed
-        on the combination. There also is a property self.imageData to find the image data element directly.
-
-        """
+        """The Image element is the container for a single ImageData instance.
+        Since the it is implemented as a normal child element, all operations
+        (such as layout conditions) can be performed on the combination. There
+        is alsa a property self.imageData to find the image data element
+        directly."""
         self.imageData = ImageData(path, parent=self, imo=imo)
         self.clipPath = clipPath
         self.pathFill = pathFill or noColor
@@ -189,7 +192,8 @@ class Image(Element):
     path = property(_get_path)
 
     def _get_imageData(self):
-        """Answers the first (and suppedly only) ImageData element that is in the child element list.
+        """Answers the first (and supposedly only) ImageData element that is in
+        the child element list.
 
         >>> from pagebot.filepaths import getResourcesPath
         >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
@@ -206,20 +210,15 @@ class Image(Element):
         self._imageData = imageData
     imageData = property(_get_imageData, _set_imageData)
 
-
-    def build(self, view, origin, **kwargs):
-        """Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
+    def build(self, view, origin=ORIGIN, **kwargs):
+        """Default drawing method just drawing the frame. Probably will be
+        redefined by inheriting element classes."""
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         pt, pr, pb, pl = self.padding
-
         context = self.context
-
         self._applyRotation(view, p)
-
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
@@ -247,7 +246,6 @@ class Image(Element):
 
         #context.fill((0, 1, 0))
         #context.drawPath(clipPath)
-
         context.save()
         # set the path as a clipping path
         #context.clipPath(clipPath)
@@ -262,7 +260,6 @@ class Image(Element):
         # Let the view draw frame info for debugging, in case view.showFrame == True
         # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
         view.drawPageMetaInfo(self, p, background=False)
-
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
