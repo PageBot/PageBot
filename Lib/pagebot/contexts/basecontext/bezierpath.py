@@ -32,8 +32,10 @@ from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
 from pagebot.contexts.basecontext.beziercontour import BezierContour
 
 class BezierPath:
-    """Implements a wrapper around BaseBezierPath wich has the same interface
+    """Implements a wrapper around BaseBezierPath which has the same interface
     as the DrawBot Bézier path, adding knowledge of units and the context.
+
+    NOTE: to be deprecated, reimplemented ad BezierCurve element.
 
     >>> from pagebot import getContext
     >>> from pagebot.fonttoolbox.objects.font import findFonts
