@@ -737,12 +737,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         self.buildFrame(view, p)
         view.drawPageMetaInfoBackground(self, p)
         view.drawElementFrame(self, p)
-
         self.buildElement(view, p, **kwargs)
-
-        if self.drawAfter is not None:
-            self.drawAfter(self, view, p)
-
         view.drawPageMetaInfo(self, p)
         self.restore(view, p)
         self.drawMeta(view, origin)
