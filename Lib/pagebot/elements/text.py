@@ -73,7 +73,8 @@ class Text(Element, TextConditions, TextAlignments):
         # self.style is used as template, in the content is defined as plain
         # string.
         if style is not None:
-            self.style = makeStyle(style, **kwargs)
+            #self.style = makeStyle(style, **kwargs)
+            self.style = makeStyle(style)
 
         # Set as property, to make sure there's always a generic BabelString
         # instance or None. Needs to be done before element initialisation,
