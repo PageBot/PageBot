@@ -772,8 +772,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Draws child elements, dispatching depends on the implementation of
         context specific build elements.
 
-        If no specific builder_<view.context.b.PB_ID> is implemented, call default
-        e.build(view, origin). """
+        If no specific builder_<view.context.b.PB_ID> is implemented, call
+        default e.build(view, origin)."""
         hook = 'build_' + view.context.b.PB_ID
 
         for e in self.elements:

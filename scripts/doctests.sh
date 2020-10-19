@@ -78,6 +78,7 @@ $PY $PWD/elements/image.py
 #$PY $PWD/elements/image2.py
 $PY $PWD/elements/imaging.py
 $PY $PWD/elements/line.py
+$PY $PWD/elements/mask.py
 $PY $PWD/elements/oval.py
 $PY $PWD/elements/page.py
 $PY $PWD/elements/placer.py

@@ -15,10 +15,9 @@
 #     polygon.py
 #
 from pagebot.elements.element import Element
-from pagebot.constants import XXXL, DEFAULT_WIDTH, DEFAULT_HEIGHT, ORIGIN
-from pagebot.toolbox.units import pointOffset
+from pagebot.constants import XXXL, ORIGIN
+from pagebot.toolbox.units import pointOffset, point2D, units, pt
 from pagebot.toolbox.color import noColor
-from pagebot.toolbox.units import point2D, units, pt
 
 class Polygon(Element):
     """The Polygon element is a simple implementation of the polygon DrawBot
@@ -61,30 +60,22 @@ class Polygon(Element):
 
     def build(self, view, origin=ORIGIN, **kwargs):
         p = self.getPosition(view, origin)
-        self.buildFrame(view, p) # Draw optional frame or borders.
+        self.buildFrame(view, p)
 
         view.drawPageMetaInfoBackground(self, p)
         self.context.fill(self.css('fill'))
         self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         points = []
-#
+
+        # Calculate offsets.
         for point in self.points:
             px = point[0] + p[0]
             py = point[1] + p[1]
             points.append((px, py))
 
         self.context.polygon(*points)
-
-        # If there are child elements, recursively draw them over the pixel image.
         self.buildChildElements(view, p, **kwargs)
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # foreground here.
         view.drawPageMetaInfo(self, p)
-
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
-        # the element is visible.
         self.restore(view, p)
         self.drawMeta(view, origin)
 
@@ -156,15 +147,19 @@ class Polygon(Element):
         >>> e.box
         (100pt, 100pt, 220pt, 330pt)
         """
+
         x = y = XXXL
         w = h = 0
+
         if not self.points:
             return pt(0, 0, 0, 0)
+
         for point in self.points:
             x = min(x, self.x+point[0])
             y = min(y, self.y+point[1])
             w = max(w, self.x+point[0]-x)
             h = max(h, self.y+point[1]-y)
+
         # (x, y) including (self.x, self.y).
         return x, y, w, h
 
@@ -205,58 +200,6 @@ class Polygon(Element):
         return self.box[2:]
 
     block = property(_get_block)
-
-class Mask(Polygon):
-    """Masks don't draw by themselves, unless a fill color or stroke color
-    is defined for debugging. Masks get interpreted by sibling elements,
-    such as Image.
-    """
-    def __init__(self, points=None, w=None, h=None, **kwargs):
-        if points is None:
-            if w is None:
-                w = DEFAULT_WIDTH
-            if h is None:
-                h = DEFAULT_HEIGHT
-            # If no points, then initialize as default rectangle.
-            points = [(0, 0), (0, h), (w, h), (w, 0)]
-        Polygon.__init__(self, points=points, w=w, h=h, **kwargs)
-
-    def build(self, view, origin=ORIGIN, **kwargs):
-        context = self.context # Get current context and builder.
-        b = context.b # This is a bit more efficient than self.b once we got context
-        p = pointOffset(self.origin, origin)
-        p = self._applyScale(view, p)
-        px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-        self._applyRotation(view, p)
-
-        doDraw = False
-        if self.fill not in (None, noColor):
-            context.fill(self.fill)
-            doDraw = True
-
-        if self.stroke not in (None, noColor) and self.strokeWidth:
-            context.stroke(self.stroke)
-            context.strokeWidth(self.strokeWidth)
-            doDraw = True
-
-        if doDraw:
-            context.rect(px, py, self.w, self.h)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
-        # Let the view draw frame info for debugging, in case view.showFrame ==
-        # True and self.isPage or if self.showFrame. Mark that we are drawing
-        # foreground here.
-        view.drawPageMetaInfo(self, p)
-
-        # Supposedly drawing outside rotation/scaling mode, so the origin of
-        # the element is visible.
-        view.drawElementOrigin(self, origin)
-
-        self._restoreRotation(view, p)
-        self._restoreScale(view)
-        view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
 if __name__ == "__main__":
     import doctest
