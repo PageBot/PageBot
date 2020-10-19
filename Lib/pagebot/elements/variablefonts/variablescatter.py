@@ -80,17 +80,13 @@ class VariableScatter(Element):
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         fillColor = self.style.get('fill')
         if fillColor is not None:
             c.fill(fillColor)
         c.stroke(None)
-
         stepX = self.w / (self.sizeX+1)
         stepY = self.h / (self.sizeY+1)
+
         """Add more parametric layout behavior here."""
         for indexX in range(self.sizeX+1):
             for indexY in range(self.sizeY+1):
@@ -117,9 +113,6 @@ class VariableScatter(Element):
                         bs = c.newString(recipe, fontSize=4, fill=blackColor)
                         w, h = bs.textSize()
                         c.text(bs, point=(ppx - stepX/4 + 30, ppy - 24)) # Bit of hack, we need the width of the glyph here.
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
 
 
 if __name__ == '__main__':

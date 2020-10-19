@@ -372,10 +372,6 @@ class Image(Element):
         # Use self.cssClass if defined, otherwise self class. #id is ignored if None
         b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
 
-        if self.drawBefore is not None:
-            # Call if defined.
-            self.drawBefore(self, view)
-
         b.img(src=self.path, alt=self.alt)
 
         # Allow CSS to address the captions separately.
@@ -386,10 +382,6 @@ class Image(Element):
             e.build_html(view, path, **kwargs)
         # .caption
         b._div()
-
-        # Call if defined
-        if self.drawAfter is not None:
-            self.drawAfter(self, view)
 
         # self.cssClass or self.__class__.__name__
         b._div()
@@ -453,9 +445,6 @@ class Image(Element):
         # and self.isPage or if self.showFrame. Mark that we are drawing background here.
         view.drawPageMetaInfoBackground(self, p)
 
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
             # Missing image, show as framed grey rectangles and cross.
             if self.path is not None and not os.path.exists(self.path):
@@ -501,11 +490,9 @@ class Image(Element):
 
         #self.buildChildElements(view, p)
 
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
-        # Let the view draw frame info for debugging, in case view.showFrame == True
-        # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
+        # Let the view draw frame info for debugging, in case view.showFrame ==
+        # True and self.isPage or if self.showFrame. Mark that we are drawing
+        # foreground here.
         view.drawPageMetaInfo(self, p)
 
         # Let the view draw frame info for debugging, in case view.showFrame ==

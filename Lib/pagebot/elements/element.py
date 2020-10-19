@@ -77,7 +77,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             mt=0, mr=0, mb=0, ml=0, mzf=0, mzb=0, scaleX=1, scaleY=1, scaleZ=1,
             scale=None, borders=None, borderTop=None, borderRight=None,
             borderBottom=None, borderLeft=None, shadow=None, gradient=None,
-            drawBefore=None, radius=None, drawAfter=None, htmlCode=None,
+            radius=None, htmlCode=None,
             htmlPaths=None, xAlign=None, yAlign=None, zAlign=None,
             proportional=None,
             # Viewing parameters, local overwrite on self.doc.view parameters.
@@ -229,11 +229,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         self.borders = borders or (borderTop, borderRight, borderBottom, borderLeft)
 
         # Drawing hooks is same for 3 types of view/builders. Seperation must
-        # be done by caller.
-        # Optional method to draw before child elements are drawn.
-        self.drawBefore = drawBefore # Call as: self.drawBefore(e, view)
-        # Optional method to draw right after child elements are drawn.
-        self.drawAfter = drawAfter # Call as: self.drawAfter(e, view)
+        # be done by calling function.
 
         # Shadow and gradient, if defined
         self.shadow = shadow
@@ -742,13 +738,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         view.drawPageMetaInfoBackground(self, p)
         view.drawElementFrame(self, p)
 
-        if self.drawBefore is not None:
-            self.drawBefore(self, view, p)
-
         self.buildElement(view, p, **kwargs)
 
         if self.drawAfter is not None:
-            # Call if defined.
             self.drawAfter(self, view, p)
 
         view.drawPageMetaInfo(self, p)
@@ -902,18 +894,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         else:
             # No default class, ignore if not defined.
             b.div(cssClass=self.cssClass, cssId=self.cssId)
-
-            if self.drawBefore is not None: # Call if defined
-                self.drawBefore(self, view)
-
             # Build child elements, dispatch if they implemented generic or
             # context specific build method.
             self.buildChildElements(view, path, **kwargs)
-
-            # Call if defined.
-            if self.drawAfter is not None:
-                self.drawAfter(self, view)
-
             b._div()
 
     #   D R A W I N G  S U P P O R T

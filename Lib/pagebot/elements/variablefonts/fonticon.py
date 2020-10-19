@@ -102,15 +102,8 @@ class FontIcon(Element):
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
 
         self.draw(view, p)
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         # If there are child elements, recursively draw them over the pixel image.
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 

@@ -38,19 +38,10 @@ class Oval(Element):
         px, py, _ = p
         self.buildFrame(view, p)
         view.drawElementFrame(self, p)
-
-        if self.drawBefore is not None:
-            # Call if defined
-            self.drawBefore(self, view, p)
-
         self.context.fill(self.css('fill', noColor))
         self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         self.context.oval(px - self.w / 2, py - self.h / 2, self.w, self.h)
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
         self.restore(view, p)
         self.drawMeta(view, origin)
 

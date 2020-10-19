@@ -225,9 +225,6 @@ class Image(Element):
         # and self.isPage or if self.showFrame. Mark that we are drawing background here.
         view.drawPageMetaInfo(self, p, background=True)
 
-        if self.drawBefore is not None: # Call if defined, not part of clipping path.
-            self.drawBefore(self, view, p)
-
         if self.clipPath is not None:
             # If there is a clipPath defined, use it.
             clipPath = self.clipPath
@@ -253,9 +250,6 @@ class Image(Element):
         # may be other elemnents added too in any particular order.
         self.buildChildElements(view, p)
         context.restore()
-
-        if self.drawAfter is not None: # Call if defined, not part of clipping path
-            self.drawAfter(self, view, p)
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.

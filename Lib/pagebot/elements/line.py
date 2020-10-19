@@ -109,14 +109,8 @@ class Line(Element):
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
 
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         # If there are child elements, recursively draw them over the pixel image.
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
 
         self._restoreScale(view)
         view.drawElementInfo(self, origin)
@@ -124,17 +118,9 @@ class Line(Element):
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, origin=None, **kwargs):
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view)
-
         self.drawChildElements(view, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view)
-
         self._restoreScale(view)
         view.drawElementInfo(self, origin)
-
 
 if __name__ == '__main__':
     import doctest

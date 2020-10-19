@@ -54,10 +54,6 @@ class VariableGlyphs(Element):
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
         view.drawElementFrame(self, p, **kwargs)
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         fillColor = self.style.get('fill')
         #fillColor = (0, 0, 0)
         #if fillColor is not None:
@@ -70,8 +66,6 @@ class VariableGlyphs(Element):
         context.drawGlyphPath(c, self.font.ttFont, self.glyphNames[0], px, py,
                       self.location, glyphPathScale, fillColor)
         self.buildChildElements(view, p)
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
 
 if __name__ == '__main__':
     import doctest

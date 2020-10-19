@@ -131,7 +131,7 @@ $PY $PWD/elements/views/googlecloudview.py
 $PY $PWD/elements/views/htmlview.py
 $PY $PWD/elements/views/mampview.py
 $PY $PWD/elements/views/pageview.py
-$PY $PWD/elements/views/pagemapview.py
+$PY $PWD/elements/views/mapview.py
 $PY $PWD/elements/views/siteview.py
 #$PY $PWD/elements/web/....py
 

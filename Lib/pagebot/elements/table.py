@@ -155,38 +155,20 @@ class Table(Element):
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
         self.drawFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
 
     #   H T M L  /  S A S S  S U P P O R T
 
     def build_html(self, view, origin=None, **kwargs):
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'

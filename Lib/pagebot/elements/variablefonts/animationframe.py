@@ -72,16 +72,8 @@ class AnimationFrame(Rect):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         view.drawElementFrame(self, p)
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         # Draw that actual content of the element by stacked specimen rectangles.
         self.drawAnimatedFrame(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 

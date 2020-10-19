@@ -120,9 +120,6 @@ class MapView(BaseView):
                 self.context.fill(fillColor)
                 self.context.rect(page.bleedLeft, page.bleedBottom, pw+br+bl, ph+bt+bb)
 
-            if self.drawBefore is not None: # Call if defined
-                self.drawBefore(page, self, origin)
-
             self.drawPageMetaInfo(page, origin, background=True)
 
             # Because self already adjusts origin, scale, etc. we don't use the
@@ -131,10 +128,6 @@ class MapView(BaseView):
             page.buildChildElements(self, origin)
 
             self.drawPageMetaInfo(page, origin, background=False)
-
-            # Call if defined.
-            if self.drawAfter is not None:
-                self.drawAfter(page, self, origin)
 
             # Self.infoElements now may have collected elements needed info to
             # be drawn after all drawing is done, so the info boxes don't get

@@ -18,6 +18,7 @@
 #     each can have its own optional style, that overwrites the generic style
 #     of self.
 #
+from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.contexts.basecontext.bezierpath import BezierPath
 from pagebot.toolbox.units import pointOffset#, upt
@@ -164,9 +165,6 @@ class Paths(Element):
         # background here.
         view.drawPageMetaInfoBackground(self, p, origin)
 
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         for path in self.paths:
             # Get the style file/stroke if defined in the path. Otherwise use the settings of self.
             context = self.context
@@ -176,9 +174,6 @@ class Paths(Element):
 
         # If there are child elements, recursively draw them over the pixel image.
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.

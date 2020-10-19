@@ -15,6 +15,7 @@
 #     beziercurve.py
 #
 
+from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import upt, point2D# , degrees
 
@@ -30,6 +31,9 @@ class BezierCurve(Element):
         Element.__init__(self, **kwargs)
         self.bezierPath = None
         self.isOpenPath = False
+
+    def build(self, view, origin=ORIGIN, **kwargs):
+        pass
 
     def beginPath(self, identifier=None):
         msg = '%s.beginPath: Path is already open.' % self.__class__.__name__

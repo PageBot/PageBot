@@ -96,20 +96,12 @@ class Ruler(Element):
          # Let the view draw frame info for debugging, in case
          # view.showFrame == True
         #view.drawElementFrame(self, p)
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, p)
-
         context.fill(noColor)
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         context.line((px + sIndent, py), (px + w, py))
 
         # If there are child elements, recursively draw them over the pixel image.
         self.buildChildElements(view, origin, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
         self._restoreScale(view)
         view.drawElementInfo(self, origin)
 
@@ -136,21 +128,11 @@ class Ruler(Element):
 
         context = self.context # Get current context and builder.
         b = context.b # This is a bit more efficient than self.b once we got context
-
         context.fill(None)
         context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         #b.line((px + sIndent, py), (px + w, py))
-
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view)
-
         b.hr(cssClass=self.cssClass) # Use self.cssClass if defined. Ignore if None.
-
         self.buildChildElements(view, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view)
-
         self._restoreScale(view)
         #view.drawElementInfo(self, origin)
 

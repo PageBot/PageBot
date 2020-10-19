@@ -176,9 +176,6 @@ class PageView(BaseView):
                 self.context.rect(x=page.bleedLeft, y=page.bleedBottom,
                         w=pw+br+bl, h=ph+bt+bb)
 
-            if self.drawBefore is not None: # Call if defined
-                self.drawBefore(page, self, origin)
-
             # If there is meta info requested for the background,
             # draw it.
             self.drawPageMetaInfoBackground(page, origin)
@@ -189,9 +186,6 @@ class PageView(BaseView):
 
             # If there is meta info request for the foreground, draw it.
             self.drawPageMetaInfo(page, origin)
-
-            if self.drawAfter is not None: # Call if defined
-                self.drawAfter(page, self, origin)
 
             # Self.infoElements now may have collected elements needed info to
             # be drawn, after all drawing is done. So the info boxes don't get

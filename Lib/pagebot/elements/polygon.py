@@ -64,13 +64,8 @@ class Polygon(Element):
         self.buildFrame(view, p) # Draw optional frame or borders.
 
         view.drawPageMetaInfoBackground(self, p)
-
-        if self.drawBefore is not None:
-            self.drawBefore(self, view, p)
-
         self.context.fill(self.css('fill'))
         self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
-
         points = []
 #
         for point in self.points:
@@ -82,9 +77,6 @@ class Polygon(Element):
 
         # If there are child elements, recursively draw them over the pixel image.
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
 
         # Let the view draw frame info for debugging, in case view.showFrame ==
         # True and self.isPage or if self.showFrame. Mark that we are drawing

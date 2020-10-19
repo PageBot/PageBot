@@ -52,24 +52,14 @@ class Rect(Element):
         >>> e.size
         (500pt, 3pt)
         """
-        context = self.context # Get current context and builder.
         p = self.getPosition(view, origin)
         self.buildFrame(view, p) # Draw optional frame or borders.
         view.drawElementFrame(self, p)
-
-        if self.drawBefore is not None:
-            # Call if defined
-            self.drawBefore(self, view, p)
-
-        context.fill(self.css('fill', noColor))
-        context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
+        self.context.fill(self.css('fill', noColor))
+        self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
         px, py, _ = p
-        context.rect(px, py, self.w, self.h)
+        self.context.rect(px, py, self.w, self.h)
         self.buildChildElements(view, p, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
-
         self.restore(view, p)
         self.drawMeta(view, origin)
 

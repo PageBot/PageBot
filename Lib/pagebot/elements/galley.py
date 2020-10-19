@@ -139,9 +139,6 @@ class Galley(Element):
         # view.showFrame == True
         view.drawElementFrame(self, p)
 
-        if self.drawBefore is not None:
-            self.drawBefore(self, view, p)
-
         self.context.fill(self.css('fill')) # Find old-paper background color
         gw, gh = self.getSize()
         self.context.rect(px, py, gw, gh)
@@ -162,23 +159,13 @@ class Galley(Element):
                 e.build(view, (px, py + gy), **kwargs)
             gy += e.h
 
-        if self.drawAfter is not None:
-            self.drawAfter(self, view, p)
-
         self._restoreScale(view)
         view.drawElementInfo(self, origin)
 
     #   H T M L  /  C S S  S U P P O R T
 
     def build_html(self, view, path, **kwargs):
-        # Call if defined.
-        if self.drawBefore is not None:
-            self.drawBefore(self, view)
-
         self.buildElements(self, view, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view)
 
 class Column(Galley):
     """A Column is very similar to a Galley, grouping elements together in
@@ -195,14 +182,8 @@ class Column(Galley):
         # None.
         b.div(cssClass=self.cssClass or self.__class__.__name__.lower(), cssId=self.cssId)
 
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view)
-
         for e in self.elements:
             e.build_html(view, path, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view)
 
         b._div()
 

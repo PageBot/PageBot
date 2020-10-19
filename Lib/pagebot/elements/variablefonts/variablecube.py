@@ -54,9 +54,6 @@ class VariableCube(Element):
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
 
-        if self.drawBefore is not None: # Call if defined
-            self.drawBefore(self, view, (px, py))
-
         fillColor = self.style.get('fill')
         if fillColor is not None:
             c.fill(fillColor)
@@ -96,9 +93,6 @@ class VariableCube(Element):
         fs = c.newString('Other axes: %s' % self.location, fontSize=6, fill=blackColor)
         w, h = fs.size()
         c.text(fs, px, py - 16)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view, p)
 
 if __name__ == '__main__':
     import doctest

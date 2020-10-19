@@ -914,14 +914,8 @@ class Text(Element, TextConditions, TextAlignments):
             # Get HTML from BabelString in HtmlString context.
             b.addHtml(html)
 
-        if self.drawBefore is not None:
-            self.drawBefore(self, view)
-
         for e in self.elements:
             e.build_html(view, origin, **kwargs)
-
-        if self.drawAfter is not None: # Call if defined
-            self.drawAfter(self, view)
 
         if hasContent:
             b._div() # self.cssClass or self.__class__.__name__
