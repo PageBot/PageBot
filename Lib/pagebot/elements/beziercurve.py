@@ -18,6 +18,7 @@
 from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.toolbox.units import upt, point2D# , degrees
+from pagebot.toolbox.color import noColor
 
 class BezierCurve(Element):
     """Implements a BaseBezierPath as an element.
@@ -29,32 +30,27 @@ class BezierCurve(Element):
 
     def __init__(self, **kwargs):
         Element.__init__(self, **kwargs)
-        self.bezierPath = None
-        self.isOpenPath = False
 
     def build(self, view, origin=ORIGIN, **kwargs):
-        pass
+        p = self.getPosition(view, origin)
+        self.buildFrame(view, p) # Draw optional frame or borders.
+        view.drawElementFrame(self, p)
+        self.context.fill(self.css('fill', noColor))
+        self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
+        self.context.drawPath()
+        self.buildChildElements(view, p, **kwargs)
+        self.restore(view, p)
+        self.drawMeta(view, origin)
 
-    def beginPath(self, identifier=None):
-        msg = '%s.beginPath: Path is already open.' % self.__class__.__name__
-        assert not self.isOpenPath, msg
-        self.isOpenPath = True
-
+    def newPath(self, identifier=None):
         # Creates a new BaseBezierPath.
-        self.bezierPath = self.context.newPath()
-        self.bezierPath.beginPath(identifier)
+        self.context.newPath()
 
     def closePath(self):
-        msg = 'endPath: Pen path is not open. Call self.beginPath() first.'
-        msg = '%s.%s' % self.__class__.__name__, msg
-        assert self.isOpenPath, msg
-        self.isOpenPath = False
-        self.bezierPath.closePath()
+        self.context.closePath()
 
     def moveTo(self, p):
-        ptp = upt(point2D(p))
-        self.bezierPath.moveTo(ptp)
+        self.context.moveTo(p)
 
     def lineTo(self, p):
-        ptp = upt(point2D(p))
-        self.bezierPath.lineTo(ptp)
+        self.context.lineTo(p)
