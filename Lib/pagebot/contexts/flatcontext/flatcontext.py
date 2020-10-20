@@ -648,9 +648,10 @@ class FlatContext(BaseContext):
         assert isinstance(bs, BabelString)
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
         #xpt, ypt = self.translatePoint(p)
-        #x, y = self.getTransformed(x, y)
-        xpt, ypt = pt(p) # Make sure to convert to points
-        ypt = self.height - ypt - bs.topLineDescender # FIXME: check, is this necessary?
+        x, y = p
+        x, y = self.getTransformed(x, y)
+        y -= bs.topLineDescender
+        xpt, ypt = pt(x, y) # Make sure to convert to points
         self._place(bs, xpt, ypt)
 
     def textBox(self, s, r=None, clipPath=None, align=None):
@@ -1177,8 +1178,7 @@ class FlatContext(BaseContext):
         self.drawShapePath()
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
-        # TODO
-        pass
+        self.drawShapePath()
 
     def drawShapePath(self):
         """Renders the existing Bézier path as a Flat vector graphic."""
