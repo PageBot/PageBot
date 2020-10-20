@@ -17,7 +17,6 @@
 
 from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
-from pagebot.toolbox.units import upt, point2D# , degrees
 from pagebot.toolbox.color import noColor
 
 class BezierCurve(Element):
@@ -28,29 +27,42 @@ class BezierCurve(Element):
     TODO: what about components (currently not implemented by BaseBezierPath)?
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, points=None, closed=True, **kwargs):
+        if points is None:
+            points = []
+        # Force copy, so caller can't change size cache.
+        self.points = points[:]
+        self.closed = closed
         Element.__init__(self, **kwargs)
 
     def build(self, view, origin=ORIGIN, **kwargs):
         p = self.getPosition(view, origin)
         self.buildFrame(view, p) # Draw optional frame or borders.
         view.drawElementFrame(self, p)
+        self.context.newPath()
         self.context.fill(self.css('fill', noColor))
         self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
+
+        '''
+        points = []
+
+        for point in self.points:
+            if len(point) == 1:
+                px = point[0] + p[0]
+                py = point[1] + p[1]
+            else:
+        '''
+        p0 = self.points[0]
+        self.context.moveTo(p0)
+
+        for point in self.points[1:]:
+            if len(point) == 2:
+                self.context.lineTo(point)
+            elif len(point) == 3:
+                self.context.curveTo(point[0], point[1], point[2])
+
+        self.context.closePath()
         self.context.drawPath()
         self.buildChildElements(view, p, **kwargs)
         self.restore(view, p)
         self.drawMeta(view, origin)
-
-    def newPath(self, identifier=None):
-        # Creates a new BaseBezierPath.
-        self.context.newPath()
-
-    def closePath(self):
-        self.context.closePath()
-
-    def moveTo(self, p):
-        self.context.moveTo(p)
-
-    def lineTo(self, p):
-        self.context.lineTo(p)

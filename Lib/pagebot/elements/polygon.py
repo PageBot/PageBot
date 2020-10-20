@@ -29,7 +29,10 @@ class Polygon(Element):
         self.closed = closed
         if points is None:
             points = []
-        self.points = points[:] # Force copy, so caller cannot change and not change size cache.
+
+        # Force copy, so caller can't change size cache.
+        self.points = points[:]
+        self.closed = closed
         Element.__init__(self, **kwargs)
 
     def append(self, p):
@@ -61,7 +64,6 @@ class Polygon(Element):
     def build(self, view, origin=ORIGIN, **kwargs):
         p = self.getPosition(view, origin)
         self.buildFrame(view, p)
-
         view.drawPageMetaInfoBackground(self, p)
         self.context.fill(self.css('fill'))
         self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
