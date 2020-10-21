@@ -248,8 +248,7 @@ class BaseContext(AbstractContext):
     def newPath(self):
         """Makes a new Bezierpath to draw in and answers it. This will not
         initialize self._bezierpath, which is accessed by the property
-        self.bezierpath. This method uses a BezierPath class path to draw.  For
-        a more rich environment use BezierPath(context) instead.
+        self.bezierpath. This method uses a BezierPath class path to draw.
 
         NOTE: PageBot function.
 
@@ -258,6 +257,7 @@ class BaseContext(AbstractContext):
         >>> context.newPage(420, 420)
         >>> path = context.newPath()
         """
+        # Defaults to DrawBot at the moment, should create a BaseBezier here.
         raise NotImplementedError
         #self._bezierpath = BaseBezierPath(self.b)
         #return self._bezierpath
@@ -851,9 +851,13 @@ class BaseContext(AbstractContext):
         >>> bs = BabelString('Hkpx'+chr(10)+'Hkpx', style, context=context)
         >>> context.drawString(bs, pt(100, 100))
         """
-        # TODO: convert plain string to BabelString first.
+
         if not isinstance(bs, BabelString):
-            bs = self.asBabelString(bs)
+            try:
+                bs = self.asBabelString(bs)
+            except Exception as e:
+                print('Not a string compatible type: %s' % type(bs))
+                return
 
         if bs._w is None and bs._h is None:
             x, y = p

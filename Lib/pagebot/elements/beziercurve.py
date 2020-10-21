@@ -35,34 +35,35 @@ class BezierCurve(Element):
         self.closed = closed
         Element.__init__(self, **kwargs)
 
+    def translatePoint(self, p0, p):
+        x0, y0, _ = p0
+        x, y = p
+        return x0 + x, y0 + y
+
+
     def build(self, view, origin=ORIGIN, **kwargs):
-        p = self.getPosition(view, origin)
-        self.buildFrame(view, p) # Draw optional frame or borders.
-        view.drawElementFrame(self, p)
+        pOrigin = self.getPosition(view, origin)
+        self.buildFrame(view, pOrigin) # Draw optional frame or borders.
+        view.drawElementFrame(self, pOrigin)
         self.context.newPath()
         self.context.fill(self.css('fill', noColor))
         self.context.stroke(self.css('stroke', noColor), self.css('strokeWidth'))
-
-        '''
-        points = []
-
-        for point in self.points:
-            if len(point) == 1:
-                px = point[0] + p[0]
-                py = point[1] + p[1]
-            else:
-        '''
-        p0 = self.points[0]
+        p0 = self.translatePoint(pOrigin, self.points[0])
         self.context.moveTo(p0)
 
         for point in self.points[1:]:
             if len(point) == 2:
-                self.context.lineTo(point)
+                p = self.translatePoint(pOrigin, point)
+                self.context.lineTo(p)
             elif len(point) == 3:
-                self.context.curveTo(point[0], point[1], point[2])
+                cp0 = self.translatePoint(pOrigin, point[0])
+                cp1 = self.translatePoint(pOrigin, point[1])
+                p = self.translatePoint(pOrigin, point[2])
+                self.context.curveTo(cp0, cp1, p)
 
-        self.context.closePath()
+        if self.closed:
+            self.context.closePath()
         self.context.drawPath()
-        self.buildChildElements(view, p, **kwargs)
-        self.restore(view, p)
+        self.buildChildElements(view, pOrigin, **kwargs)
+        self.restore(view, pOrigin)
         self.drawMeta(view, origin)
