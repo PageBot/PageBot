@@ -855,8 +855,8 @@ class BaseContext(AbstractContext):
         if not isinstance(bs, BabelString):
             try:
                 bs = self.asBabelString(bs)
-            except Exception as e:
-                print('Not a string compatible type: %s' % type(bs))
+            except TypeError as e:
+                print('TypeError: %s is not a string compatible type, %s' % (type(bs), e))
                 return
 
         if bs._w is None and bs._h is None:
