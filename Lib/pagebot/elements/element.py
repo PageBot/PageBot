@@ -459,7 +459,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
         >>> context = getContext('Flat')
-        >>> doc = Document(context=context) # Stored as doc.view.context
+        >>> # Stored as doc.view.context.
+        >>> doc = Document(context=context)
         >>> e = Element(parent=doc[1])
         >>> e.view, doc.view, e.view is doc.view
         (<PageView>, <PageView>, True)
@@ -468,8 +469,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     view = property(_get_view)
 
     def _get_theme(self):
-        """Answers the theme of this element. If undefined, answers the theme of
-        self.parent. If no parent is defined, then answers None.
+        """Answers the theme of this element. If undefined, answers the theme
+        of self.parent. If no parent is defined, then answers None.
 
         >>> from pagebot.themes import BaseTheme, BackToTheCity
         >>> theme1 = BaseTheme()
@@ -538,7 +539,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     eId = property(_get_eId)
 
     def _get_elements(self):
-        """Property to get/set elements to parent self. Answers a copy of the
+        """Property to get / set elements to parent self. Answers a copy of the
         list, not self._elements itself, to avoid problems if iterations on the
         children is changing the parent. E.g. if elements of a Typesetter
         galley are composed on a page.
@@ -708,7 +709,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     #   D R A W B O T / F L A T  S U P P O R T
 
     def prepare(self, view):
-        """Respond to the top-down element broadcast to prepare for build.  If
+        """Responds to the top-down element broadcast to prepare for build. If
         the original image needs scaling, then prepare the build by letting the
         context make a new cache file with the scaled images. If the cache
         file already exists, then ignore, just continue the broadcast towards
