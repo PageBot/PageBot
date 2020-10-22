@@ -94,37 +94,31 @@ class GlyphPath(Paths):
     h = property(_get_h, _set_h)
 
     def build(self, view, origin=ORIGIN, **kwargs):
-        # Get current context.
-        context = self.context
-        p = pointOffset(self.origin, origin)
-        # Draws optional bounding box if view.showFrame = True.
+        p = self.getPosition(view, origin)
         self.buildFrame(view, p) # Draw optional frame, shadow or borders.
+        px, py, _ = p
 
-        p = self._applyScale(view, p)
-        # Ignore z-axis for now.
-        px, py, _ = p = self._applyAlignment(p)
-
-        context.save()
-        context.translate(px, py)
-        # We need the scale as ration value, not as unit.
+        #self.context.save() # TODO: fix in Flat.
+        self.context.translate(px, py)
+        # Scale needs to bev a ratio value, not a unit.
         sx, sy = (self.w/self.iw).rv, (self.h/self.ih).rv
-        context.scale(sx, sy)
+        self.context.scale(sx, sy)
 
         # If a path filter is defined, call it and ignore regular drawing.
         if self.pathFilter is not None:
             self.pathFilter(self, self.glyph, view)
-        else: # Not path filter defined, draw by regular stroke/fill.
-            context.fill(self.css('fill'))
-            context.stroke(self.css('stroke', noColor), (self.css('strokeWidth') or 1))
-            context.drawGlyphPath(self.glyph)
-        context.restore()
+        else:
+            # No path filter defined, draws regular stroke and fill.
+            self.context.fill(self.css('fill'))
+            self.context.stroke(self.css('stroke', noColor), (self.css('strokeWidth') or 0.5))
+            self.context.drawGlyphPath(self.glyph)
+        #self.context.restore() # TODO: fix in Flat.
+        self.context.scale(1/sx, 1/sy)
+        self.context.translate(-px, -py)
 
-        for e in self.elements:
-            e.build(view, p, **kwargs)
-
-
-        self._restoreScale(view)
-        view.drawElementInfo(self, origin) # Depends on css flag 'showElementInfo'
+        self.buildChildElements(view, p, **kwargs)
+        self.restore(view, p)
+        self.drawMeta(view, origin)
 
 if __name__ == '__main__':
     import doctest

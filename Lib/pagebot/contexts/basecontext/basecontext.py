@@ -371,7 +371,7 @@ class BaseContext(AbstractContext):
         >>> path.closePath()
         >>> context.drawPath(path)
         """
-        if self._bezierpath is not None: # Only if there is an open path.
+        if self._bezierpath is not None: # Only if an open path exists.
             self._bezierpath.closePath()
 
     def drawPath(self, path=None, p=None, sx=1, sy=None, fill=None,
@@ -872,7 +872,7 @@ class BaseContext(AbstractContext):
             self.textBox(bs, box)
 
     def drawText(self, bs, box):
-        """Draws the text block, in case there is a width or heigh defined."""
+        """Draws the text block, in case a width or height is defined."""
         assert isinstance(bs, BabelString),\
             'drawText needs a BabelString: %s' % (bs.__class__.__name__)
         _, _, w, h = box

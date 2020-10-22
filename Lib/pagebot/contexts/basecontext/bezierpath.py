@@ -72,7 +72,7 @@ class BezierPath:
         # drawing. Otherwise take the fill / stroke settings already defined in
         # the context.
         if style is None:
-            style = {} # Make sure that there is at least an empty style dictionary
+            style = {} # Make sure an empty style dictionary exists.
 
         self.style = style
         self.bp = bezierPath
@@ -619,7 +619,7 @@ class BezierPath:
                 y = 0
             if w is None:
                 w = tw - tx
-                # TODO re-render the line to see if there is wrapping from w.
+                # TODO re-render the line to see if width wraps.
                 #if hasattr(bs, 's'):
                 #    h = bs.getSize(w=w)[1]
                 #else:

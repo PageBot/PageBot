@@ -94,7 +94,7 @@ class BabelRun:
         # FormattedString is created.
         hyphenation = style.get('hyphenation', False)
 
-        # In case there is an error in these parameters, DrawBot ignors all.
+        # In case an error occurs in these parameters, DrawBot ignores all.
         #    upt(fontSize), upt(leading, base=fontSize),
         #    textColor.rgba, align)
 

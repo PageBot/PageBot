@@ -105,9 +105,10 @@ class BabelString:
         assert self.context
         self._w = units(w) # Set source value of the properties, not need clear cache again.
         self._h = units(h) # Set to points, if not already a Unit instance.
+
         # Cache is initialize by the self.context-->self.reset() property call.
-        # In case there is overflow for a given width and height, the overflow indiced
-        # store the slice in self.lines for the current everflow render by the context.
+        # In case of overflow for a given width and height, the overflow indices
+        # store the slice in self.lines for the current overflow render by the context.
         # _overflowStart Line index where overflow starts.
         # _overflowEnd Line (non-inclusive)
         # _cs Cache of native context string (e.g. DrawBot.FormattedString or FlatStringData)
@@ -164,9 +165,9 @@ class BabelString:
         self._overflowEnd = None # Line (non-inclusive)
 
     def _get_w(self):
-        """Answers the request width of this string. If None, there is not
-        width defined, so not wrapping is done and `self.tw` will just answer
-        the natural width of the string.
+        """Answers the request width of this string. If None, no width is
+        defined, therefore no wrapping is done and `self.tw` will just answer
+        the original width of the string.
 
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
@@ -185,18 +186,18 @@ class BabelString:
         return self._w # Can be None
 
     def _set_w(self, w):
-        """Answers the requested width of this string. If None, there is no
-        width defined, so no wrapping is done and `self.tw` will just answer
-        the natural width of the string."""
+        """Answers the requested width of this string. If None, no width is
+        defined, therefore no wrapping is done and `self.tw` will just answer
+        the original width of the string."""
         self._w = units(w)
         self.reset() # Force context wrapping for self.tw to be recalculated.
 
     w = property(_get_w, _set_w)
 
     def _get_h(self):
-        """Answers the requested height of this string. If None, there is no
-        height defined, so not overlap checking done and `self.th` will just
-        answer the natural height of the string."""
+        """Answers the requested height of this string. If None, no height is
+        defined, so not overlap checking is done and `self.th` will just answer
+        the original height of the string."""
         return self._h
 
     def _set_h(self, h):

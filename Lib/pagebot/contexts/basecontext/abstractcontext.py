@@ -18,9 +18,7 @@ from pagebot.constants import PAGE_SIZES
 
 class AbstractContext:
     """All contexts should at least contain the same (public) functions DrawBot
-    does.  That API is the standard. Additionally there is an optional doc=None
-    or e=None, that contains the calling Document or Element instance.  This
-    way contexts can derive their own information if needed.
+    has, the default API.
 
     * https://github.com/typemytype/drawbot/blob/master/drawBot/drawBotDrawingTools.py
     """
