@@ -33,7 +33,7 @@ class MampView(SiteView):
     # MAMP website to download it. There is a free demo version that can be
     # installed.
     MAMP_SHOP_URL = 'https://www.mamp.info/en/'
-    LOCAL_HOST_URL = 'http://localhost:8888/%s/%s'
+    LOCAL_HOST_URL = 'http://localhost%s/%s/%s' # :Port, domain, page
 
     DEFAULT_HTML_FILE = 'index.html'
     #DEFAULT_HTML_PATH = SITE_ROOT_PATH + DEFAULT_HTML_FILE
@@ -107,9 +107,11 @@ class MampView(SiteView):
         self.copyResources(path, removeExisting=False)
 
 
-    def getUrl(self, name):
+    def getUrl(self, name, port=''):
         """Answers the local URL for Mamp Pro to find the copied website."""
-        return self.LOCAL_HOST_URL % (name, self.DEFAULT_HTML_FILE)
+        if port:
+            port = ':%d' % port
+        return self.LOCAL_HOST_URL % (port, name, self.DEFAULT_HTML_FILE)
 
 
 if __name__ == "__main__":
