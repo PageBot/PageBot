@@ -706,8 +706,7 @@ class Color:
 
     def _get_isRgba(self):
         """Answers if the base of this color is defined as RGB or if an (RGB)
-        name is defined and if opacity is not 1 (meaning, there is some
-        transparency).
+        name is defined and if opacity is not 1.
 
         >>> color(rgb=0.5, a=0.5).isRgba
         True

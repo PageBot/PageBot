@@ -178,8 +178,8 @@ class Typesetter:
         self.return2Space = return2Space # If True (default), then all \r will be replaced by ' '
         self.tabs2Space = tabs2Space # If False, then \t is preserved into <tab/> and later converted back into '\t
         self.br2Return = br2Return # If True, the <br/> will be replaced by '\r'
-        self.stripHead = stripHead # If there is trailing white space a string, then strip it.
-        self.stripTail = stripTail # If there is tail white space in a string, then strip it
+        self.stripHead = stripHead # Strip trailing white space.
+        self.stripTail = stripTail # Strip tail white space.
 
         self.currentImage = None # Keep the last processed image, in case there are captions to add.
 
@@ -340,9 +340,9 @@ class Typesetter:
         Image element.  Keep the Image element in self.currentImage, in case we
         need to add captions.
 
-        If there is a "w=<number>" pattern in the alt-attribute, then use it as
-        width measurement for creating a cached image. This way an author can
-        control the required size from within the content.
+        If a "w=<number>" pattern is present in the alt-attribute, then use it
+        as width measurement for creating a cached image. This way an author
+        can control the required size from within the content.
 
         Markdown could use code such as ![MyImage w=450](images/myImage.jpg)
 
@@ -418,13 +418,13 @@ class Typesetter:
             context=self.context)
 
     def node_caption(self, node, e):
-        """If there is a self.currentImage set, then redirect output of the
-        caption nodes into the image, instead of the self.galley. Otherwise
-        just output as plain text, ignoring the caption tag. Multiple captions
-        are added to the the current image until it is changed. The caption
-        tag is triggered by *[[...]]* in MarkDown.
+        """If self.currentImage is set, then redirect output of the caption
+        nodes into the image, instead of the self.galley. Otherwise just output
+        as plain text, ignoring the caption tag. Multiple captions are added to
+        the the current image until it is changed. The caption tag is triggered
+        by *[[...]]* in MarkDown.
         """
-        if self.currentImage is not None: # In case there is a current image, attach caption to it.
+        if self.currentImage is not None: # In a current image exists, attach caption to it.
             savedGalley = self.galley # Temporary redirect node parent
             self.galley = self.currentImage
             self.typesetNode(node, e)
@@ -637,7 +637,7 @@ class Typesetter:
         self.pushStyle(nodeStyle) # Push this merged style on the stack
 
         # XML-nodes are organized as: node - node.text - node.children -
-        # node.tail If there is no text or if the node does not have tail text,
+        # node.tail If no text exists or if the node does not have tail text,
         # these are None. Still we want to be able to add the prefix to the
         # node.text, so then the text is changed to an empty string.
 
@@ -669,7 +669,7 @@ class Typesetter:
                 self.typesetNode(child, e)
 
             # XML-nodes are organized as: node - node.text - node.children -
-            # node.tail If there is no text or if the node does not have tail
+            # node.tail If no text exists or if the node does not have tail
             # text, these are None. Still we want to be able to add the
             # postfix to the tail, so then the tail is changed to empty string?
             childTail = self._strip(child.tail)
@@ -766,7 +766,7 @@ class Typesetter:
         tree = ET.parse(fileName)
         self.root = tree.getroot() # Get the root element of the tree and store for later retrieval.
 
-        # If there is XSL filtering defined, they get the filtered nodes.
+        # If XSL filtering is defined, they get the filtered nodes.
         if xPath is not None:
             filteredNodes = self.root.findall(xPath)
             if filteredNodes:

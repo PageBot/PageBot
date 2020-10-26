@@ -223,7 +223,7 @@ class Image(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         # and self.isPage or if self.showFrame. Mark that we are drawing background here.
-        view.drawPageMetaInfo(self, p, background=True)
+        view.drawPageMetaInfoBackground(self, p)
 
         if self.clipPath is not None:
             # If there is a clipPath defined, use it.
@@ -253,7 +253,7 @@ class Image(Element):
 
         # Let the view draw frame info for debugging, in case view.showFrame == True
         # and self.isPage or if self.showFrame. Mark that we are drawing foreground here.
-        view.drawPageMetaInfo(self, p, background=False)
+        view.drawPageMetaInfo(self, p)
         self._restoreRotation(view, p)
         self._restoreScale(view)
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'

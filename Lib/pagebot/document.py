@@ -322,13 +322,13 @@ class Document:
         if isinstance(defaultTemplate, str): # Make reference to existing template by name
             defaultTemplate = self.templates.get(defaultTemplate) # If it exists, otherwise it is None
         if defaultTemplate is None: # Only if we have one, overwrite existing default template if it was there.
-            # Make sure there is at least a default template.
+            # Make sure at least a default template exists.
             defaultTemplate = Template(w=self.w, h=self.h, name='default', padding=self.padding)
         self.defaultTemplate = defaultTemplate
 
     def getTemplate(self, name=None):
         """Answers the named template. If it does not exist, then answer the
-        default template. Answer `None` if there is no default.
+        default template. Answer `None` if no default exists.
 
         >>> from pagebot.constants import A6
         >>> doc = Document(name='TestDoc', size=A6)
@@ -919,7 +919,9 @@ class Document:
             if index >= len(self.pages[pnOrName]):
                 return None
             return self.pages[pnOrName][index]
-        pages = self.findPages(name=pnOrName) # In case searching by name, there is chance that multiple are answered as list.
+
+        # In case searching by name, chances are that multiple are answered as list.
+        pages = self.findPages(name=pnOrName)
         if pages:
             return pages[0]
         return None
@@ -1090,7 +1092,7 @@ class Document:
     def getElementPage():
         """Search ancestors for the page element. This call can only happen
         here if elements don't have a Page ancestor. Always return None to
-        indicate that there is no Page instance found amongst the ancesters."""
+        indicate that no Page instance is found amongst the ancesters."""
         return None
 
     def nextPage(self, page, nextPage=1, makeNew=True):

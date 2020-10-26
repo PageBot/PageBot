@@ -22,7 +22,7 @@ from pagebot.conditions.condition import Condition
 # Margins
 
 class Overflow2Next(Condition):
-    """If there is overflow in the element, then try to solve it. Note that
+    """If the element has overflow, then try to solve it. Note that
     when used in a Composer-typesetter environment, this will not update the
     `globals['page']` value. In that case it is better to call the
     `Element.overflow2Next()` directly at the start of a new chapter."""

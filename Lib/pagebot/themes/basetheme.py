@@ -191,7 +191,7 @@ class Mood:
     def getStyle(self, tag):
         """Answer the style dictionary indicated by tag. Note that this is the
         reference to the original, so a called can change values directly in the style.
-        Answer None if there is not style with that tag name.
+        Answer None if no style exists with that tag name.
 
         >>> theme = BaseTheme('dark') # Using default mood and default palette
         >>> theme.mood

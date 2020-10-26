@@ -23,7 +23,7 @@ from pagebot.conditions.condition import Condition
 # Text overflow
 
 class Overflow2Next(Condition):
-    """If there is overflow in the element, then try to solve it.
+    """If an element has overflow, try to solve it.
 
     >>> from pagebot import getContext
     >>> context = getContext()

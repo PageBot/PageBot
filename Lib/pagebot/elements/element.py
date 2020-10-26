@@ -996,7 +996,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             c.lineDash(borderTop.get('dash')) # None for no dash
             c.stroke(borderTop.get('stroke', noColor), borderTop.get('strokeWidth', 0))
 
-            oLeft = 0 # Extra offset on left, if there is a left border.
+            oLeft = 0 # Extra offset on left, if a left border exists.
 
             if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
                 if borderLeft.get('line') == ONLINE:
@@ -1004,7 +1004,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 elif borderLeft.get('line') == OUTLINE:
                     oLeft = borderLeft.get('strokeWidth', 0)
 
-            oRight = 0 # Extra offset on right, if there is a right border.
+            oRight = 0 # Extra offset on right, if a right border exists.
 
             if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
                 if borderRight.get('line') == ONLINE:
@@ -1027,14 +1027,14 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             c.lineDash(borderBottom.get('dash')) # None for no dash
             c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
 
-            oLeft = 0 # Extra offset on left, if there is a left border.
+            oLeft = 0 # Extra offset on left, if a left border exists.
             if borderLeft and (borderLeft.get('strokeWidth') or pt(0)) > 1:
                 if borderLeft.get('line') == ONLINE:
                     oLeft = borderLeft.get('strokeWidth', 0)/2
                 elif borderLeft.get('line') == OUTLINE:
                     oLeft = borderLeft.get('strokeWidth', 0)
 
-            oRight = 0 # Extra offset on right, if there is a right border.
+            oRight = 0 # Extra offset on right, if a right border exists.
             if borderRight and (borderRight.get('strokeWidth') or pt(0)) > 1:
                 if borderRight.get('line') == ONLINE:
                     oRight = borderRight.get('strokeWidth', 0)/2
@@ -1056,14 +1056,14 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             c.lineDash(borderRight.get('dash')) # None for no dash
             c.stroke(borderRight.get('stroke', noColor), borderRight.get('strokeWidth', 0))
 
-            oTop = 0 # Extra offset on top, if there is a top border.
+            oTop = 0 # Extra offset on top, if a top border exists.
             if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
                 if borderTop.get('line') == ONLINE:
                     oTop = borderTop.get('strokeWidth', 0)/2
                 elif borderLeft.get('line') == OUTLINE:
                     oTop = borderTop.get('strokeWidth', 0)
 
-            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            oBottom = 0 # Extra offset on bottom, if a bottom border exists.
             if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
                 if borderBottom.get('line') == ONLINE:
                     oBottom = borderBottom.get('strokeWidth', 0)/2
@@ -1085,14 +1085,14 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             c.lineDash(borderLeft.get('dash')) # None for no dash
             c.stroke(borderLeft.get('stroke', noColor), borderLeft.get('strokeWidth', 0))
 
-            oTop = 0 # Extra offset on top, if there is a top border.
+            oTop = 0 # Extra offset on top, if a top border exists.
             if borderTop and (borderTop.get('strokeWidth') or pt(0)) > 1:
                 if borderTop.get('line') == ONLINE:
                     oTop = borderTop.get('strokeWidth', 0)/2
                 elif borderLeft.get('line') == OUTLINE:
                     oTop = borderTop.get('strokeWidth', 0)
 
-            oBottom = 0 # Extra offset on bottom, if there is a bottom border.
+            oBottom = 0 # Extra offset on bottom, if a bottom border exists.
             if borderBottom and (borderBottom.get('strokeWidth') or pt(0)) > 1:
                 if borderBottom.get('line') == ONLINE:
                     oBottom = borderBottom.get('strokeWidth', 0)/2
@@ -1731,8 +1731,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
             # Either parent element or document.docLib.
             return parent.docLib
 
-        # Document cannot be found, or there is there is no parent defined in
-        # the element.
+        # Document cannot be found, or no parent is defined in the element.
         return None
     docLib = property(_get_docLib)
 
@@ -1787,7 +1786,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
     def _get_parent(self):
         """Answers the parent of the element, if it exists, by weakref
-        reference. Answers None of there is not parent defined or if the parent
+        reference. Answers None if no parent is defined or if the parent
         not longer exists."""
         if self._parent is not None:
             return self._parent()
@@ -1901,9 +1900,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     def getGridColumns(self):
         """Answers the constructed sequence of [(columnX, columnW), ...] in the
         block of the element.  Note that this is different from the gridX
-        definition [(wx, gutter), ...] If there is one or more None in the grid
-        definition, then try to fit equally on self.cw.  If gutter is left
-        None, then the default style gutter is filled there.
+        definition [(wx, gutter), ...] If there are one or more instances of
+        None in the grid definition, then try to fit equally on self.cw.  If
+        gutter is left None, then the default style gutter is filled there.
 
         """
         """
@@ -1923,7 +1922,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         pw = self.pw # Padded with, available space for columns.
         gw = self.gw or 0
 
-        if gridX is not None: # If there is a non-linear grid sequence defined, use that.
+        if gridX is not None: # If a non-linear grid sequence is defined, use that.
             undefined = 0
             usedWidth = 0
             # Make a first pass to see how many columns (None) need equal
@@ -1958,8 +1957,8 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 x += cw + gutter
 
         elif self.cw:
-            # If no grid defined, and there is a general grid width, then run
-            # the squence for cw + gw gutter.
+            # If no grid defined, and a general grid width is, then run the
+            # squence for cw + gw gutter.
             cw = self.cw
             x = 0
             for index in range(int(pw/cw)): # Roughly the amount of columns to expect. Avoid while loop
@@ -1986,8 +1985,9 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     def getGridRows(self):
         """Answers the constructed sequence of [(columnX, columnW), ...] in the
         block of the element.  Note that this is different from the gridX
-        definition [(wx, gutter), ...] If there is one or more None in the grid
-        definition, then try to fit equally on self.cw. If gutter is left
+        definition [(wx, gutter), ...] If there are one or more instances of
+        None in the grid definition, then try to fit equally on self.cw. If
+        gutter is left
         None, then the default style gutter is filled there.
 
         """
@@ -2010,7 +2010,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         ph = self.ph # Padded height, available space for vertical columns.
         gh = self.gh or 0
 
-        if gridY is not None: # If there is a non-linear grid sequence defined, use that.
+        if gridY is not None: # If a non-linear grid sequence is defined, use that.
             undefined = 0
             usedHeight = 0
             #usedWidth = 0
@@ -2045,7 +2045,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 gridRows.append((y, ch))
                 y += ch + gutter
         elif self.ch:
-            # If no grid defined, and there is a general grid height, then run
+            # If no grid defined, and a general grid heighti is, then run
             # the squence for ch + gh gutter.
             ch = self.ch
             y = 0
@@ -2062,7 +2062,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     # Properties for unit access.
 
     def _get_parentW(self):
-        """Answers the width if the parent element. If there is not parent,
+        """Answers the width if the parent element. If no parent exists,
         answers DEFAULT_WIDTH.
 
         >>> e0 = Element(w=500)
@@ -2079,7 +2079,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     parentW = property(_get_parentW)
 
     def _get_parentH(self):
-        """Answers the height if the parent element. If there is no parent,
+        """Answers the height if the parent element. If no parent exists,
         answers DEFAULT_HEIGHT.
 
         >>> e0 = Element(h=500)
@@ -2096,7 +2096,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     parentH = property(_get_parentH)
 
     def _get_parentD(self):
-        """Answers the depth if the parent element. If there is no parent,
+        """Answers the depth if the parent element. If no parent exists,
         answers DEFAULT_DEPTH.
 
         >>> e0 = Element(d=502)

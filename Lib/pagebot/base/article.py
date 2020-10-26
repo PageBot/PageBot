@@ -56,7 +56,7 @@ class Article:
         """
         self.doc = doc # Reuired Document instance. Assummed to be initialized with size and styles.
         self.artDirection = artDirection
-        self.path = path # Optional path to markdown file, if there is content there.
+        self.path = path # Optional path to markdown file, if it has content.
         self.mdText = mdText # Optional markdown string.
         self.name = name or 'Untitled'
         self.startPage = startPage
