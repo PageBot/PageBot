@@ -1444,7 +1444,7 @@ class Model:
         self.clear()
         # Set the self.paths (path->fontInfo) dictionary, so all fonts are enabled by default.
         # Set the path->fontInfo dictionary of fonts from the design space that are disable.
-        # This allows the caller to enable/disable fonts from interpolation.
+        # This allows the calling function to enable/disable fonts from interpolation.
         self.disabledMasterPaths = [] # Paths of masters not to be used in delta calculation.
 
     def __repr__(self):

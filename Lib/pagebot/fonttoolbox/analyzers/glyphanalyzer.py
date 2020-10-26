@@ -264,8 +264,8 @@ class GlyphAnalyzer:
         assigns them as dictionary to @self._stems@. Since we cannot use the
         CVT of the glyph (the analyzer is used to find these values, not to use
         them), we'll make an assumption about the pattern of vertices found. It
-        is up to the caller to make sure that the current glyph is relevant in
-        the kind of vertices that we are looking for.
+        is up to the calling function to make sure that the current glyph is
+        relevant in the kind of vertices that we are looking for.
 
         NOTE: An alternative approach could be to make a Fourier analysis of all
         stem distances of the font, and so find out which are likely to have a
@@ -572,8 +572,8 @@ class GlyphAnalyzer:
         assigns them as dictionary to @self._bars@. Since we cannot use the CVT
         of the glyph (the analyzer is user to find these values, not to use
         them), we'll make an assumption about the pattern of vertices found. It
-        is up to the caller to make sure that the current glyph is relevant in
-        the kind of vertices that we are looking for."""
+        is up to the calling function to make sure that the current glyph is
+        relevant in the kind of vertices that we are looking for."""
         horizontals = self.horizontals
         self._bars = bars = {}
         # BlueBars by separate property call

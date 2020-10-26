@@ -341,8 +341,8 @@ class Document:
 
     def addTemplate(self, name, template):
         """Adds the template to the self.templates of dictionaries. There is no
-        check, so the caller can overwrite existing templates. Answer the
-        template as convenience of the caller.
+        check, so the calling function can overwrite existing templates. Answer the
+        template.
 
         >>> name ='TestTemplate'
         >>> t = Template(w=200, h=300, name=name)
@@ -492,12 +492,12 @@ class Document:
     def add2Style(self, name, addStyle):
         """Add (overwrite) the values in the existing style *name* with the
         values in *addStyle*. Raise an error if the *name* style does not
-        exist. Answer the named target style for convenience of the caller."""
+        exist. Answer the named target style."""
         assert name in self.styles
         style = self.styles[name]
         for key, value in addStyle.items():
             style[key] = value
-        return style # Answer the style for convenience of the caller.
+        return style
 
     def addStyle(self, name, style, force=False):
         """Adds the style to the self.styles dictionary. Makes sure that styles
@@ -519,7 +519,7 @@ class Document:
         self.styles[name] = style
         # Force the name of the style to synchronize with the requested key.
         style['name'] = name
-        return style # Answer the style for convenience of tha caller, e.g. when called by self.newStyle(args,...)
+        return style # used e.g. when called by self.newStyle(args,...)
 
     def newStyle(self, **kwargs):
         """Creates a new style with the supplied arguments as attributes.
@@ -1056,7 +1056,7 @@ class Document:
         page = self.PAGE_CLASS(w=w, h=h, name=name, description='page', **kwargs)
         self.appendPage(page, pn) # Add the page to the document, before applying the template.
         page.applyTemplate(template)
-        return page # Answer the new page for convenience of the caller.
+        return page
 
     def removePage(self, pn):
         """Remove the page with index pn, keeping the page numbers of the remaining pages unchanged.

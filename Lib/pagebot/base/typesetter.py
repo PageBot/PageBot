@@ -162,7 +162,7 @@ class Typesetter:
         self.tryExcept = tryExcept
 
         # If True add tags to the output, otherwise ignore. Can be overwritten
-        # by caller for debugging.
+        # by calling function for debugging.
         self.writeTags = context.useTags
 
         # Will contain the root node after executing typesetFile.
@@ -604,8 +604,7 @@ class Typesetter:
         """If s is a formatted string, then it is placed untouched. If it is a
         plain string, then use the optional *style* or element *e* (using
         *e.css(name)*) for searching style parameters.  Answer the new
-        formatted string for convenience of the caller. e.g. to measure its
-        size."""
+        formatted string. Used e.g. to measure its size."""
         # Only convert if not yet BabelString instance.
         bs = self.context.newString(sOrBs, e=e, style=style)
         self.append(bs)
@@ -746,8 +745,7 @@ class Typesetter:
         rest.
 
         The optional rootStyle can be defined as style for the root tag,
-        cascading force all child elements. Answer the root node for
-        convenience of the caller."""
+        cascading force all child elements. Answer the root node."""
         fileExtension = fileName.split('.')[-1]
         if fileExtension.lower() == 'md':
             # If we have MarkDown content, convert to XML (XHTML)
@@ -782,7 +780,7 @@ class Typesetter:
         # Remember this galley where it came from.
         self.galley.name = fileName
 
-        # Answer the self.galley as convenience for the caller.
+        # Answer the self.galley.
         return self.galley
 
 if __name__ == '__main__':

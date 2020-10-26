@@ -237,7 +237,7 @@ def DEFAULT_TYPOGRAPHIC(tag, fontSizes):
     )
 
 def DEFAULT_H_COLORS_NORMAL(c):
-    """Make new dictionary, in case the caller wants to change value."""
+    """Make new dictionary, in case the calling function wants to change value."""
     return dict(
         textFill='darkest%d'%c, fill='white',
         textFillDiap='lightest%d'%c, fillDiap='black',
@@ -245,7 +245,7 @@ def DEFAULT_H_COLORS_NORMAL(c):
         textLinkDiap='lightest%d'%c, textHoverDiap='lighter%d'%c)
 
 def DEFAULT_MENU_COLORS_NORMAL(c):
-    """Make new dictionary, in case the caller wants to change value."""
+    """Make new dictionary, in case the calling function wants to change value."""
     return dict(
         textFill='darkest%d'%c, fill='lightest%d'%c,
         textFillDiap='lightest%d'%c, fillDiap='dark%d'%c,
@@ -255,7 +255,7 @@ def DEFAULT_MENU_COLORS_NORMAL(c):
         textSublinkDiap='lightest%d'%c, textSubhoverDiap='lighter%d'%c)
 
 def DEFAULT_H_COLORS_DARK(c):
-    """Make new dictionary, in case the caller wants to change value."""
+    """Make new dictionary, in case the calling function wants to change value."""
     return dict(
         textFill='lightest%d'%c, fill='black',
         textFillDiap='darkest%d'%c, fillDiap='white',
@@ -263,7 +263,7 @@ def DEFAULT_H_COLORS_DARK(c):
         textLinkDiap='darkest%d'%c, textHoverDiap='dark%d'%c)
 
 def DEFAULT_MENU_DARK(c):
-    """Make new dictionary, in case the caller wants to change value."""
+    """Make new dictionary, in case the calling function wants to change value."""
     return dict(
         textFill='lightest%d'%c, fill='black',
         textFillDiap='darkest%d'%c, fillDiap='white',

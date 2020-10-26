@@ -37,7 +37,7 @@ def calculateAngle(p1, p2, inDegrees=True):
 
 def angleOfLines(p1, p2, q1, q2, inDegrees=True):
     """Answers the angle difference (radials or default degrees) between
-    p1-->p2 and q1-->q2.  Points can be either 2D or 3D point tuples or Point
+    p1-->p2 and q1-->q2. Points can be either 2D or 3D point tuples or Point
     instances. In the case of Point3D, only the 2D projection in (x, y) plane
     is calculated."""
     angle1 = calculateAngle(p1, p2, inDegrees)
@@ -66,7 +66,7 @@ class APointContext:
         self.p_3, self.p_2, self.p_1, self.p, self.p1, self.p2, self.p3 = points
         self.contourIndex = contourIndex
         self.index = index
-        #self.clockwise = clockwise # TODO: Add clockwise attribute from caller.
+        #self.clockwise = clockwise # TODO: Add clockwise attribute from calling function.
         self.glyphName = glyphName
         self._direction = None  # Cache direction once calculated.
         self._angle = None  # Cache axis once calculated.

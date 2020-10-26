@@ -23,8 +23,8 @@ class Site(Publication):
 
 class SiteColumn(Column):
     """Abstract class for site elements. Keep the self.cssId in case there is
-    more than one SiteElement of the same class, so the caller needs to supply
-    a unique id. If omitted, the self.cssId is the class name.
+    more than one SiteElement of the same class, so the calling function needs
+    to supply a unique id. If omitted, the self.cssId is the class name.
 
     Since SiteElements are wrappers around Text, Image and other elements,
     theirs naming should be different.

@@ -34,18 +34,20 @@ from pagebot.toolbox.color import blackColor
 DEBUG = False
 
 def getMasterPath():
-    """Answers the path to read master fonts, whic typically is a user/Fonts/ folder.
-    Default is at the same level as pagebot module."""
+    """Answers the path to read master fonts, whic typically is a user/Fonts/
+    folder. Default is at the same level as pagebot module."""
     return os.path.expanduser("~") + '/Fonts/'
 
 def getInstancePath():
-    """Answers the path to write instance fonts, which typically is the user/Fonts/_instances/ folder."""
+    """Answers the path to write instance fonts, which typically is the
+    user/Fonts/_instances/ folder."""
     return getMasterPath() + '_instances/'
 
-def getVariableAxisFonts(varFont, axisName,
-                         normalize=True, cached=False, lazy=True):
-    """Answers the two instance fonts located at minValue and maxValue of the axis. If varFont is not
-    a Variable Font, or the axis does not exist in the font, then answer (varFont, varFont)."""
+def getVariableAxisFonts(varFont, axisName, normalize=True, cached=False,
+        lazy=True):
+    """Answers the two instance fonts located at minValue and maxValue of the
+    axis. If varFont is not a Variable Font, or the axis does not exist in the
+    font, then answer (varFont, varFont)."""
     if axisName in varFont.axes:
         minValue, _, maxValue = varFont.axes[axisName]
         minInstance = getVarFontInstance(varFont, {axisName:minValue},
@@ -57,25 +59,33 @@ def getVariableAxisFonts(varFont, axisName,
         return minInstance, maxInstance
     return varFont, varFont
 
-def fitVariableWidth(context, varFont, s, w, fontSize, condensedLocation, wideLocation,
-        fixedSize=True, tracking=None, cached=True, lazy=True):
-    """Answers the font instance that makes string s width on the given width *w* for the given *fontSize*.
-    The *condensedLocation* dictionary defines the most condensed font instance (optionally including the opsz)
-    and the *wideLocation* dictionary defines the most wide font instance (optionally including the opsz).
-    The string width for s is calculated with both locations and then the [wdth] value is interpolated and iterated
-    until the location is found where the string *s* fits width *w*). Note that interpolation may not be enough,
-    as the width axis may contain non-linear masters.
-    If the requested w outside of what is possible with two locations, then interations are performed to
-    change the size. Again this cannot be done by simple interpolation, as the [opsz] also changes the width.
-    It one of the axes does not exist in the font, then use the default setting of the font.
+def fitVariableWidth(context, varFont, s, w, fontSize, condensedLocation,
+        wideLocation, fixedSize=True, tracking=None, cached=True, lazy=True):
+    """Answers the font instance that makes string s width on the given width
+    *w* for the given *fontSize*.  The *condensedLocation* dictionary defines
+    the most condensed font instance (optionally including the opsz) and the
+    *wideLocation* dictionary defines the most wide font instance (optionally
+    including the opsz).  The string width for s is calculated with both
+    locations and then the [wdth] value is interpolated and iterated until the
+    location is found where the string *s* fits width *w*). Note that
+    interpolation may not be enough, as the width axis may contain non-linear
+    masters.
+
+    If the requested w outside of what is possible with two locations, then
+    interations are performed to change the size. Again this cannot be done by
+    simple interpolation, as the [opsz] also changes the width.  It one of the
+    axes does not exist in the font, then use the default setting of the font.
     """
-    # TODO: Adjusting by size change (if requested width is not possible with the width limits of the font)
+    # TODO: Adjusting by size change (if requested width is not possible with
+    # the width limits of the font)
     # TODO: is not yet implemented.
 
-    # Get the instances for the extreme width locations. This allows the caller to define the actual range
-    # of the [wdth] axis to be user, instead of the default minValue and maxValue. E.g. for a range of widths
-    # in a headline, the typographer may only want a small change before the line is wrapping, instead
-    # using the full spectrum to extreme condensed.
+    # Get the instances for the extreme width locations. This allows the
+    # calling function to define the actual range of the [wdth] axis to be
+    # user, instead of the default minValue and maxValue. E.g. for a range of
+    # widths in a headline, the typographer may only want a small change before
+    # the line is wrapping, instead using the full spectrum to extreme
+    # condensed.
     condensedFont = getVarFontInstance(varFont, condensedLocation, cached=cached, lazy=lazy)
     wideFont = getVarFontInstance(varFont, wideLocation, cached=cached, lazy=lazy)
     # Calculate the widths of the string using these two instances.
@@ -89,25 +99,33 @@ def fitVariableWidth(context, varFont, s, w, fontSize, condensedLocation, wideLo
                                           fontSize=fontSize,
                                           tracking=tracking,
                                           textFill=blackColor))
+
     # Calculate the widths of the strings.
-    # TODO: Handle if these lines would wrap on the given width. In that case we may want to set the wrapped
-    # first line back to it's uncondensed value, to make the first wrapped line fit the width.
+    # TODO: Handle if these lines would wrap on the given width. In that case
+    # we may want to set the wrapped first line back to it's uncondensed value,
+    # to make the first wrapped line fit the width.
     condensedWidth, _ = context.textSize(condensedString)
     wideWidth, _ = context.textSize(wideString)
 
     # Check if the requested with is inside the boundaries of the font width axis
-    if w < condensedWidth: # Requested width is smaller than was was possible using the extreme value of [wdth] axis.
+    # Requested width is smaller than was was possible using the extreme value
+    # of [wdth] axis.
+    if w < condensedWidth:
         font = condensedFont
         bs = condensedString
         location = condensedLocation
-    elif w > wideWidth:  # Requested width is larger than was was possible using the extreme value of [wdth] axis.
+    elif w > wideWidth:
+        # Requested width is larger than was was possible using the extreme
+        # value of [wdth] axis.
         font = wideFont
         bs = wideString
         location = wideLocation
-    else: # Inside the selected [wdth] range, now interpolation the fitting location.
-        # TODO: Check if the width of the new string is within tolerance of the request width.
-        # This may not be the case if the range of the [wdth] is interpolating in a non-linear way.
-        # In that case we may need to do a number of iterations.
+    else:
+        # Inside the selected [wdth] range, now interpolation the fitting location.
+        # TODO: Check if the width of the new string is within tolerance of the
+        # request width.  This may not be the case if the range of the [wdth]
+        # is interpolating in a non-linear way.  In that case we may need to do
+        # a number of iterations.
         widthRange = wideLocation['wdth'] - condensedLocation['wdth']
         location = copy.copy(condensedLocation)
         assert wideWidth != condensedWidth # Avoid division by zero.
@@ -118,7 +136,9 @@ def fitVariableWidth(context, varFont, s, w, fontSize, condensedLocation, wideLo
                                           fontSize=fontSize,
                                           tracking=tracking,
                                           textFill=blackColor))
-    # Answer the dictionary with calculated data, so the caller can reuse it, without the need to new expensive recalculations.
+
+    # Answer the dictionary with calculated data, so the calling function can
+    # reuse it, without the need to new expensive recalculations.
     return dict(condensendFont=condensedFont,
                 condensedString=condensedString,
                 condensedWidth=condensedWidth,
@@ -133,9 +153,9 @@ def fitVariableWidth(context, varFont, s, w, fontSize, condensedLocation, wideLo
                 location=location)
 
 def getConstrainedLocation(font, location):
-    """Answers the location with applied min/max values for each axis. Don't change the values
-    if they are positioned between their min/max values. Don't change values for axes that are
-    not defined in the font."""
+    """Answers the location with applied min/max values for each axis. Don't
+    change the values if they are positioned between their min/max values.
+    Don't change values for axes that are not defined in the font."""
     constrainedLocation = {}
     axes = font.axes
     for name, value in location.items():
@@ -144,14 +164,16 @@ def getConstrainedLocation(font, location):
         constrainedLocation[name] = value
     return constrainedLocation
 
-def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True, cached=True, lazy=True):
+def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True,
+        cached=True, lazy=True):
     """The getVarFontInstance refers to the file of the source variable font.
-    The nLocation is dictionary axis locations of the instance with values between (0, 1000), e.g.
-    dict(wght=0, wdth=1000) or values between  (0, 1), e.g. dict(wght=0.2, wdth=0.6).
-    Set normalize to False if the values in location already are matching the axis min/max of the font.
-    If there is a [opsz] Optical Size value defined, then store that information in the font.info.opticalSize.
-    The optional *styleName* overwrites the *font.info.styleName* of the *ttFont* or the automatic
-    location name."""
+    The nLocation is dictionary axis locations of the instance with values
+    between (0, 1000), e.g. dict(wght=0, wdth=1000) or values between  (0, 1),
+    e.g. dict(wght=0.2, wdth=0.6). Set normalize to False if the values in
+    location already are matching the axis min/max of the font. If there is a
+    [opsz] Optical Size value defined, then store that information in the
+    font.info.opticalSize. The optional *styleName* overwrites the
+    *font.info.styleName* of the *ttFont* or the automatic location name."""
     if isinstance(fontOrPath, str):
         varFont = getFont(fontOrPath, lazy=lazy)
     else:

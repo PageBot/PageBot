@@ -540,7 +540,7 @@ class Font:
     def __init__(self, path=None, ttFont=None, name=None, opticalSize=None,
             location=None, styleName=None, lazy=True):
         """Initialize the TTFont, for which Font is a wrapper. self.name is
-        supported, in case the caller wants to use a different
+        supported, in case the calling function wants to use a different
 
         >>> f = Font()
         >>> f
@@ -651,7 +651,7 @@ class Font:
         """Answers level of matching for the (abbreviated) weight name or
         number with font, in a value between 0 and 1. Currently there is only
         no-match (0) and full-match (1). Future implementations may give a
-        float indicator for the level of matching, so the caller can decide on
+        float indicator for the level of matching, so the calling function can decide on
         the level of threshold.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -713,7 +713,7 @@ class Font:
         """Answers level of matching for the (abbreviated) width name or number
         with font. Currently there is only no-match (0) and full-match (1).
         Future implementations may give a float indicator for the level of
-        matching, so the caller can decide on the level of threshold.
+        matching, so the calling function can decide on the level of threshold.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> path = getTestFontsPath() + '/google/roboto/Roboto-Black.ttf' # We know this exists in the PageBot repository
@@ -758,8 +758,8 @@ class Font:
     def isItalic(self):
         """Answers if this font should be considered to be italic. Currently
         there is only no-match (0) and full-match (1). Future implementations
-        may give a float indicator for the level of matching, so the caller can
-        decide on the level of threshold.
+        may give a float indicator for the level of matching, so the calling
+        function can decide on the level of threshold.
 
         >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
         >>> fontPath = getTestFontsPath()

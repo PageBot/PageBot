@@ -278,8 +278,9 @@ def getRootStyle(u=None, w=None, h=None, **kwargs):
         # element.parent.w If the width is a float between 0..1 or a string
         # with format "50%" then these are interpreted as percentages. If
         # there are multiple None widths, then their values are calculated from
-        # an equal division of available space. It is up to the caller to make
-        # sure that the grid values fit the width of the current element.
+        # an equal division of available space. It is up to the calling
+        # function to make sure that the grid values fit the width of the
+        # current element.
         #
         # HTML/CSS builders convert to:
         # grid-template-columns, grid-template-rows, grid-auto-rows,

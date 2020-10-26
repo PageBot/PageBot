@@ -203,7 +203,7 @@ class Publication(Element):
         else:
             finder = finderOrPath
         self.finders[finder.rootPath] = finder # Overwrite if there is already one on that root path,
-        return finder # Answer the finders for convenience of the caller.
+        return finder # Answer the finders.
 
     #   E X P O R T I N G
 

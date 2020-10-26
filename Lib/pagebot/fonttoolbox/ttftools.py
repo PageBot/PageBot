@@ -26,7 +26,7 @@ from pagebot.fonttoolbox.unicodes import unicoderanges
 #
 
 def subsetFont(font, glyphsToDelete):
-    """Delete the set of glyphs 'glyphsToDelete' from the font. The caller is
+    """Delete the set of glyphs 'glyphsToDelete' from the font. The calling function is
     responsible for the consistency of this set: eg. one should not delete a
     glyph that is used as a component while not deleting the composite glyph
     that references it.
@@ -701,7 +701,7 @@ class FontMerger(TTFTraverser):
 
     def mergeFonts_cmap(self, table, otherFont, glyphsToMerge):
         # XXX This method is rather picky: it demands both fonts to have matching sets of
-        # cmap subtables. So far, it is up to our caller to make sure this is in fact true.
+        # cmap subtables. So far, it is up to our calling function to make sure this is in fact true.
         # Not sure if it's wise to try and "fix" it here: there's not much to fix if it's about
         # encodings we know nothing about. It would however be possible to fix a mismatching set
         # of 3,10, 3,1 and/or 0,3 cmap subtables.

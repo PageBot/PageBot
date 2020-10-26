@@ -32,7 +32,7 @@ class AbstractContext:
     def endDrawing(self, doc=None):
         """Explicitly tells the context that drawing is done. This is advised
         when using DrawBot as a standalone module.  The `doc` attribute is the
-        optional Document instance of the caller."""
+        optional Document instance of the calling function."""
         raise NotImplementedError
 
     def saveDrawing(self, path, multiPage=None):

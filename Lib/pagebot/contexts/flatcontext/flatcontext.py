@@ -568,7 +568,7 @@ class FlatContext(BaseContext):
     def _place(self, bs, x, y, w=None, h=None):
         """Places the styled Flat text on a page, transform vertical position
         to position on baseline. Vertical alignment should to be handled by the
-        caller, already calculated in the `y`. Horizontal alignment is taken
+        calling function, already calculated in the `y`. Horizontal alignment is taken
         from the bs.xTextAlign value, as answered by the style of the first
         run: bs.runs[0].style.get('xTextAlign')
 
@@ -604,7 +604,7 @@ class FlatContext(BaseContext):
         elif xTextAlign == RIGHT:
             x -= bs.tw
 
-        # Vertical alignment is handled by the caller, already calculated in
+        # Vertical alignment is handled by the calling function, already calculated in
         # the `y`.
 
         x = x.pt

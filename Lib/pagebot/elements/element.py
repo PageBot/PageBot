@@ -170,7 +170,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         else:
             self.xyz = x, y, z
 
-        # Alternative attributes, to make it intuitive for the caller.
+        # Alternative attributes, to make it intuitive for the calling function.
         if whd is not None:
             size = whd
         elif wh is not None:
@@ -1793,7 +1793,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         return None
 
     def _set_parent(self, parent):
-        # Note that the caller must add self to its elements.
+        # Note that the calling function must add self to its elements.
         if parent is not None:
             #assert not self in parent.ancestors, '[%s.%s] Cannot set one of the children "%s" as parent.' % (self.__class__.__name__, self.name, parent)
             parent.appendElement(self)
@@ -2118,10 +2118,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         """Answers the `x` position of self as Unit instance. In case it is a
         relative unit (such as Fr, Perc or Em), we just set the current parent
         total and em as reference. By not freezing or rendering the value yet,
-        the caller can decide to change parent value, and then render the value
-        as with `u.get(optionalTotal)`. Some situations require the rendered
-        value, but in case of CSS, the relative value should be maintained. Then
-        the current parent total reference is not important.
+        the calling function can decide to change parent value, and then render
+        the value as with `u.get(optionalTotal)`. Some situations require the
+        rendered value, but in case of CSS, the relative value should be
+        maintained. Then the current parent total reference is not important.
 
         >>> from pagebot.toolbox.units import fr, isUnit
         >>> e = Element(x=100, w=400)

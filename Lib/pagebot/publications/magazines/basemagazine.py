@@ -223,7 +223,7 @@ class BaseMagazine(Publication):
         ad pages of the magazine."""
         coverFront = CoverFront()
         self.elements.append(coverFront)
-        return coverFront # Answer CoverFront element for convenience of the caller.
+        return coverFront # Answer CoverFront element.
 
 if __name__ == '__main__':
     import doctest

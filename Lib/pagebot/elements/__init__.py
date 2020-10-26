@@ -196,7 +196,7 @@ def newImage(path=None, **kwargs):
     to be filled later. If the image is drawn with an empty or non-existent
     file path, a missing Image cross-frame is shown. The optional imo attribute
     is an DrawBot-modelled ImageObject() with filters in place. The created
-    Image element is answered as convenience to the caller."""
+    Image element is answered."""
     return Image(path=path, **kwargs)
 
 def newTable(cols=1, rows=1, **kwargs):

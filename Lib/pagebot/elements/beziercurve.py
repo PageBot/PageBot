@@ -30,7 +30,7 @@ class BezierCurve(Element):
     def __init__(self, points=None, closed=True, **kwargs):
         if points is None:
             points = []
-        # Force copy, so caller can't change size cache.
+        # Force copy, so calling function can't change size cache.
         self.points = points[:]
         self.closed = closed
         Element.__init__(self, **kwargs)

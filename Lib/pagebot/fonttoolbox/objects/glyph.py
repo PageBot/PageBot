@@ -267,8 +267,8 @@ class Glyph:
 
     def update(self):
         """Update the font if it became dirty by changing cooridinates.
-        Otherwise ignore. Note that in case the caller cache points, contours,
-        components, etc. these are no longer valid."""
+        Otherwise ignore. Note that in case the calling function cache points,
+        contours, components, etc. these are no longer valid."""
         if self.dirty:
             self._initialize()
 

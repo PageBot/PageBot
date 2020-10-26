@@ -71,7 +71,7 @@ class SvgContext(BaseContext):
     # Drawing.
 
     def newDrawing(self, w=None, h=None, doc=None):
-        """The @doc is the optional Document instance of the caller. Clear
+        """The @doc is the optional Document instance of the calling function. Clear
         output canvas, start new export file.
 
         >>> context = SvgContext()

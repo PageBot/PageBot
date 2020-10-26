@@ -121,7 +121,7 @@ class CodeBlock(Text):
                 print(u'### %s ### %s' % (error, self.code))
             # TODO: insert more possible exec() errors here.
 
-        # For convenience, store the last source code of the block in the result dict.
+        # Store the last source code of the block in the result dict.
         if '__code__' not in targets:
             targets['__code__'] = self.code
 

@@ -60,7 +60,7 @@ class HtmlContext(BaseContext):
         """PageBot function. Ignore for now in HTMLContext.
 
         Clear output canvas, start new export file.
-        The @doc is the optional Document instance of the caller.
+        The @doc is the optional Document instance of the calling function.
         """
 
     def endDrawing(self):
