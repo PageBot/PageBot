@@ -985,7 +985,7 @@ class FlatContext(BaseContext):
         path0 = '%s/%s' % (path0, '_scaled')
 
         if not exists(path0):
-            os.makedirs(path0)
+            makedirs(path0)
 
         path = parts0[-1]
         parts = path.split('.')
