@@ -27,8 +27,8 @@ from pagebot.toolbox.transformer import path2Extension
 
 
 class Image(Element):
-    """The Image contains the reference to the actual binary image data. eId
-    can be (unique) file path or eId.
+    """An Image element contains the reference to the binary image data. eId can be
+    (unique) file path or eId.
 
     >>> from pagebot.toolbox.units import mm, p, point3D
     >>> from pagebot.filepaths import getResourcesPath
@@ -72,8 +72,6 @@ class Image(Element):
     >>> round(h)
     64pt
     """
-
-    isImage = True
 
     def __init__(self, path=None, alt=None, name=None, w=None, h=None,
             size=None, cssSize=None, cssRepeat=None, z=0, mask=None, imo=None,
@@ -316,8 +314,7 @@ class Image(Element):
         In case the source is a PDF, then use self.index to request for the
         page.
 
-        TODO: Add clipPath and filter as parameters.
-        """
+        TODO: Add clipPath and filter as parameters."""
         if self.path is None or not self.scaleImage:
             return
         if not path2Extension(self.path) in BITMAP_TYPES:

@@ -167,7 +167,6 @@ class Image(Element):
     >>> e.path.endswith(imageFilePath)
     True
     """
-    isImage = True
 
     IMAGE_CLASS = ImageData
 

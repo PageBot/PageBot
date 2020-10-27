@@ -76,6 +76,7 @@ def elementFromPath(path, name=None, **kwargs):
     """Answer the element that is best suitable to hold the data in the path.
     """
     extension = path2Extension(path).lower()
+
     if extension in IMAGE_TYPES:
         e = newImage(path, name=name, **kwargs)
     elif extension in FONT_TYPES:

@@ -49,7 +49,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     # where the settings of Text.nextBox and Text.nextPage define if a Text
     # instance can operate as a flow.
     isText = False
-    isText = False
 
     #isFlow property answers if nextElement or prevElement is defined.
     # isFlow = False
@@ -57,7 +56,6 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
     # Set to True by Page-like elements.
     isPage = False
     isView = False
-    isImage = False
 
     GRADIENT_CLASS = Gradient
     SHADOW_CLASS = Shadow

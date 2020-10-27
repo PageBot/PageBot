@@ -273,8 +273,6 @@ class FlatContext(BaseContext):
 
         if force or not os.path.exists(cachedFilePath):
             # Clean the drawing stack.
-            self.newDrawing()
-            self.newPage(w=w, h=h)
             self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
 
             if showImageLoresMarker:
@@ -287,7 +285,6 @@ class FlatContext(BaseContext):
             self.saveImage(cachedFilePath)
 
             # Clean the drawing stack again.
-            self.newDrawing()
         return cachedFilePath
         return path
     '''
@@ -301,13 +298,13 @@ class FlatContext(BaseContext):
         # TODO: move caching to _scale (merge code).
         '''
         cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
-        im = Image.open(path)
 
         if not exists(cachePath):
             os.makedirs(cachePath)
         cachedFilePath = cachePath + fileName
         '''
 
+        im = Image.open(path)
 
         # NOTE: using PIL for resizing, much faster than Flat.
         # TODO: cache result.

@@ -29,7 +29,6 @@ class Page(Element):
     HTML pages, a Page contains a mixture of available meta data."""
 
     isPage = True
-
     VIEW_PORT = "width=device-width, initial-scale=1.0, user-scalable=yes"
     FAVICON_PATH = 'images/favicon.ico'
     INDEX_HTML = 'index.html'
