@@ -291,32 +291,23 @@ class FlatContext(BaseContext):
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
-        # TODO: show optional lores marker.
-        # TODO: add optional extensions.
-        # TODO: move to shared base.
-        # TODO: check if index is still necessary.
-        # TODO: move caching to _scale (merge code).
-        '''
-        cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
+        """Scales image and stores it to _scaled/image-name.jpg.
 
-        if not exists(cachePath):
-            os.makedirs(cachePath)
-        cachedFilePath = cachePath + fileName
-        '''
+        NOTE: using PIL for resizing, much faster than Flat.
+        TODO: show optional lores marker.
+        TODO: add optional extensions.
+        TODO: move to shared base.
+        TODO: check if index is still necessary.
+        """
 
         im = Image.open(path)
-
-        # NOTE: using PIL for resizing, much faster than Flat.
-        # TODO: cache result.
         path, ext = self.getResizedPathName(path, w, h)
 
-        # TODO: is this necessary?
         if ext == 'jpg':
             ext = 'jpeg'
 
         if force or not exists(path):
             try:
-                print('Resizing %s' % path)
                 im = im.resize((w, h), Image.ANTIALIAS)
             except OverflowError as e:
                 print('%s: Caught an OverflowError:' % self.name, e)
@@ -989,10 +980,14 @@ class FlatContext(BaseContext):
     #   I M A G E
 
     def getResizedPathName(self, path, w, h):
+        parts0 = path.split('/')
+        path0 = '/'.join(parts0[:-1])
+        path0 = '%s/%s' % (path0, '_scaled')
+        path = parts0[-1]
         parts = path.split('.')
         pre = '.'.join(parts[:-1])
         ext = parts[-1]
-        return '%s-%sx%s.%s' % (pre, w, h, ext), ext
+        return '%s/%s-%sx%s.%s' % (path0, pre, w, h, ext), ext
 
     def image(self, path, p=None, alpha=1, pageNumber=None, w=None, h=None,
             scaleType=None, clipPath=None):

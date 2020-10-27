@@ -33,7 +33,7 @@ class Finder:
     >>> images = finder.find(pattern='pepper', extension='png') # Answer a list of unplaced Image elements
     >>> image = images[0]
     >>> image.path.split('/')[-1], image.w, image.h
-    ('peppertom_lowres_398x530.png', 398pt, 530pt)
+    ('peppertom.png', 398pt, 530pt)
     """
     DEFAULT_IGNORE_PATTERNS = ('_scaled', '_export', '_local')
 

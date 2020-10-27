@@ -39,7 +39,7 @@ class SampleContent:
         self.imagePaths = (
             resourcesPath + '/images/cookbot1.jpg',
             resourcesPath + '/images/cookbot10.jpg',
-            resourcesPath + '/images/peppertom_lowres_398x530.png',
+            resourcesPath + '/images/peppertom.png',
         )
         self.longTitles = []
         self.titles = []

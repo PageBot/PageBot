@@ -46,7 +46,7 @@ class ImageData(Element):
         it exists.
 
         >>> from pagebot.filepaths import getResourcesPath
-        >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
+        >>> imageFilePath = '/images/peppertom.png'
         >>> path = getResourcesPath() + imageFilePath
         >>> e = ImageData(path)
         >>> e.iw, e.ih # Get real size of image in the file
@@ -161,7 +161,7 @@ class Image(Element):
     clipPath, size, rotation and position.
 
     >>> from pagebot.filepaths import getResourcesPath
-    >>> imageFilePath = '/images/peppertom_lowres_398x530.png'
+    >>> imageFilePath = '/images/peppertom.png'
     >>> path = getResourcesPath() + imageFilePath
     >>> e = Image(path)
     >>> e.path.endswith(imageFilePath)
@@ -195,7 +195,7 @@ class Image(Element):
         the child element list.
 
         >>> from pagebot.filepaths import getResourcesPath
-        >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> path = getResourcesPath() + '/images/peppertom.png'
         >>> e = Image(path)
         >>> e.imageData.box # Answer the size of the plain image.
         (0pt, 0pt, 100pt, 100pt)

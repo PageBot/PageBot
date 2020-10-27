@@ -1216,7 +1216,7 @@ class BaseContext(AbstractContext):
         >>> from pagebot import getContext
         >>> from pagebot.filepaths import getResourcesPath
         >>> context = getContext()
-        >>> path = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> path = getResourcesPath() + '/images/peppertom.png'
         >>> #imo = context.getImageObject(path)
         """
 

@@ -154,13 +154,13 @@ class HtmlContext(BaseContext):
             exportExtension=None, force=False):
         """
         >>> from pagebot.filepaths import getResourcesPath
-        >>> srcPath = getResourcesPath() + '/images/peppertom_lowres_398x530.png'
+        >>> srcPath = getResourcesPath() + '/images/peppertom.png'
         >>> path2ScaledImagePath(srcPath, 100, 200, 0, 'png')
-        'scaled/peppertom_lowres_398x530-w100-h200-i0.png'
+        'scaled/peppertom-w100-h200-i0.png'
         >>> context = HtmlContext()
         >>> imagePath = context.scaleImage(srcPath, 100, 200)
         >>> imagePath
-        'scaled/peppertom_lowres_398x530-w100-h200.png'
+        'scaled/peppertom-w100-h200.png'
         >>> context.imageSize(imagePath)
         (100pt, 133pt)
         """
