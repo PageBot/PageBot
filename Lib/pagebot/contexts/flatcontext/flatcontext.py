@@ -16,7 +16,7 @@
 #
 import math
 from sys import platform
-from os import listdir
+from os import listdir, makedirs
 from os.path import exists
 import flat
 from flat import rgb
@@ -983,6 +983,10 @@ class FlatContext(BaseContext):
         parts0 = path.split('/')
         path0 = '/'.join(parts0[:-1])
         path0 = '%s/%s' % (path0, '_scaled')
+
+        if not exists(path0):
+            os.makedirs(path0)
+
         path = parts0[-1]
         parts = path.split('.')
         pre = '.'.join(parts[:-1])
