@@ -259,14 +259,14 @@ class FlatContext(BaseContext):
 
     # Public callbacks.
 
+    '''
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
         # TODO
 
-        '''
-        # If default _scaled directory does not exist, then create it.
         cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
 
+        # If default _scaled directory does not exist, then create it.
         if not exists(cachePath):
             os.makedirs(cachePath)
         cachedFilePath = cachePath + fileName
@@ -276,6 +276,7 @@ class FlatContext(BaseContext):
             self.newDrawing()
             self.newPage(w=w, h=h)
             self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
+
             if showImageLoresMarker:
                 bs = self.newString('LO-RES',
                         style=dict(font=DEFAULT_FALLBACK_FONT_PATH,
@@ -288,7 +289,43 @@ class FlatContext(BaseContext):
             # Clean the drawing stack again.
             self.newDrawing()
         return cachedFilePath
+        return path
+    '''
+
+    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
+            exportExtension=None, force=False):
+        # TODO: show optional lores marker.
+        # TODO: add optional extensions.
+        # TODO: move to shared base.
+        # TODO: check if index is still necessary.
+        # TODO: move caching to _scale (merge code).
         '''
+        cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
+        im = Image.open(path)
+
+        if not exists(cachePath):
+            os.makedirs(cachePath)
+        cachedFilePath = cachePath + fileName
+        '''
+
+
+        # NOTE: using PIL for resizing, much faster than Flat.
+        # TODO: cache result.
+        path, ext = self.getResizedPathName(path, w, h)
+
+        # TODO: is this necessary?
+        if ext == 'jpg':
+            ext = 'jpeg'
+
+        if force or not exists(path):
+            try:
+                print('Resizing %s' % path)
+                im = im.resize((w, h), Image.ANTIALIAS)
+            except OverflowError as e:
+                print('%s: Caught an OverflowError:' % self.name, e)
+                print('Image path is %s' % path)
+            im.save(path, ext)
+
         return path
 
     # Compatible API with DrawBot.
@@ -976,26 +1013,7 @@ class FlatContext(BaseContext):
         doScale = w is not None or h is not None
 
         if HAS_PIL and doScale:
-            # TODO: move to scaleImage.
-            im = Image.open(path)
-
-
-            # NOTE: using PIL for resizing, much faster than Flat.
-            # TODO: cache result.
-            path, ext = self.getResizedPathName(path, w, h)
-
-            # TODO: is this necessary?
-            if ext == 'jpg':
-                ext = 'jpeg'
-
-            if not exists(path):
-                try:
-                    print('Resizing %s' % path)
-                    im = im.resize((w, h))
-                except OverflowError as e:
-                    print('%s: Caught an OverflowError:' % self.name, e)
-                    print('Image path is %s' % path)
-                im.save(path, ext)
+            path = self.scaleImage(path, w, h)
 
             # Now open the image in Flat.
             img = self.b.image.open(path)
@@ -1012,12 +1030,14 @@ class FlatContext(BaseContext):
         placed.frame(xpt, ypt - h, w, h)
         self.restore()
 
-        # Debugging.
-        #xpt, ypt = point2D(upt(p))
-        #self.marker(xpt, ypt)
-        #self.stroke((1, 0, 0))
-        #self.fill(None)
-        #self.rect(xpt, ypt, w.pt, h.pt)
+        '''
+        # Enable this for debugging.
+        xpt, ypt = point2D(upt(p))
+        self.marker(xpt, ypt)
+        self.stroke((1, 0, 0))
+        self.fill(None)
+        self.rect(xpt, ypt, w.pt, h.pt)
+        '''
 
     def imagePixelColor(self, path, p):
         return self.b.imagePixelColor(path, p)
