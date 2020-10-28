@@ -75,7 +75,8 @@ $PY $PWD/elements/flow.py
 $PY $PWD/elements/galley.py
 $PY $PWD/elements/group.py
 $PY $PWD/elements/image.py
-#$PY $PWD/elements/image2.py
+$PY $PWD/elements/image2.py
+$PY $PWD/elements/imagedata.py
 $PY $PWD/elements/imaging.py
 $PY $PWD/elements/line.py
 $PY $PWD/elements/mask.py
