@@ -478,7 +478,7 @@ class Image(Element):
                         alpha=self._getAlpha(), w=self.w, h=self.h,
                         scaleType=self.scaleType, clipPath=clipPath)
 
-            # TODO: Draw optional (transparant) forground color?
+            # TODO: Draw optional (transparent) forground color?
             self.context.restore()
 
         # Draw optional frame or borders.

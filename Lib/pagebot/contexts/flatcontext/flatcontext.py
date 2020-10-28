@@ -1008,19 +1008,21 @@ class FlatContext(BaseContext):
 
         doScale = w is not None or h is not None
 
-        if HAS_PIL and doScale:
-            path = self.scaleImage(path, w, h)
+        if doScale:
+            if HAS_PIL:
+                path = self.scaleImage(path, w, h)
 
-            # Now open the image in Flat.
-            img = self.b.image.open(path)
+                # Now open the image in Flat.
+                img = self.b.image.open(path)
+            else:
+                # Missing PIL, slow scaling in Flat instead.
+                img.resize(width=w, height=h)
 
         else:
             # TODO: slow Flat scale without PIL.
-            print('FlatContext.image: Missing PIL, slow context scaling instead.')
             img = self.b.image.open(path)
-
-            if doScale:
-                img.resize(width=w or 0, height=h or 0)
+            w = img.width
+            h = img.height
 
         placed = self.page.place(img)
         placed.frame(xpt, ypt - h, w, h)

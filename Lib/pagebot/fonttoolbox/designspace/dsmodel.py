@@ -566,7 +566,7 @@ class DesignSpace:
 
         >>> ds = DesignSpace()
         >>> a = ds.newAxis('wght', name='Weight')
-        >>> a = ds.newAxis('XTRA', name='X-transparant')
+        >>> a = ds.newAxis('XTRA', name='X-transparent')
         >>> ds.axesByName['Weight'].tag
         'wght'
         """

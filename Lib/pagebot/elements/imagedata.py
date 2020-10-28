@@ -131,8 +131,11 @@ class ImageData(Element):
 
         self._applyRotation(view, p)
 
-        if self.path is None or not os.path.exists(self.path) or not self.iw or not self.ih:
-            # TODO: Also show error, in case the image does not exist, to differ from empty box.
+        if self.path is None or \
+                not os.path.exists(self.path) or \
+                not self.iw or not self.ih:
+            # TODO: Also show error, in case the image does not exist, to
+            # differ from empty box.
             print('Cannot display image %s' % self)
             _, _, pb, pl = self.padding
             self.context.stroke(0.5, 0.5)
@@ -150,7 +153,7 @@ class ImageData(Element):
             else:
                 self.context.image(self.path, p=(px, py), w=self.w, h=self.h,
                         alpha=self._getAlpha())
-            # TODO: Draw optional (transparant) forground color?
+            # TODO: Draw optional (transparent) forground color?
 
         self.buildChildElements(view, p, **kwargs)
 

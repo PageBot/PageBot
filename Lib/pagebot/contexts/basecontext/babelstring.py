@@ -532,7 +532,7 @@ class BabelString:
     def addMarker(self, markerId, arg):
         """Adds a marker as a new run. Code can run through the self.runs to
         mark a run with additional information. A marker is a tiny piece of
-        string in transparant color, that can its positions traced back in a
+        string in transparent color, that can its positions traced back in a
         rendered BabelString instance.
 
         >>> from pagebot.contexts import getContext
