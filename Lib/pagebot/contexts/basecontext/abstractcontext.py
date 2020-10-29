@@ -150,10 +150,6 @@ class AbstractContext:
         transformations) but also the state of colors, strokes."""
         raise NotImplementedError
 
-    def savedState(self):
-        """Save and restore the current graphics state in a `with` statement."""
-        raise NotImplementedError
-
     # Basic shapes.
 
     def rect(self, x, y, w, h):
