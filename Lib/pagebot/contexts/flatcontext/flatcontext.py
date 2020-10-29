@@ -504,8 +504,6 @@ class FlatContext(BaseContext):
         )
         self._gState.append(gState)
 
-    save = saveGraphicState
-
     def restoreGraphicState(self):
         gState = self._gState.pop()
         self._font = gState['font']
@@ -517,8 +515,6 @@ class FlatContext(BaseContext):
         self._oy = gState['oy']
         self._rotate = gState['rotate']
         self._rotationCenter = gState['rotationCenter']
-
-    restore = restoreGraphicState
 
     #   F O N T S
 
