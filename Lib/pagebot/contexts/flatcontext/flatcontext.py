@@ -132,6 +132,8 @@ class FlatContext(BaseContext):
         self.setTransform3D()
 
     def setTransform3D(self):
+        """Initializes the transforrmation matrix to be used for translation,
+        rotation and scaling."""
         self.transform3D = Transform3D()
 
     #   Drawing.
@@ -294,7 +296,7 @@ class FlatContext(BaseContext):
         """Scales image and stores it to _scaled/image-name.jpg.
 
         NOTE: using PIL for resizing, much faster than Flat.
-        TODO: show optional lores marker.
+        TODO: show optional lores marker? Or remove it?
         TODO: add optional extensions.
         TODO: move to shared base.
         TODO: check if index is still necessary.
@@ -420,7 +422,9 @@ class FlatContext(BaseContext):
     width = property(_get_width)
 
     def getTransformed(self, x, y, z=0):
-        """
+        """Takes a point and puts it through the transformation matrix,
+        handling translation, rotation and scaling at once.
+
         >>> context = FlatContext()
         >>> w = 800
         >>> h = 600
@@ -455,6 +459,17 @@ class FlatContext(BaseContext):
         #if not self.originTop:
         y1 = self.height - y1
         return upt(x1, y1)
+
+    def translatePoint(self, p):
+        # TODO: merge with getTransformed.
+        x, y = point2D(upt(p))
+        x = self._ox + x
+        y = self.height - (self._oy + y) # Flip vertical
+        return upt(x, y)
+
+    def getScaledWH(self, w, h):
+        """Scales width and height according to previously set scale."""
+        return w * self._sx, h * self._sy
 
     #   S T A T E
 
@@ -1024,8 +1039,11 @@ class FlatContext(BaseContext):
             w = img.width
             h = img.height
 
+        w, h = self.getScaledWH(w, h)
+        x = xpt
+        y = ypt - h
         placed = self.page.place(img)
-        placed.frame(xpt, ypt - h, w, h)
+        placed.frame(x, 0, int(w), int(h))
         self.restore()
 
         '''
@@ -1204,13 +1222,6 @@ class FlatContext(BaseContext):
 
         if shape is not None:
             self.page.place(shape.path(self._bezierpath.commands))
-
-    def translatePoint(self, p):
-        x, y = point2D(upt(p))
-        x = self._ox + x
-        y = self.height - (self._oy + y) # Flip vertical
-        return upt(x, y)
-
 
     def moveTo(self, p):
         p = self.translatePoint(p)
