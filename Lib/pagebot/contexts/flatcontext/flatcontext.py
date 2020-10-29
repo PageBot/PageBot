@@ -76,6 +76,11 @@ class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
     framework.
 
+    Because the origin is at the bottom, like in DrawBot and as opposed to
+    Flat, we need to subtract all vertical coordinates from the page height
+    before an object gets placed. In case of (bounding) boxes, we also need to
+    subtract the box height.
+
     TODO: merge getTransformed() and translatePoint()?
 
     * xxyxyz.org/flat
@@ -455,16 +460,33 @@ class FlatContext(BaseContext):
         p0 = (x, y, z)
         p1 = self.transform3D.transformPoint(p0)
         x1, y1, _ = p1
+
+        # Makes sure the page height has been initiated.
         assert self.height
-        #if not self.originTop:
+
+        '''Because the origin is at the bottom, like in DrawBot and as opposed
+        to Flat, we need to subtract all vertical coordinates from the page
+        height before an object gets placed. In case of (bounding) boxes, we
+        also need to subtract the box height.'''
+
         y1 = self.height - y1
         return upt(x1, y1)
 
     def translatePoint(self, p):
-        # TODO: merge with getTransformed.
+        """
+        Simpler function to translate a point based on origin coordinates
+        (`self._ox` and `self._oy`).
+
+        TODO: merge with getTransformed.
+        """
         x, y = point2D(upt(p))
         x = self._ox + x
-        y = self.height - (self._oy + y) # Flip vertical
+
+        '''Because the origin is at the bottom, like in DrawBot and as opposed
+        to Flat, we need to subtract all vertical coordinates from the page
+        height before an object gets placed. In case of (bounding) boxes, we
+        also need to subtract the box height.'''
+        y = self.height - (self._oy + y)
         return upt(x, y)
 
     def getScaledWH(self, w, h):
@@ -683,7 +705,6 @@ class FlatContext(BaseContext):
             bs = s
         assert isinstance(bs, BabelString)
         assert self.page is not None, 'FlatContext.text: self.page is not set.'
-        #xpt, ypt = self.translatePoint(p)
         x, y = p
         x, y = self.getTransformed(x, y)
         y -= bs.topLineDescender
@@ -1013,9 +1034,12 @@ class FlatContext(BaseContext):
         if p is None:
             p = 0, 0
 
-        # Renders unit tuple to value tuple.
-        xpt, ypt = self.translatePoint(p)
-        self.save()
+        #xTest, yTest = p
+        x, y = self.translatePoint(p)
+        #xTest, yTest = self.getTransformed(xTest, yTest)
+        #print(x, y)
+        #print(xTest, yTest)
+        #self.save()
 
         doScale = w is not None or h is not None
 
@@ -1035,12 +1059,14 @@ class FlatContext(BaseContext):
             w = img.width
             h = img.height
 
+        # Also scales frame width and height.
         w, h = self.getScaledWH(w, h)
-        x = xpt
-        y = ypt - h
+
+        # Now subtract the image height.
+        y -= h
         placed = self.page.place(img)
-        placed.frame(x, 0, int(w), int(h))
-        self.restore()
+        placed.frame(x, y, w, h)
+        #self.restore()
 
         '''
         # Enable this for debugging.

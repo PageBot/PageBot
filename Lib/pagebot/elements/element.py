@@ -929,17 +929,17 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         eShadow = self.shadow
 
         if eShadow:
-            c.saveGraphicState()
+            c.save()
             c.setShadow(eShadow)
             c.rect(p[0], p[1], self.w, self.h)
-            c.restoreGraphicState()
+            c.restore()
 
         eFill = self.fill # Default is noColor
         eStroke = self.stroke #self.css('stroke', default=noColor)
         eGradient = self.gradient
 
         #if eStroke is not noColor or eFill is not noColor or eGradient:
-        c.saveGraphicState()
+        c.save()
 
         # Drawing element fill and / or frame.
         if eGradient:
@@ -981,7 +981,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
         c.fill(None)
         c.stroke(None, 0)
-        c.restoreGraphicState()
+        c.restore()
 
         # Instead of full frame drawing, check on separate border settings.
         borderTop = self.borderTop
@@ -990,7 +990,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         borderLeft = self.borderLeft
 
         if borderTop is not None:
-            c.saveGraphicState()
+            c.save()
             c.lineDash(borderTop.get('dash')) # None for no dash
             c.stroke(borderTop.get('stroke', noColor), borderTop.get('strokeWidth', 0))
 
@@ -1018,10 +1018,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 oTop = 0
 
             c.line((x-oLeft, y+h+oTop), (x+w+oRight, y+h+oTop))
-            c.restoreGraphicState()
+            c.restore()
 
         if borderBottom is not None:
-            c.saveGraphicState()
+            c.save()
             c.lineDash(borderBottom.get('dash')) # None for no dash
             c.stroke(borderBottom.get('stroke', noColor), borderBottom.get('strokeWidth', 0))
 
@@ -1047,10 +1047,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 oBottom = 0
 
             c.line((x-oLeft, y-oBottom), (x+w+oRight, y-oBottom))
-            c.restoreGraphicState()
+            c.restore()
 
         if borderRight is not None:
-            c.saveGraphicState()
+            c.save()
             c.lineDash(borderRight.get('dash')) # None for no dash
             c.stroke(borderRight.get('stroke', noColor), borderRight.get('strokeWidth', 0))
 
@@ -1076,10 +1076,10 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 oRight = 0
 
             c.line((x+w+oRight, y-oBottom), (x+w+oRight, y+h+oTop))
-            c.restoreGraphicState()
+            c.restore()
 
         if borderLeft is not None:
-            c.saveGraphicState()
+            c.save()
             c.lineDash(borderLeft.get('dash')) # None for no dash
             c.stroke(borderLeft.get('stroke', noColor), borderLeft.get('strokeWidth', 0))
 
@@ -1105,7 +1105,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
                 oLeft = 0
 
             c.line((x-oLeft, y-oBottom), (x-oLeft, y+h+oTop))
-            c.restoreGraphicState()
+            c.restore()
 
     #   V A L I D A T I O N
 
@@ -4732,7 +4732,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
 
         # Make sure these are value scale values.
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1):
-            self.view.context.saveGraphicState()
+            self.view.context.save()
             view.scale = sx, sy
             # Scale point in 3 dimensions.
             p = (p[0] / sx, p[1] / sy, p[2] / sz)
@@ -4747,7 +4747,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         sz = self.scaleZ
         # Make sure these are value scale values.
         if sx and sy and sz and (sx != 1 or sy != 1 or sz != 1):
-            self.view.context.restoreGraphicState()
+            self.view.context.restore()
 
     #   S P E L L  C H E C K
 

@@ -583,7 +583,7 @@ class MapView(BaseView):
             p = self._applyScale(e, p)
             px, py, _ = e._applyAlignment(p) # Ignore z-axis for now.
 
-            context.saveGraphicState()
+            context.save()
             context.setShadow(self.shadow)
 
             sMissingElementFill = self.css('viewMissingElementFill', noColor)
@@ -601,8 +601,7 @@ class MapView(BaseView):
             context.moveTo((px + self.w, py))
             context.lineTo((px, py + self.h))
             context.drawPath()
-
-            context.restoreGraphicState()
+            context.restore()
             e._restoreScale(self)
 
     #    G R I D
