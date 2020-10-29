@@ -186,9 +186,11 @@ class BaseContext(AbstractContext):
     # Graphics state.
 
     def save(self):
+        """Saves the current graphic state, in case it needs to be restored later."""
         self.saveGraphicState()
 
     def restore(self):
+        """Restores the previous graphic state."""
         self.restoreGraphicState()
 
     # Basic shapes.

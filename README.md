@@ -23,14 +23,14 @@ Upgrade to the latest if already installed:
 
 ## Virtual Environment
 
-To setup `pagebot` and its requirements in a virtual environemnt environment:
+To setup `pagebot` and its requirements in a virtual environment:
 
     pip install virtualenv
     mkdir ~/virtualenvironment
     virtualenv ~/virtualenvironment/pagebot
     cd ~/virtualenvironment/pagebot/bin
     source activate
-    pip-3.8 install pagebot
+    pip install pagebot
 
 ## Mac OS X
 
