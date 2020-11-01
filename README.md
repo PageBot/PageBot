@@ -5,7 +5,7 @@ documents using Python programming. It is available as a Python library with
 multi-platform support based on [Flat](http://xxyxyz.org/flat) and as a Mac OS
 X extension that uses [DrawBot](http://www.drawbot.com). Our aim is to create a
 system of scriptable applications to generate professionally designed output in
-various print-ready formats.
+various print-ready and web-based formats.
 
 The PageBot homepage is located at [pagebot.io](http://pagebot.io).
 
