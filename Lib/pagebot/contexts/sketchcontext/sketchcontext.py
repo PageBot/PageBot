@@ -22,7 +22,7 @@
 #  This description is not complete.
 #  Additions made where found in the Reading specification of this context.
 #
-#  Equivalent classes on PageBot <--> SketchApp2Py
+#  Equivalent classes on PageBot <--> PySketch
 #  Publication       SketchApi/Sketch file
 #  Document          SketchPage
 #  Document.pages    SketchArtBoard[]
@@ -340,7 +340,7 @@ class SketchContext(BaseContext):
 
             elif isinstance(layer, SketchBitmap):
                 # All internal Sketch file images are converted to .png
-                # SketchApp2Py converts the internal names with long id's to their object
+                # PySketch converts the internal names with long id's to their object
                 # names and copies them into a parallel folder, indicated by self.b.sketchApi.sketchFile
                 # If there are Mask elements with the same parent, then use it as clip path
                 y = e.h - frame.h - frame.y # Flip the y-axis

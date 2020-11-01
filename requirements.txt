@@ -10,5 +10,5 @@ uharfbuzz
 python-lorem==1.1.2
 #flat==0.3.1
 git+https://github.com/PageBot/flat.git
-git+https://github.com/PageBot/SketchApp2Py.git
+git+https://github.com/PageBot/PySketch.git
 .
