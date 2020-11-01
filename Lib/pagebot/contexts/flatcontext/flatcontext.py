@@ -496,7 +496,10 @@ class FlatContext(BaseContext):
     #   S T A T E
 
     def saveGraphicState(self):
-        """Save the current graphic state.
+        """Saves the current graphic state, in case it needs to be restored later.
+
+        TODO: add tests for stroke, fill, strokewidth, fontSize, origin, scale,
+        rotation.
 
         >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> context = FlatContext()
@@ -527,6 +530,7 @@ class FlatContext(BaseContext):
         self._gState.append(gState)
 
     def restoreGraphicState(self):
+        """Restores the previous graphic state."""
         gState = self._gState.pop()
         self._font = gState['font']
         self._fontSize = gState['fontSize']
