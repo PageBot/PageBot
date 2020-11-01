@@ -51,7 +51,6 @@ from pagebot.elements.dating.calendarmonth import CalendarMonth
 from pagebot.elements.artboard import Artboard
 
 from pagebot.elements.glyphpath import GlyphPath
-from pagebot.elements.paths import Paths
 
 # Table elements
 from pagebot.elements.table import Table
