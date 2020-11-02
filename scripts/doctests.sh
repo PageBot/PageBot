@@ -67,6 +67,8 @@ $PY $PWD/document.py
 # Elements.
 $PY $PWD/elements/alignments.py
 $PY $PWD/elements/artboard.py
+$PY $PWD/elements/beziercurve.py
+$PY $PWD/elements/bezierpaths.py
 $PY $PWD/elements/clippath.py
 $PY $PWD/elements/codeblock.py
 $PY $PWD/elements/conditions.py
