@@ -15,12 +15,12 @@
 #     glyphpath.py
 #
 
-from pagebot.elements.paths import Paths
+from pagebot.elements.bezierpaths import BezierPaths
 from pagebot.toolbox.units import units
 from pagebot.toolbox.color import noColor
 from pagebot.constants import DEFAULT_HEIGHT, DEFAULT_WIDTH, ORIGIN
 
-class GlyphPath(Paths):
+class GlyphPath(BezierPaths):
     """GlyphPath is an element to show the path of a glyph with additional features.
 
     >>> from pagebot.fonttoolbox.fontpaths import getTestFontsPath
@@ -41,7 +41,7 @@ class GlyphPath(Paths):
 
     """
     def __init__(self, glyph, w=None, h=None, pathFilter=None, **kwargs):
-        Paths.__init__(self, **kwargs)
+        BezierPaths.__init__(self, **kwargs)
         # Store separately, to avoid disappearing weakref.
         self.font = glyph.font
         self.glyph = glyph
