@@ -12,21 +12,21 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     paths.py
+#     bezierpaths.py
 #
-#     The Paths element holds an ordered list of BezierPath elements, where
+#     The BezierPaths element holds an ordered list of BezierPath elements, where
 #     each can have its own optional style, that overwrites the generic style
 #     of self.
 #
 from pagebot.constants import ORIGIN
 from pagebot.elements.element import Element
 from pagebot.contexts.basecontext.bezierpath import BezierPath
-from pagebot.toolbox.units import pointOffset#, upt
+from pagebot.toolbox.units import pointOffset
 
-class Paths(Element):
+class BezierPaths(Element):
     """Draw rectangle, default identical to Element itself.
 
-    NOTE: class Mask(Paths) is deprecated; use Mask(Polygon) instead.
+    NOTE: class Mask(BezierPaths) is deprecated; use Mask(Polygon) instead.
 
     >>> from pagebot.document import Document
     >>> from pagebot.toolbox.color import color
@@ -63,7 +63,7 @@ class Paths(Element):
     >>> view.showPadding = True
     >>> view.showCropMarks = True
     >>> page = doc[1]
-    >>> e = Paths([path1, path2], x=100, y=100, parent=page)
+    >>> e = BezierPaths([path1, path2], x=100, y=100, parent=page)
     >>> doc.export('_export/DrawBotPaths.pdf')
     >>>
     """
@@ -74,8 +74,11 @@ class Paths(Element):
         if paths is None:
             paths = []
         elif not isinstance(paths, (tuple, list)):
-            paths = [paths] # Create an ordered list of BezierPath instances
+            # Creates an ordered list of BezierPath instances.
+            paths = [paths]
+
         self.paths = paths
+
         for path in paths:
             assert isinstance(path, self.PATH_CLASS)
         Element.__init__(self, **kwargs)
@@ -86,7 +89,8 @@ class Paths(Element):
         self.paths.append(path)
 
     def _get_pathsW(self):
-        """Read only property that answers the cumulated total width of all paths."""
+        """Read only property that answers the cumulated total width of all
+        paths."""
         minX = 0 # At least cover the origin of the element, or smaller.
         maxX = 0
         for path in self.paths:
@@ -94,6 +98,7 @@ class Paths(Element):
             minX = min(minX, bounds[0])
             maxX = max(maxX, bounds[2])
         return max(0, maxX - minX)
+
     pathsW = property(_get_pathsW)
 
     def _get_w(self):
@@ -105,13 +110,13 @@ class Paths(Element):
         >>> path1.oval(100, 100, 200, 200)
         >>> path2 = BezierPath(context=context)
         >>> path2.oval(200, 200, 200, 200)
-        >>> e = Paths([path1, path2])
+        >>> e = BezierPaths([path1, path2])
         >>> e.w
         400.0
         """
         return self.pathsW * self.scaleX
     def _set_w(self, w):
-        """Set the scale accordingly, as the width of the cumulated paths is fixed."""
+        """Sets the scale accordingly, as the width of the cumulated paths is fixed."""
         bpw = self.pathsW
         if w and bpw:
             self.scaleX = self.scaleY = w/bpw # Default is proportional scaling
@@ -137,7 +142,7 @@ class Paths(Element):
         >>> path1.oval(100, 100, 200, 300)
         >>> path2 = BezierPath(context=context)
         >>> path2.oval(200, 200, 200, 500)
-        >>> e = Paths([path1, path2])
+        >>> e = BezierPaths([path1, path2])
         >>> e.h
         700.0
         """
@@ -157,7 +162,7 @@ class Paths(Element):
         px, py, _ = p = self._applyAlignment(p) # Ignore z-axis for now.
         self._applyRotation(view, p)
 
-        # No automatic frame drawing on Paths elements
+        # No automatic frame drawing on BezierPaths elements
         #self.buildFrame(view, p) # Draw optional frame or borders.
 
         # Let the view draw frame info for debugging, in case view.showFrame ==

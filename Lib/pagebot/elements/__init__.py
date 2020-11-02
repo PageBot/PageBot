@@ -34,6 +34,7 @@ from pagebot.elements.circle import Circle
 from pagebot.elements.polygon import Polygon
 from pagebot.elements.ruler import Ruler
 from pagebot.elements.docwrap import DocWrap
+from pagebot.elements.bezierpaths import BezierPaths
 
 # Page elements.
 from pagebot.elements.image import Image
@@ -181,11 +182,11 @@ def newRuler(**kwargs):
 def newBezierCurve(**kwargs):
     return BezierCurve(**kwargs)
 
-def newPaths(paths=None, **kwargs):
-    """Creates a Paths element, holding BezierPath object(s) in the element
+def newBezierPaths(paths=None, **kwargs):
+    """Creates a Paths element, containing BezierPath objects in an element
     frame. The paths can be a single BezierPath instance or a list / tuple of
     instances. Not be confused with the filePath "path" in Image."""
-    return Paths(paths, **kwargs)
+    return BezierPaths(paths, **kwargs)
 
 def newGlyphPath(glyph, **kwargs):
     return GlyphPath(glyph, **kwargs)
