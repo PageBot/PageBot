@@ -103,7 +103,6 @@ $PY $PWD/elements/newspapers/__init__.py
 #$PY $PWD/elements/newspapers/articles.py
 $PY $PWD/elements/newspapers/headers.py
 $PY $PWD/elements/glyphpath.py
-$PY $PWD/elements/paths.py
 #$PY $PWD/elements/ui/....py
 $PY $PWD/elements/variablefonts/animationframe.py
 $PY $PWD/elements/variablefonts/basefontshow.py
