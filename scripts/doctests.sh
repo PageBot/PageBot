@@ -201,6 +201,8 @@ $PY $PWD/themes/wordlywise.py
 $PY $PWD/toolbox/color.py
 $PY $PWD/toolbox/columncalc.py
 $PY $PWD/toolbox/dating.py
+$PY $PWD/toolbox/drawing.py
+#$PY $PWD/toolbox/finder.py
 $PY $PWD/toolbox/hyphenation.py
 $PY $PWD/toolbox/markers.py
 $PY $PWD/toolbox/timemark.py

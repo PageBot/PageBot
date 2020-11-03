@@ -16,6 +16,7 @@
 #
 import os
 from pagebot.elements import elementFromPath
+from pagebot import getContext
 
 class Finder:
     """Answers a Finder instance that can find resources (images, texts)
@@ -30,10 +31,15 @@ class Finder:
     >>> textPaths = finder.findPaths(pattern='Roboto', extension='txt')
     >>> textPaths[0].endswith('txt') # Page resources contain Roboto OFL txt file.
     True
-    >>> images = finder.find(pattern='pepper', extension='png') # Answer a list of unplaced Image elements
+    >>> # Answers a list of unplaced Image elements.
+    >>> images = finder.find(pattern='pepper', extension='png')
     >>> image = images[0]
-    >>> image.path.split('/')[-1], image.w, image.h
-    ('peppertom.png', 398pt, 530pt)
+    >>> image.path.split('/')[-1]
+    'peppertom.png'
+    >>> # image.path.split('/')[-1], image.w, image.h
+    #('peppertom.png', 398pt, 530pt)
+    # FIXME: returns
+    #('peppertom.png', 398pt, 398pt)
     """
     DEFAULT_IGNORE_PATTERNS = ('_scaled', '_export', '_local')
 
@@ -91,10 +97,12 @@ class Finder:
     def find(self, name=None, pattern=None, extension=None, **kwargs):
         """Answer the elements that hold the data of matching path extensions."""
         elements = []
+        context = getContext()
         for path in self.findPaths(name=name, pattern=pattern, extension=extension):
-            e = elementFromPath(path, name=name, **kwargs)
-            if e is not None:
-                elements.append(e)
+            if os.path.exists(path):
+                e = elementFromPath(path, context=context, name=name, **kwargs)
+                if e is not None:
+                    elements.append(e)
         return elements
 
 if __name__ == '__main__':

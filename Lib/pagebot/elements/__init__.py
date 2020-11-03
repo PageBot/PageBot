@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -72,23 +72,21 @@ from pagebot.elements.variablefonts.variablecircle import VariableCircle
 from pagebot.elements.designspacegraph.designspacegraph import DesignSpace, DesignSpaceGraph
 from pagebot.elements.variablefonts.specimen import TypeList, TypeFeatures, TypeGlyphSet, Waterfall
 
-def elementFromPath(path, name=None, **kwargs):
+def elementFromPath(path, context=None, name=None, **kwargs):
     """Answer the element that is best suitable to hold the data in the path.
     """
     extension = path2Extension(path).lower()
 
     if extension in IMAGE_TYPES:
-        e = newImage(path, name=name, **kwargs)
+        e = newImage(path, context=context, name=name, **kwargs)
+    elif extension in TEXT_TYPES:
+        e = newText(path, context=context, name=name, **kwargs)
     elif extension in FONT_TYPES:
         # TODO: Answer a default specimen element to show the font.
         e = None
     elif extension in MOVIE_TYPES:
         # TODO: Answer a MovieElement instance (to be developed)
         e = None
-    elif extension in TEXT_TYPES:
-        # TODO: Answer Text on the parsed content of the file, instead of
-        # the path.
-        e = newText(path, name=name, **kwargs)
     else:
         # If no extension-->element can be found.
         e = None

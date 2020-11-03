@@ -70,3 +70,8 @@ def drawArrow(e, view, xs, ys, xt, yt, onText=1, startMarker=False,
     b.drawPath()
     if endMarker:
         context.oval(xt - fms, yt - fms, 2 * fms, 2 * fms)
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

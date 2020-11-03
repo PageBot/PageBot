@@ -218,7 +218,7 @@ class Image(Element):
                 # Width is lead, calculate height.
                 u = self.ih * upt(self._w / iwpt)
             else:
-                # Undefined and without parent, answer original image width.
+                # Undefined and without parent, answer original image height.
                 u = self.ih
         else:
             # In case relative units, use the right kind of base.
