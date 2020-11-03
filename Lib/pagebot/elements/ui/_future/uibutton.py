@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -21,9 +22,9 @@ class UIButton(Element):
         >>> context = getContext()
         >>> def buttonCallback(sender):
         ...     print('Callback of', sender)
-        >>> e = Button(w=100, h=24, name='My Button', callback=buttonCallback, context=context)
+        >>> e = UIButton(w=100, h=24, name='My Button', callback=buttonCallback, context=context)
         >>> e
-        <Button:My Button (0pt, 0pt, 100pt, 24pt)>
+        <UIButton "My Button" w=100pt h=24pt>
     """
     def __init__(self, callback=None, **kwargs):
         Element.__init__(self, **kwargs)
@@ -33,7 +34,7 @@ class UIButton(Element):
         """Draw a button and connect it to a callback function.
         """
         assert nsParent is not None
-        button = self.context.button(title=self.title, x=self.x, y=self.y, 
+        button = self.context.button(title=self.title, x=self.x, y=self.y,
             w=self.w, h=self.h, style=self.style, callback=self.callback)
         print('dsdadas', button, self.callback)
         setattr(nsParent, self.name or 'untitledButton', button)

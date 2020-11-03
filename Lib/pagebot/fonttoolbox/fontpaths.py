@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -59,8 +60,6 @@ def getFontPathOfFont(font, default=None):
     >>> path = getFontPathOfFont('UnknowFont.ttf') # Unknown font is set to getDefaultFontPath()
     >>> path == getDefaultFontPath()
     True
-    >>> getFontPathOfFont('Georgia Bold') == getFontPathOfFont('Georgia-Bold') # Can find both
-    True
     >>> #getFontPathOfFont('AgencyFB-Regular')
 
     """
@@ -121,8 +120,6 @@ def getFontPaths(extraPaths=None):
     >>> 'OtherFont' in fontPaths # Ignore if extra paths don't exists.
     False
     >>> fontPaths = getFontPaths()
-    >>> fontPaths['Georgia-Bold'] == fontPaths['Georgia Bold'] # Works both
-    True
     """
     global FONT_PATHS
     if extraPaths is not None:

@@ -57,9 +57,10 @@ class ClipPath:
         >>> context.newPage(w=500, h=500)
         >>> from pagebot.document import Document
         >>> doc = Document(w=500, h=500, context=context)
-        >>> e = doc[1] #Element(w=500, h=500, context=context)
+        >>> e = doc[1]
         >>> e.childClipPath
         <BezierPath 1>
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(parent=e, x=0, y=0, w=50, h=80)
         """
         """
@@ -93,6 +94,7 @@ class ClipPath:
         append it to self.elements and answer the index number that is assigned
         to it. If index < 0, just answer None and do nothing.
 
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(name='Child1')
         >>> e2 = Element(name='Child2')
         >>> e3 = Element(name='Child3')
@@ -124,6 +126,7 @@ class ClipPath:
         and the position are lost. The position `e` is supposed to be filled
         already in local position.
 
+        >>> from pagebot.elements.element import Element
         >>> e = Element(name='Parent')
         >>> e1 = Element(name='Child1', parent=e)
         >>> e2 = Element(name='Child2', parent=e)
@@ -163,6 +166,7 @@ class ClipPath:
         """If the element is placed in self, then remove it. Don't touch the
         position.
 
+        >>> from pagebot.elements.element import Element
         >>> e = Element(name='Parent')
         >>> e1 = Element(name='Child1', parent=e)
         >>> e2 = Element(name='Child2', parent=e)

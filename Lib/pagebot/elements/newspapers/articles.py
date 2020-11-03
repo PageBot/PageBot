@@ -32,6 +32,7 @@ class ArticleHCC(Rect):
     >>> a = ArticleHCC(parent=page)
     >>> score = page.solve()
     >>> page['ArticleHead'].box
+    (0pt, 0pt, 100pt, 100pt)
     """
     def __init__(self, **kwargs):
         Rect.__init__(self, **kwargs)
