@@ -16,6 +16,9 @@ matrix:
         - ./scripts/pylint.sh
         - ./scripts/doctests-linux.sh
         - ./scripts/doctests.sh
+          #- pytest
+          #after_success:
+          #- codecov
     - os: osx
       #osx_image: xcode12.2
       language: sh
@@ -27,9 +30,9 @@ matrix:
               update: true
               packages: python3.9
       before_install:
-        - brew link --overwrite python
-        - python --version
-        - python3 --version
+          #- brew link --overwrite python
+          #- python --version
+          #- python3 --version
         - pip3 install --upgrade pip
       install:
         - ./scripts/osx.sh
@@ -38,6 +41,9 @@ matrix:
         - ./scripts/pylint.sh
         - ./scripts/doctests-osx.sh
         - ./scripts/doctests.sh
+          #- pytest
+          #after_success:
+          #- codecov
 branches:
   only:
     - master

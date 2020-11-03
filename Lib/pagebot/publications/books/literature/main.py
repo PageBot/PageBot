@@ -55,7 +55,7 @@ family = getFamily('Roboto')
 fontRegular = family.findFont('Regular')
 fontBold = family.findFont('Bold')
 fontItalic = family.findFont('Italic')
-ampersandFont = findFont('Georgia')
+ampersandFont = findFont('Roboto-Regular')
 
 def makeDocument():
     """Demo random book cover generator."""
