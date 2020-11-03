@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -10,15 +11,17 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     magazine.py
+#     parts.py
 #
 from pagebot.conditions import *
 from pagebot.elements import *
 
 class PartOfBook(Element):
 
-    def __init__(self, length=None, elements=None, name=None, compose=None, toc=True, **kwargs):
-        """Abstract type of element that contain parts of the book and/or single pages.
+    def __init__(self, length=None, elements=None, name=None, compose=None,
+            hasToc=True, **kwargs):
+        """Abstract type of element that contain parts of the book and / or
+        single pages.
 
         >>> elements = (
         ...     Front(1, name='Front'),
@@ -54,10 +57,11 @@ class PartOfBook(Element):
         ... )
         >>> pob = PartOfBook()
         >>> pob.getSpreads()
+        []
         """
         Element.__init__(self, name=name, **kwargs)
         self.compose = compose
-        self.toc = toc # Flag indicates if this part should be added to the Table of Content.
+        self.hasToc = hasToc # Flag indicates if this part should be added to the Table of Content.
 
         if elements is not None:
             self.elements = elements

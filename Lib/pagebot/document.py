@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
-#
-#     P A G E B O T
+# #     P A G E B O T
 #
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -951,7 +950,7 @@ class Document:
         return pages
 
     def findPage(self, eId=None, name=None, pattern=None, pageSelection=None):
-        """Answer the first page found from the self.findPages(...) call. Answer None
+        """Answers the first page found from the self.findPages(...) call. Answers None
         if no page can be found matching the parameters."""
         pages = self.findPages(eId=eId, name=name, pattern=pattern, pageSelection=pageSelection)
         if pages:
@@ -959,13 +958,13 @@ class Document:
         return None
 
     def findBysId(self, sId):
-        """If defined, the system self.sId can be used to recursively find self or a child.
-        Answer None if nothing can be found that is exactly matching.
+        """If defined, the system self.sId can be used to recursively find self
+        or a child. Answers None if nothing can be found that matches exactly.
 
-        >>> from elements import *
         >>> doc = Document(sId=1234)
         >>> doc.view.sId = 7890
         >>> page = doc[1]
+        >>> from pagebot.elements.element import Element
         >>> e1 = Element(parent=page, name='e1', sId=2345)
         >>> e2 = Element(parent=e1, name='e2', sId=3456)
         >>> doc.findBysId(3456)
