@@ -37,15 +37,21 @@ class Location(dict):
         <Location wdth=200 wght=100>
         """
         s = []
-        for tagValue in self.items():
+        for tagValue in sorted(self.items()):
             s += (tagValue,)
         return tuple(s)
     id = property(_get_id)
 
     def __repr__(self):
         s = '<%s' % self.__class__.__name__
-        for tagValue in sorted(self.items()):
-            s += ' %s=%s' % tagValue
+
+        keys = list(self.keys())
+        keys.sort(key=lambda s: s.lower())
+
+        for key in keys:
+            v = self.get(key)
+            s += ' %s=%s' % (key, v)
+
         s += '>'
         return s
 
@@ -61,7 +67,7 @@ class Location(dict):
 
         >>> loc = Location.fromId(dict(wght=400, wdth=100))
         >>> loc
-        <Location wght=400 wdth=100>
+        <Location wdth=100 wght=400>
         >>> loc = Location.fromId((('wdth', 100), ('wght', 400)))
         >>> loc
         <Location wdth=100 wght=400>
@@ -78,3 +84,8 @@ class Location(dict):
             for tag, value in locId:
                 location[tag] = value
         return location
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

@@ -435,7 +435,6 @@ class Model:
         glyph.width = self.vm.interpolateFromMasters(nLocation, mMt[0])
 
 if __name__ == '__main__':
-    # TODO: Convert from UFO to TTF/OTF workings
     import doctest
     import sys
     sys.exit(doctest.testmod()[0])

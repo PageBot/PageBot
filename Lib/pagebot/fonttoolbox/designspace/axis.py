@@ -18,6 +18,7 @@
 
 from pagebot.toolbox.units import asFormatted
 from pagebot.fonttoolbox.designspace.location import Location
+from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
 
 REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -193,3 +194,8 @@ class BlendAxis(Axis):
     def _set_maximum(self, value):
         pass # Ignore, value is calculated result.
     maximum = property(_get_maximum, _set_maximum)
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])

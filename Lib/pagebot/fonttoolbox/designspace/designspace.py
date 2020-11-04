@@ -19,7 +19,8 @@
 import os
 from copy import copy, deepcopy
 from fontTools.designspaceLib import DesignSpaceDocument
-from pagebot.fonttoolbox.designspace.axis import Axis, isValidTag
+from fontTools.varLib.models import normalizeLocation
+from pagebot.fonttoolbox.designspace.axis import Axis, BlendAxis, isValidTag
 from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
 from pagebot.fonttoolbox.designspace.location import Location
 from pagebot.toolbox.units import asFormatted
@@ -773,11 +774,11 @@ class DesignSpace:
         >>> a = ds.newAxis('wght')
         >>> b = ds.newAxis('XTRA')
         >>> ds.defaultLocation
-        <Location XTRA=500 wght=500>
+        <Location wght=500 XTRA=500>
         >>> c = ds.newAxis('XOPQ')
         >>> b.default = 504
         >>> ds.defaultLocation
-        <Location wght=500 XTRA=504 XOPQ=500>
+        <Location wght=500 XOPQ=500 XTRA=504>
         """
         location = self.LOCATION_CLASS()
         for axis in self.axisList:
@@ -797,10 +798,10 @@ class DesignSpace:
         (<Location wght=0 XTRA=500>, <Location wght=500 XTRA=500>, <Location wght=1000 XTRA=500>)
         >>> a = ds.newAxis('XOPQ')
         >>> ds.getAxisLocation(a) # New axis is added to all locations: gathering is dynamic property
-        (<Location wght=500 XTRA=500 XOPQ=0>, <Location wght=500 XTRA=500 XOPQ=500>, <Location wght=500 XTRA=500 XOPQ=1000>)
+        (<Location wght=500 XOPQ=0 XTRA=500>, <Location wght=500 XOPQ=500 XTRA=500>, <Location wght=500 XOPQ=1000 XTRA=500>)
         >>> a.minimum = a.default
         >>> ds.getAxisLocation(a) # Minimum now overlaps with default
-        (None, <Location wght=500 XTRA=500 XOPQ=500>, <Location wght=500 XTRA=500 XOPQ=1000>)
+        (None, <Location wght=500 XOPQ=500 XTRA=500>, <Location wght=500 XOPQ=1000 XTRA=500>)
         """
         defaultLocation = self.defaultLocation # Get fresh created dictionary of origin location.
         minLocation = copy(defaultLocation)
@@ -987,3 +988,7 @@ class DesignSpace:
 
         return ''.join(xml)
 
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
