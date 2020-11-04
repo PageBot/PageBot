@@ -34,7 +34,7 @@ class FontInfo:
     def _set_location(self, location):
         if isinstance(location, (tuple, list, dict)): # Is probably is a locationId, try to convert. Or from dict.
             location = Location.fromId(location)
-        assert location is None or isinstance(location, Location), TypeError('"%s" is not of type "%s"' % (location, DesignSpace.LOCATION_CLASS))
+        assert location is None or isinstance(location, Location), TypeError('"%s" is not of type "%s"' % (location, Location))
         self._location = location
     location = property(_get_location, _set_location)
 
