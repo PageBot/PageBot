@@ -21,40 +21,15 @@ from pagebot.contributions.filibuster.blurb import Blurb
 from pagebot.toolbox.units import pointOffset
 
 class Paragraphs(BaseFontShow):
-    """Showing the specified (variable) font as full page with a matrix
-    of all glyphs in the font.
+    """Showing the specified (variable) font as full page with a matrix of all
+    glyphs in the font.
 
-    Usage of standard style parameters
+    Usage of standard style parameters:
+
     fill        Fill color for the background of the element
     stroke      Draw frame around the element
     textFill    Color of the text. Default is black.
     padding     Use in case of background color or frame. Default is 0
-
-    File "./paragraphs.py", line 58, in __main__.Paragraphs.__init__
-Failed example:
-    doc.export('_export/%sParagraphs.pdf' % font1.info.familyName)
-Exception raised:
-    Traceback (most recent call last):
-      File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/doctest.py", line 1329, in __run
-        exec(compile(example.source, filename, "single",
-      File "<doctest __main__.Paragraphs.__init__[20]>", line 1, in <module>
-        doc.export('_export/%sParagraphs.pdf' % font1.info.familyName)
-      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/document.py", line 1529, in export
-        self.build(path=path, multiPage=multiPage, **kwargs)
-      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/document.py", line 1511, in build
-        self.view.build(path, pageSelection=pageSelection, multiPage=multiPage, **kwargs)
-      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/elements/views/pageview.py", line 190, in build
-        page.buildChildElements(self, origin, **kwargs)
-      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/elements/element.py", line 4541, in buildChildElements
-        e.build(view, origin, **kwargs)
-      File "./paragraphs.py", line 88, in build
-        self.drawStacked(view, p, **kwargs)
-      File "./paragraphs.py", line 129, in drawStacked
-        x, _ = self.buildText(s1, s2, origin, x, y,
-      File "/Users/michiel/VirtualEnvironments/pagebot/lib/python3.8/site-packages/pagebot/elements/variablefonts/basefontshow.py", line 105, in buildText
-        instance = self.getInstance(location) # Get Roman for labels, using default axis values.
-    AttributeError: 'Paragraphs' object has no attribute 'getInstance'
-
     """
     def __init__(self, f, words=None, labelSize=None, **kwargs):
         """
@@ -94,8 +69,8 @@ Exception raised:
         self.labelSize = labelSize # If undefined, then don't draw labels.
 
     def build(self, view, origin=ORIGIN, **kwargs):
-        """Default drawing method just drawing the frame.
-        Probably will be redefined by inheriting element classes."""
+        """Default drawing method just drawing the frame. Probably will be
+        redefined by inheriting element classes."""
         c = self.context
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
@@ -110,8 +85,9 @@ Exception raised:
         view.drawElementInfo(self, origin) # Depends on flag 'view.showElementInfo'
 
     def getText(self, tag, cnt=None, charCnt=None):
-        """If the tag type of text is in self.words, then take a random choice from there.
-        Otherwise use the tag to create a blurb with the specified length."""
+        """If the tag type of text is in self.words, then take a random choice
+        from there.  Otherwise use the tag to create a blurb with the specified
+        length."""
         if tag in self.words:
             text = choice(self.words[tag])
             if text in self.usedText: # Already used, try once more.
@@ -122,22 +98,21 @@ Exception raised:
         return text
 
     def drawStacked(self, view, origin, **kwargs):
-        """Draw the content of the element, responding to size, styles, font and content.
-        Create 2 columns for the self.fontSizes ranges that show the text with and without [opsz]
-        if the axis exists.
+        """Draws the content of the element, responding to size, styles, font
+        and content. Creates 2 columns for the self.fontSizes ranges that show
+        the text with and without [opsz] if the axis exists.
 
-        TODO: If the axis does not exist, do something else with the right column
+        TODO: If the axis does not exist, do something else with the right
+        column.
         """
-
-        c = self.context
-
         # Start on top left, with respect to optional padding value.
         x = self.pl
         y = self.h-self.pt
 
         fontSizes = (7, 8, 9, 10, 11)
         for fontSize in fontSizes:
-            # Don't update to the new y, next colomn needs to be on the right, starting at the same y.
+            # Don't update to the new y, next colomn needs to be on the right,
+            # starting at the same y.
             s1 = self.getText(self.headlineTag, cnt=6)
             if not s1[-1] in ',.!?':
                 s1 += '.'
@@ -152,8 +127,6 @@ Exception raised:
                 w=(self.pw-self.gw)/2, h=self.ph/len(fontSizes)-self.gh,
                 fontSize=fontSize, alignment=LEFT, labelSize=self.labelSize or self.DEFAULT_LABEL_SIZE,
                 label='No optical size axis used.\n\n', Bwght=0.6, Bwdth=-0.1, useOpsz=False)
-
-
 
 if __name__ == '__main__':
     import doctest

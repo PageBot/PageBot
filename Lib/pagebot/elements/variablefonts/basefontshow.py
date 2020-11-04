@@ -14,9 +14,10 @@
 #
 #     basefontshow.py
 #
-from pagebot.elements.element import Element
 from pagebot.constants import LEFT
+from pagebot.elements.element import Element
 from pagebot.toolbox.units import asFormatted
+from pagebot.fonttoolbox.variablefontbuilder import getVarFontInstance
 
 class BaseFontShow(Element):
     """Abstract base class for elements that show aspects, values,
@@ -36,6 +37,18 @@ class BaseFontShow(Element):
         if alignment is not None:
             style['xTextAlign'] = alignment
         return style
+
+    def getInstance(self, vf=None, location=None):
+        """Return the instance font at this location. The font is stored as file,
+        # so it correspondents to normal instance.path behavior."""
+        if vf is None or (self.vf and not self.vf.axes):
+            return {}
+
+        vf = vf or self.vf
+
+        if vf and vf.axes:
+            return getVarFontInstance(vf, location)
+        return vf
 
     def getLocation(self, vf=None, wght=None, wdth=None, opsz=None):
         """Answers the instance of self, corresponding to the normalized location.
