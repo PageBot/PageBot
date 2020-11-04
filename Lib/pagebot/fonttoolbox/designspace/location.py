@@ -16,6 +16,8 @@
 #    location.py
 #
 
+from copy import copy
+
 class Location(dict):
     """Location object (instead of dictionaries use as location), so we can
     used them as key.
@@ -76,4 +78,3 @@ class Location(dict):
             for tag, value in locId:
                 location[tag] = value
         return location
-

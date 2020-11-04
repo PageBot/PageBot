@@ -18,7 +18,8 @@
 
 import os
 from copy import copy, deepcopy
-from pagebot.fonttoolbox.designspace.axis import Axis
+from fontTools.designspaceLib import DesignSpaceDocument
+from pagebot.fonttoolbox.designspace.axis import Axis, isValidTag
 from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
 from pagebot.fonttoolbox.designspace.location import Location
 from pagebot.toolbox.units import asFormatted

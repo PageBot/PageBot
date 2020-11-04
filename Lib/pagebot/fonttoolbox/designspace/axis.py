@@ -17,6 +17,10 @@
 #
 
 from pagebot.toolbox.units import asFormatted
+from pagebot.fonttoolbox.designspace.location import Location
+
+REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
+CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 #classmethod
 def isValidTag(tag):
@@ -189,4 +193,3 @@ class BlendAxis(Axis):
     def _set_maximum(self, value):
         pass # Ignore, value is calculated result.
     maximum = property(_get_maximum, _set_maximum)
-

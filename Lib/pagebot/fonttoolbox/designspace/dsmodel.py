@@ -16,11 +16,7 @@
 #    dsmodel.py
 #
 
-from fontTools.designspaceLib import DesignSpaceDocument
 from fontTools.varLib.models import VariationModel, normalizeLocation
-
-REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
-CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 def getPoints(glyph):
     """Answers the list of points for this glyph."""
