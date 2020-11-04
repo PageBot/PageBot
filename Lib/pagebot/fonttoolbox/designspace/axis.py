@@ -16,6 +16,31 @@
 #    axis.py
 #
 
+from pagebot.toolbox.units import asFormatted
+
+#classmethod
+def isValidTag(tag):
+    """Answers if tag is a valid tag string.
+
+    >>> isValidTag('wght')
+    True
+    >>> isValidTag('XOPQ')
+    True
+    >>> isValidTag('AAA')
+    False
+    >>> isValidTag('AAaa')
+    False
+    >>> isValidTag('????')
+    False
+    """
+    if tag in REGISTERED_AXIS: # Only registered axes can be lower case
+        return True
+    if not isinstance(tag, str) or len(tag) != 4:
+        return False
+    if tag[0] in CAPS and tag[1] in CAPS and tag[2] in CAPS and tag[3] in CAPS:
+        return True
+    return False
+
 class Axis:
 
     def __init__(self, tag, name=None, minimum=None, default=None,

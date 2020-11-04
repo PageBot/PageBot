@@ -16,6 +16,9 @@
 #    fontinfo.py
 #
 
+from pagebot.fonttoolbox.designspace.designspace import DesignSpace
+from pagebot.fonttoolbox.designspace.location import Location
+
 class FontInfo:
     """Holds the design space info for master and instance. """
 
@@ -42,4 +45,3 @@ class FontInfo:
             s += '/'+self.name
         s += '>'
         return s
-

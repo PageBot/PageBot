@@ -16,15 +16,8 @@
 #    dsmodel.py
 #
 
-import os
-from copy import copy, deepcopy
 from fontTools.designspaceLib import DesignSpaceDocument
 from fontTools.varLib.models import VariationModel, normalizeLocation
-from pagebot.toolbox.units import asFormatted
-from pagebot.fonttoolbox.designspace.axis import Axis, BlendAxis
-from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
-from pagebot.fonttoolbox.designspace.location import Location
-from pagebot.fonttoolbox.designspace.designspace import DesignSpace
 
 REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -47,29 +40,6 @@ def getComponents(glyph):
         elif hasattr(glyph, 'components'):
             return glyph.components
     return None
-
-#classmethod
-def isValidTag(tag):
-    """Answers if tag is a valid tag string.
-
-    >>> isValidTag('wght')
-    True
-    >>> isValidTag('XOPQ')
-    True
-    >>> isValidTag('AAA')
-    False
-    >>> isValidTag('AAaa')
-    False
-    >>> isValidTag('????')
-    False
-    """
-    if tag in REGISTERED_AXIS: # Only registered axes can be lower case
-        return True
-    if not isinstance(tag, str) or len(tag) != 4:
-        return False
-    if tag[0] in CAPS and tag[1] in CAPS and tag[2] in CAPS and tag[3] in CAPS:
-        return True
-    return False
 
 class Model:
     """

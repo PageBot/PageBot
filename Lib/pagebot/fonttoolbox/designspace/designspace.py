@@ -16,9 +16,12 @@
 #    designspace.py
 #
 
+import os
+from copy import copy, deepcopy
 from pagebot.fonttoolbox.designspace.axis import Axis
 from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
 from pagebot.fonttoolbox.designspace.location import Location
+from pagebot.toolbox.units import asFormatted
 
 class DesignSpace:
     """DesignSpace file wrapper. It can read from a design space source (path),
