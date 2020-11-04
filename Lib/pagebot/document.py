@@ -1443,7 +1443,7 @@ class Document:
 
         # Check if the context is supported by this view type.
         if context is None:
-            context = getContext(self.DEFAULT_CONTEXT_ID)
+            context = getContext()
 
         view = self.view = self.views[viewId] = viewClasses[viewId](name=name
                 or viewId, w=self.w, h=self.h, context=context)

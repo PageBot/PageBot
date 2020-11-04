@@ -27,8 +27,6 @@ class BaseView(Element):
     viewId = 'View'
     isView = True
 
-    DEFAULT_CONTEXT_ID = 'Flat'
-
     # Default, redefined by inheriting classes that need another context.
     SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext', 'HtmlContext')
     #SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext')
