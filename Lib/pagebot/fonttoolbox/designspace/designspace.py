@@ -20,7 +20,7 @@ import os
 from copy import copy, deepcopy
 from fontTools.designspaceLib import DesignSpaceDocument
 from fontTools.varLib.models import normalizeLocation
-from pagebot.fonttoolbox.designspace.axis import Axis, BlendAxis, isValidTag
+from pagebot.fonttoolbox.designspace.axis import Axis, isValidTag
 from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
 from pagebot.fonttoolbox.designspace.location import Location
 from pagebot.toolbox.units import asFormatted
@@ -835,6 +835,7 @@ class DesignSpace:
         >>> m1 = FontInfo(familyName=fName, styleName='Bold', location=Location(XOPQ=700, XTRA=600))
         >>> m2 = FontInfo(familyName=fName, styleName='Condensed', location=Location(XOPQ=100, XTRA=600))
         >>> m3 = FontInfo(familyName=fName, styleName='Wide', location=Location(XOPQ=700, XTRA=100))
+        >>> from pagebot.fonttoolbox.designspace.axis import BlendAxis
         >>> ba1 = BlendAxis('wght', name='Weight', masters={100: m0, 900: m1}) # Masters on their location
         >>> ba2 = BlendAxis('wdth', name='Width', masters={100: m2, 900: m3})
         >>> len(ds.blend([ba1, ba2])) # Make from list of BlendAxis instances. Return removed axes.

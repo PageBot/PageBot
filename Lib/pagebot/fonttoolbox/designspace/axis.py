@@ -18,7 +18,6 @@
 
 from pagebot.toolbox.units import asFormatted
 from pagebot.fonttoolbox.designspace.location import Location
-from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
 
 REGISTERED_AXIS = set(('wght', 'wdth', 'ital', 'slnt', 'opsz'))
 CAPS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -169,6 +168,7 @@ class BlendAxis(Axis):
         >>> a1 = Axis('XOPQ', 'X-Opaque', 0, 500, 1000)
         >>> a2 = Axis('XTRA', 'X-Transparant', 0, 500, 1000)
         >>> fName = 'Demo'
+        >>> from pagebot.fonttoolbox.designspace.fontinfo import FontInfo
         >>> m1 = FontInfo(familyName=fName, styleName='Light', location=Location(XOPQ=0, XTRA=200))
         >>> m2 = FontInfo(familyName=fName, styleName='Bold', location=Location(XOPQ=700, XTRA=600))
         >>> blendMasters = {100: m1, 900: m2}
