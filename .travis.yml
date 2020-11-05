@@ -1,5 +1,5 @@
+#https://docs.travis-ci.com/user/languages/python/
 ---
-#language: python3
 matrix:
   include:
     - os: linux
@@ -30,9 +30,6 @@ matrix:
               update: true
               packages: python3.9
       before_install:
-          #- brew link --overwrite python
-          #- python --version
-          #- python3 --version
         - pip3 install --upgrade pip
       install:
         - ./scripts/osx.sh
