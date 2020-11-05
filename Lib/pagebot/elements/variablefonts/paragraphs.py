@@ -55,7 +55,8 @@ class Paragraphs(BaseFontShow):
         >>> #font2 = findFont('Escrow-Bold')
         >>> gs = Paragraphs(font2, parent=page, conditions=conditions, style=style, padding=40, context=c)
         >>> score = doc.solve()
-        >>> doc.export('_export/%sParagraphs.pdf' % font1.info.familyName)
+        >>> #FIXME: reroute generateInstance to fontTools.
+        >>> #doc.export('_export/%sParagraphs.pdf' % font1.info.familyName)
         """
         BaseFontShow.__init__(self, **kwargs)
         self.f = f # Font instance

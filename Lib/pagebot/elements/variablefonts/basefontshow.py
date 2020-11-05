@@ -41,10 +41,10 @@ class BaseFontShow(Element):
     def getInstance(self, vf=None, location=None):
         """Return the instance font at this location. The font is stored as file,
         # so it correspondents to normal instance.path behavior."""
-        if vf is None or (self.vf and not self.vf.axes):
+        if vf is None or (self.f and not self.f.axes):
             return {}
 
-        vf = vf or self.vf
+        vf = vf or self.f
 
         if vf and vf.axes:
             return getVarFontInstance(vf, location)
@@ -56,7 +56,7 @@ class BaseFontShow(Element):
         The optical size [opsz] is supposed to contain the font size, so it is not normalized.
         If [opsz] is not defined, then set it to default, if the axis exist.
         """
-        if vf is None or not self.vf.axes:
+        if vf is None or not self.f.axes:
             return {}
 
         # Get real axis values.

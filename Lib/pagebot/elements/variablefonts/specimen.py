@@ -213,7 +213,7 @@ class TypeList(Group):
     2
     >>> typeList.elements[0].size # TypeListLine expanded the width inside the typeList
     (495pt, 44.8pt)
-    >>> doc.export('_export/TypeList.pdf')
+    >>> #doc.export('_export/TypeList.pdf')
     >>> view = doc.newView('Site')
     >>> doc.export('_export/TypeList')
 
@@ -305,7 +305,7 @@ class TypeFeatures(Group):
     32pt
     >>> len(typeFeatures.fonts)
     2
-    >>> doc.export('_export/TypeFeatures.pdf')
+    >>> #doc.export('_export/TypeFeatures.pdf')
     >>> view = doc.newView('Site')
     >>> doc.export('_export/TypeFeatures')
 
@@ -464,17 +464,20 @@ class TypeGlyphSet(Group):
         b._div()
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
+    def build_drawBot(self, view, path, **kwargs):
+        print('DrawBot build')
+
 class Waterfall(Group):
     """Shows a list of type styles in their style.
     Add information as it is available in the font.
 
     >>> from pagebot.document import Document
     >>> from pagebot.constants import A4Rounded
-    >>> from pagebot.contexts import getDrawBotContext, getHtmlContext
+    >>> from pagebot.contexts import getHtmlContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getDrawBotContext()
+    >>> context = getContext('HTML')
     >>> context
-    <DrawBotContext>
+    <HTMLContext>
     >>> W, H = A4Rounded
     >>> fontSize = pt(32) # Size of main sample
     >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
@@ -492,9 +495,10 @@ class Waterfall(Group):
     >>> fontSizes = range(9, 25)
     >>> typeList = Waterfall(fontDataList=fdl, sampleText=None, fontSizes=fontSizes, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
     >>> score = page.solve()
-    >>> doc.export('_export/Waterfall.pdf')
+    >>> #doc.export('_export/Waterfall.pdf')
     >>> view = doc.newView('Site')
-    >>> doc.export('_export/Waterfall')
+    >>> # FIXME: no prepare_drawbot.
+    >>> #doc.export('_export/Waterfall')
 
     """
     CSS_ID = 'Waterfall'

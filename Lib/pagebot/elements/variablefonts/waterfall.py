@@ -73,7 +73,7 @@ class Waterfall(Text):
         style['font'] = self.getInstance(self.f, self.getLocation(self.f, location)).path
         sampleText = sampleText or self.SAMPLE
         matchingLine = c.newString(sampleText+'\n', style=style, w=w)
-        style['fontSize'] = fontSize = pt(int(matchingLine.fittingFontSize / 8)) * 8
+        style['fontSize'] = fontSize = pt(int(matchingLine.fontSize / 8)) * 8
 
         bs = c.newString('', style=style)
         while fontSize >= 12:

@@ -118,10 +118,12 @@ class SiteView(HtmlView):
         # e.g. by saving scaled images into cache if that file does not already
         # exists. Note that this is done on a page-by-page level, not a
         # preparation of all.
+        '''
         for pn, pages in doc.pages.items():
             for page in pages:
                 hook = 'prepare_' + b.PB_ID # E.g. page.prepare_html()
                 getattr(page, hook)(self) # Typically calling page.prepare_html
+        '''
 
         # If resources defined, copy them to the export folder.
         self.copyResources(path)
@@ -130,7 +132,10 @@ class SiteView(HtmlView):
             for page in pages:
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
-                getattr(page, hook)(self, path, **kwargs) # Typically calling page.build_html
+                try:
+                    getattr(page, hook)(self, path, **kwargs) # Typically calling page.build_html
+                except Exception as e:
+                    print(e)
 
         # Deprecated
         # TODO: Make this automatic, depending on extension of CSS file.

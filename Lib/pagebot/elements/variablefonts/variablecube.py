@@ -30,7 +30,7 @@ class VariableCube(Element):
             dimensions=None, location=None, **kwargs):
         super().__init__()
         self.font = font
-        self.eId = eId
+        #self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
 
         # Try to figure out the requested dimensions if the element display per
