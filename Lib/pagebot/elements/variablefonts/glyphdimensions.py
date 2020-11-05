@@ -56,7 +56,6 @@ class GlyphDimensions(BaseFontShow):
         >>> from pagebot.conditions import *
         >>> c = getContext()
         >>> w, h = Letter
-        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> font = findFont('RobotoDelta-VF')
         >>> location = dict(SHPE=360, wght=500)
         >>> doc = Document(w=w, h=h, padding=80, autoPages=1, context=c)

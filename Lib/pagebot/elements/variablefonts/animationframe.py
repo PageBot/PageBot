@@ -29,7 +29,6 @@ class AnimationFrame(Rect):
     def __init__(self, s, f, frames, frameIndex, phases=None, **kwargs):
         """
         >>> from random import random
-        >>> from pagebot.fonttoolbox.objects.font import findFont
         >>> from pagebot.document import Document
         >>> from pagebot.constants import Letter, RIGHT
         >>> from pagebot import getContext
