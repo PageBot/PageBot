@@ -132,10 +132,11 @@ class SiteView(HtmlView):
             for page in pages:
                 # Building for HTML, try the hook. Otherwise call by main page.build.
                 hook = 'build_' + self.context.b.PB_ID # E.g. page.build_html()
-                try:
-                    getattr(page, hook)(self, path, **kwargs) # Typically calling page.build_html
-                except Exception as e:
-                    print(e)
+                # FIXME: should catch a more specific error type.
+                #try:
+                getattr(page, hook)(self, path, **kwargs) # Typically calling page.build_html
+                #except Exception as e:
+                #    print(e)
 
         # Deprecated
         # TODO: Make this automatic, depending on extension of CSS file.
