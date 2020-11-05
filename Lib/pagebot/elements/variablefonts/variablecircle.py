@@ -30,17 +30,16 @@ from pagebot.toolbox.units import pt, upt
 
 
 class VariableCircle(Element):
-    """Interpret the content of the self.font variable font and draw a circle info graphic on that info.
-    Information is derived from the Variable Font and automatic converted into
-    an info-graphic, showing a simplified model of the design space.
-    To show all possible interpolation, it would need to visualize an n-dimensional
-    space (where n is the amount of axes in the font). In the simplified model
-    all axes are represented as spikes/needles on a wheel, where the amount of
-    penetration in the neutral glyph defined the influence of that axis.
-    In that respect is it not much better than a list of sliders, but at least this
-    model allows to show interactions between axes, by putting them on another
-    angle on the circle.
-    """
+    """Interpret the content of the self.font variable font and draw a circle
+    info graphic on that info. Information is derived from the Variable Font
+    and automatic converted into an info-graphic, showing a simplified model of
+    the design space.  To show all possible interpolation, it would need to
+    visualize an n-dimensional space (where n is the amount of axes in the
+    font). In the simplified model all axes are represented as spikes/needles
+    on a wheel, where the amount of penetration in the neutral glyph defined
+    the influence of that axis.  In that respect is it not much better than a
+    list of sliders, but at least this model allows to show interactions
+    between axes, by putting them on another angle on the circle."""
     isText = False
     isFlow = False
 
@@ -51,7 +50,6 @@ class VariableCircle(Element):
     >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> from pagebot.document import Document
     >>> vfFont = findFont('RobotoDelta_v2-VF')
-    >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> doc = Document(w=500, h=500, autoPages=1)
     >>> page = doc[1]
     >>> page.padding = 40
@@ -222,15 +220,19 @@ class VariableCircle(Element):
         # Draw axis names and DeltaLocation values
         #if self.showAxisNames:
         for axisName, (minValue, defaultValue, maxValue) in axes.items():
-            angle = self.angles[axisName]
+            #angle = self.angles[axisName]
+            angle1, angle2 = self.angles[axisName]
             location = {axisName: maxValue}
             valueFontSize = self.style.get('valueFontSize', 8)
             axisNameFontSize = self.style.get('axisNameFontSize', 8)
-            markerX, markerY = self._angle2XY(angle, r/2)
+
+            # Also for angle2?
+            markerX, markerY = self._angle2XY(angle1, r/2)
             bs = context.newString(self.makeAxisName(axisName),
                              style=dict(font=self.style.get('labelFont'),
                                         fontSize=axisNameFontSize,
                                         fill=self.style.get('axisNameColor', 0)))
+
             tw, th = bs.textSize
             context.fill((0.7, 0.7, 0.7, 0.6))
             context.stroke(None)

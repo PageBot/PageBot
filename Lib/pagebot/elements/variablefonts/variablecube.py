@@ -32,24 +32,29 @@ class VariableCube(Element):
         self.font = font
         self.eId = eId
         self.style = makeStyle(style, **kwargs) # Combine self.style from
-        # Try to figure out the requested dimensions if the element display per axes.
+
+        # Try to figure out the requested dimensions if the element display per
+        # axes.
         if dimensions is None:
             dimensions = dict(wght=4, wdth=6)
         self.dimensions = dimensions
-        # Each element should check at this point if the minimum set of style values
-        # are set and if their values are valid.
+
+        # Each element should check at this point if the minimum set of style
+        # values are set and if their values are valid.
         assert self.w is not None and self.h is not None # Make sure that these are defined.
-        # Make sure that this is a formatted string. Otherwise create it with the current style.
-        # Note that in case there is potential clash in the double usage of fill and stroke.
+
+        # Makes sure that this is a formatted string. Otherwise create it with
+        # the current style.  Note that in case there is potential clash in the
+        # double usage of fill and stroke.
         self.glyphNames = s or 'e'
-        # Store the external location, to allow other axis values to be set.
+
+        # Stores the external location, to allow other axis values to be set.
         if location is None:
             location = {}
         self.location = copy(location)
 
     def draw(self, view, origin):
         c = self.doc.context
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
@@ -73,7 +78,8 @@ class VariableCube(Element):
         sizeY = self.dimensions[axisY]
         stepX = self.w / (sizeX+1)
         stepY = self.h / (sizeY+1)
-        """Add more parametric layout behavior here."""
+
+        # TODO: Add more parametric layout behavior here.
         RANGE = 1000
         for indexX in range(sizeX+1):
             for indexY in range(sizeY+1):

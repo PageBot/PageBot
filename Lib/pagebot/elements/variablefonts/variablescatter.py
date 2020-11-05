@@ -42,14 +42,18 @@ class VariableScatter(Element):
         self.style = makeStyle(style, **kwargs) # Combine self.style from
         self.sizeX = sizeX
         self.sizeY = sizeY
-        self.recipeAxes = recipeAxes # Ordered name list of axes to show in legenda. Ignore if None.
+
+        # Ordered name list of axes to show in legenda. Ignore if None.
+        self.recipeAxes = recipeAxes
+
         self.designSpace = designSpace or {}
         self.locations = locations
-        # Each element should check at this point if the minimum set of style values
-        # are set and if their values are valid.
+        # Each element should check if the minimum set of style values are set
+        # and if their values are valid at this point.
         assert self.w is not None and self.h is not None # Make sure that these are defined.
-        # Make sure that this is a formatted string. Otherwise create it with the current style.
-        # Note that in case there is potential clash in the double usage of fill and stroke.
+        # Makes sure that this is a formatted string. Otherwise creates it with
+        # the current style. Note that in case there is potential clash in the
+        # duplicate usage of fill and stroke.
         self.glyphNames = s or 'e'
 
     def location2Recipe(self, location, start=0, end=3):
@@ -76,13 +80,15 @@ class VariableScatter(Element):
 
     def draw(self, view, origin):
         c = self.doc.context
-
         p = pointOffset(self.origin, origin)
         p = self._applyScale(view, p)
         px, py, _ = self._applyAlignment(p) # Ignore z-axis for now.
+
         fillColor = self.style.get('fill')
+
         if fillColor is not None:
             c.fill(fillColor)
+
         c.stroke(None)
         stepX = self.w / (self.sizeX+1)
         stepY = self.h / (self.sizeY+1)
@@ -113,7 +119,6 @@ class VariableScatter(Element):
                         bs = c.newString(recipe, fontSize=4, fill=blackColor)
                         w, h = bs.textSize()
                         c.text(bs, point=(ppx - stepX/4 + 30, ppy - 24)) # Bit of hack, we need the width of the glyph here.
-
 
 if __name__ == '__main__':
     import doctest
