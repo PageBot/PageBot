@@ -16,7 +16,7 @@
 
 class ASegment:
     """
-    >>> from pagebot.fonttoolbox.analyzers.apoint import Point
+    >>> from pagebot.fonttoolbox.analyzers.apoint import APoint
     >>> p0 = APoint(101, 303, True)
     >>> p1 = APoint(202, 404, False)
     >>> p2 = APoint(303, 808, False)

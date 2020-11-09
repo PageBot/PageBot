@@ -184,9 +184,9 @@ class TypeList(Group):
 
     >>> from pagebot.document import Document
     >>> from pagebot.constants import A4Rounded
-    >>> from pagebot.contexts import getDrawBotContext, getHtmlContext
+    >>> from pagebot import getContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getDrawBotContext()
+    >>> context = getContext('DrawBot')
     >>> context
     <DrawBotContext>
     >>> W, H = A4Rounded
@@ -278,9 +278,9 @@ class TypeFeatures(Group):
 
     >>> from pagebot.document import Document
     >>> from pagebot.constants import A4Rounded
-    >>> from pagebot.contexts import getDrawBotContext, getHtmlContext
+    >>> from pagebot import getContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getDrawBotContext()
+    >>> context = getContext('DrawBot')
     >>> context
     <DrawBotContext>
     >>> W, H = A4Rounded
@@ -386,9 +386,9 @@ class TypeGlyphSet(Group):
 
     >>> from pagebot.document import Document
     >>> from pagebot.constants import A4Rounded
-    >>> from pagebot.contexts import getDrawBotContext, getHtmlContext
+    >>> from pagebot.contexts import getContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getDrawBotContext()
+    >>> context = getContext('DrawBot')
     >>> context
     <DrawBotContext>
     >>> W, H = A4Rounded
