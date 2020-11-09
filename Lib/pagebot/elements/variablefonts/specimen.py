@@ -215,7 +215,7 @@ class TypeList(Group):
     (495pt, 44.8pt)
     >>> #doc.export('_export/TypeList.pdf')
     >>> view = doc.newView('Site')
-    >>> doc.export('_export/TypeList')
+    >>> #doc.export('_export/TypeList')
 
     """
     CSS_ID = 'TypeList'
@@ -307,7 +307,7 @@ class TypeFeatures(Group):
     2
     >>> #doc.export('_export/TypeFeatures.pdf')
     >>> view = doc.newView('Site')
-    >>> doc.export('_export/TypeFeatures')
+    >>> #doc.export('_export/TypeFeatures')
 
     """
     CSS_ID = 'TypeFeatures'
@@ -413,9 +413,9 @@ class TypeGlyphSet(Group):
     32pt
     >>> len(typeGlyphSet.fonts)
     2
-    >>> doc.export('_export/TypeGlyphSet.pdf')
+    >>> #doc.export('_export/TypeGlyphSet.pdf')
     >>> view = doc.newView('Site')
-    >>> doc.export('_export/TypeGlyphSet')
+    >>> #doc.export('_export/TypeGlyphSet')
 
     """
     CSS_ID = 'TypeGlyphSet'
@@ -465,7 +465,7 @@ class TypeGlyphSet(Group):
         b.comment('End %s.%s\n' % (self.cssId, self.cssClass))
 
     def build_drawBot(self, view, path, **kwargs):
-        print('DrawBot build')
+        pass
 
 class Waterfall(Group):
     """Shows a list of type styles in their style.
@@ -475,9 +475,10 @@ class Waterfall(Group):
     >>> from pagebot.constants import A4Rounded
     >>> from pagebot.contexts import getHtmlContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getContext('HTML')
+    >>> from pagebot import getContext
+    >>> context = getContext('Html')
     >>> context
-    <HTMLContext>
+    <HtmlContext>
     >>> W, H = A4Rounded
     >>> fontSize = pt(32) # Size of main sample
     >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
@@ -495,7 +496,7 @@ class Waterfall(Group):
     >>> fontSizes = range(9, 25)
     >>> typeList = Waterfall(fontDataList=fdl, sampleText=None, fontSizes=fontSizes, parent=page, x=page.pl, y=page.pb, w=page.pw, h=page.ph)
     >>> score = page.solve()
-    >>> #doc.export('_export/Waterfall.pdf')
+    >>> doc.export('_export/Waterfall.pdf')
     >>> view = doc.newView('Site')
     >>> # FIXME: no prepare_drawbot.
     >>> #doc.export('_export/Waterfall')

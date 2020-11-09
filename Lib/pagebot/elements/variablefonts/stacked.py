@@ -103,10 +103,12 @@ class Stacked(BaseFontShow):
         # Start on top left, with respect to optional padding value.
         x = self.pl
         y = self.h-self.pt
-
         # Top headline. (x,y) is top-left of the box, passed on for the position of the next box.
-        s = self.getText(self.lineTag, charCnt=10).upper()
+        #s = self.getText(self.lineTag, charCnt=10).upper()
+        s = self.getText(self.lineTag).upper()
         x, y = self.buildStackedLine(s, origin, x, y, self.pw, wght=0.7, wdth=-0.4)
+
+        '''
 
         # Second headline
         s = self.getText(self.lineTag, 4, 18)
@@ -141,7 +143,7 @@ class Stacked(BaseFontShow):
         s2 = self.getText(self.textTag) + ' ' + self.getText(self.textTag)
         x, y = self.buildText(s1, s2, origin, x+(self.pw+self.gw)/2, y, (self.pw-self.gw)/2, y-self.pb,
             8, LEFT, labelSize=7, Bwght=0.6, Bwdth=-0.1)
-
+        '''
 
 
 if __name__ == '__main__':
