@@ -108,9 +108,10 @@ class BaseFontShow(Element):
         style = self.getTextStyle(instance, fontSize)
         stackLine = self.context.newString(s, style=style, w=w)
         capHeight = float(instance.info.capHeight) / instance.info.unitsPerEm * stackLine.fontSize
-        tx, ty, tw, th = stackLine.bounds()
-        self.context.text(stackLine, (ox+x-tx, oy+y-capHeight))
-        return x, y-capHeight+ty-self.gh
+        #tx, ty, tw, th = stackLine.bounds()
+        #self.context.text(stackLine, (ox+x-tx, oy+y-capHeight))
+        self.context.text(stackLine, (ox+x, oy+y-capHeight))
+        return x, y-capHeight-self.gh
 
     def buildText(self, s1, s2, origin, x, y, w, h, fontSize, alignment=None,
             labelSize=None, label=None, Bwght=0, Bwdth=0, Rwght=0, Rwdth=0,
@@ -123,6 +124,8 @@ class BaseFontShow(Element):
         If labelSize defined then show the defaul label: Font family name
         fontSize / leading.
         If label is defined, then use that label in the defined font font size.
+
+        FIXME: bs is a tuple, not BabelString.
         """
         ox, oy, _ = origin
 

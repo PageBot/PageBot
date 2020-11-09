@@ -68,7 +68,7 @@ class Blurb:
 
         if charCnt is not None and len(content) > charCnt:
             # Shorten the string to the requested amount of glyphs.
-            content = self.writer.write(type)[:charCnt].strip()
+            content = self.writer.write(ofType)[:charCnt].strip()
 
             while content and not content[-1].lower() in 'abcdefghijklmnopqrstuvwxyz':
                 content = content[:-1]

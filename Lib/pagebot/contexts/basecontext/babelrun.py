@@ -153,7 +153,10 @@ class BabelRun:
 
         if 'tabs' in style:
             tabs = [] # Render the tab values to points.
-            for tx, alignment in style.get('tabs', []):
+            tabsDict = style.get('tabs', {})
+            if not tabsDict:
+                tabsDict = {}
+            for tx, alignment in tabsDict:
                 tabs.append((upt(tx, base=fontSize), alignment))
             fsStyle['tabs'] = tabs
 

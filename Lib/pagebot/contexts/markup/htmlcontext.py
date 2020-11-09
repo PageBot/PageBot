@@ -66,7 +66,7 @@ class HtmlContext(BaseContext):
     def endDrawing(self):
         pass
 
-    def saveDrawing(self, path):
+    def saveDrawing(self, path, multiPage=None):
         pass
 
     def getDrawing(self):

@@ -177,7 +177,7 @@ class FlatContext(BaseContext):
         #self.drawing.size(wpt, hpt, units=self.UNITS)
         #self.drawing.pages = []
 
-    def saveDrawing(self, path, multiPage=True):
+    def saveDrawing(self, path, multiPage=None):
         """Save the current document to file(s)
 
         >>> import os
@@ -215,6 +215,8 @@ class FlatContext(BaseContext):
         >>> context.saveDrawing(exportPath + '/MyTextDocument_F.gif')
         [FlatContext] Gif not yet implemented for "MyTextDocument_F.gif"
         """
+        if not multiPage:
+            multiPage = True
         # In case path starts with "_export", make sure that the directory
         # exists.
         self.checkExportPath(path)
