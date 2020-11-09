@@ -19,13 +19,12 @@ from pagebot.fonttoolbox.analyzers.apoint import APoint
 from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 class Stem:
-    """
-    The <code>Stem</code> class instant takes the CVT related to this stem, and the  left and point <code>Vertical
-    </code> instance that stem binds.
-    """
+    """The `Stem` class instant takes the CVT related to this stem, and the
+    left and point `Vertical ` instance that stem binds."""
 
     def __init__(self, parent, point, glyphName=None, offset=None, name=None):
-        """Parent and point can be point or point context, depending on available data and usage."""
+        """Parent and point can be point or point context, depending on
+        available data and usage."""
         assert parent is None or isinstance(parent, (tuple, list, APointContext))
         assert point is None or isinstance(point, (tuple, list, APointContext))
         self.parent = parent
@@ -43,12 +42,14 @@ class Stem:
         return self.__class__(self.parent, self.point, self.glyphName, self.offset)
 
     def addOffset(self, offset):
-        """In case of multiple chained component reference, analyzer will add incremental offset this way."""
+        """In case of multiple chained component reference, analyzer will add
+        incremental offset this way."""
         self.offset = self.offset[0] + offset[0], self.offset[1] + offset[1]
 
     # self.size
     def _get_size(self):
-        """Note that size can be negative, to indicate the direction of the arrow, as in the top blueBar."""
+        """Note that size can be negative, to indicate the direction of the
+        arrow, as in the top blueBar."""
         return self.point[0] - self.parent[0]
     size = property(_get_size)
 
@@ -81,10 +82,8 @@ class Stem:
 
     # self.nearestPoint
     def _get_nearestPoint(self):
-        """
-        The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
-        to <code>self.parent</code>.
-        """
+        """The `getNearestPoint` method gets the nearest point in
+        the `self.point` point context to `self.parent`."""
         nearp = self.point.p
         d = abs(self.parent.y - nearp.y)
         if self.isOnCurve(self.point.p1):
@@ -100,7 +99,8 @@ class Stem:
     nearestPoint = property(_get_nearestPoint)
 
     def isTerminal(self):
-        """The stem is also a terminal, if the end of the parallel lines also are connected point contexts."""
+        """The stem is also a terminal, if the end of the parallel lines also
+        are connected point contexts."""
         return False
 
 class Counter(Stem):
@@ -144,10 +144,8 @@ class Bar(Stem):
     size = property(_get_size)
 
     def _get_nearestPoint(self):
-        """
-        The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
-        to <code>self.parent</code>.
-        """
+        """The `getNearestPoint` method gets the nearest point in the
+        `self.point` point context to `self.parent`."""
         nearp = self.point.p
         d = abs(self.parent.p.x - nearp.x)
         if self.isOnCurve(self.point.p1):
@@ -181,9 +179,9 @@ class DiagonalStem(Stem):
     # self.nearestPoint
 
     def _get_nearestPoint(self):
-        """The <code>getNearestPoint</code> method gets the nearest point in the <code>self.point</code> point context
-        to <code>self.parent</code>. Default for a diagonal is always to answer <code>self.point.p</code>.
-        """
+        """The `getNearestPoint` method gets the nearest point in the
+        `self.point` point context to `self.parent`. Default for a diagonal is
+        always to answer `self.point.p`."""
         return self.point.p
 
     nearestPoint = property(_get_nearestPoint)
@@ -199,8 +197,8 @@ class DiagonalStem(Stem):
 
     size = property(_get_size)
 
-    """A diagonal is a special kind of <b>Stem</b>, as it also is able to calculate
-    the projected window points."""
+    """A diagonal is a special kind of <b>Stem</b>, as it also is able to
+    calculate the projected window points."""
 
     # self.projectionLines    Answer the list of valid projection lines (tuple of point + projected point)
 
@@ -245,10 +243,9 @@ class DiagonalStem(Stem):
     perpendicularLines = property(_get_perpendicularLines)
 
 class Serif(Stem):
-    """
-    The <code>Serif</code> class holds the two point contexts (<code>self.parent</code> and <code>self.point</code>)
-    that span a continuous set of point contexts defining a serif.
-    """
+    """The `Serif` class holds the two point contexts (`self.parent` and
+    `self.point`) that span a continuous set of point contexts defining a
+    serif."""
 
     def _get_boundingBox(self):
         # TODO: get this to work

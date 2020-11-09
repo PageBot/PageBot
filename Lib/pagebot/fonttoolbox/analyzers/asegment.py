@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -12,18 +13,19 @@
 # -----------------------------------------------------------------------------
 #
 #     asegment.py
-#
+
 class ASegment:
     """
-    >>> p0 = Point(101, 303, True)
-    >>> p1 = Point(202, 404, False)
-    >>> p2 = Point(303, 808, False)
-    >>> p3 = Point(909, 808, True)
+    >>> from pagebot.fonttoolbox.analyzers.apoint import Point
+    >>> p0 = APoint(101, 303, True)
+    >>> p1 = APoint(202, 404, False)
+    >>> p2 = APoint(303, 808, False)
+    >>> p3 = APoint(909, 808, True)
     >>> points = [p0, p1, p2, p3]
-    >>> s = Segment(points)
+    >>> s = ASegment(points)
     >>> len(s)
     4
-    >>> p4 = Point(111, 313, False)
+    >>> p4 = APoint(111, 313, False)
     >>> s.append(p4)
     >>> len(s)
     5
