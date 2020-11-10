@@ -8,8 +8,8 @@ X extension that uses [DrawBot](http://www.drawbot.com).
 PageBot consists of three abstraction levels:
 
 * Builders, the libraries and formats PageBot usesto generate the final result, for example DrawBot, Flat and markup languages.
-* Contexts that provide a fixed API for the builders and connect everything to specific output formats.
-* Documents, Views and Elements, our output independent classes.
+* Contexts that provide a fixed API for the builders.
+* Documents, Views and Elements, our format independent classes.
 
 The official PageBot documentation can be found at [pagebot.io](http://pagebot.io).
 
