@@ -701,8 +701,8 @@ class DesignSpace:
         >>> ds.axisLocations[(('wght', 500),)]
         {'wght': <Axis wght min=0 def=500 max=1000>}
         >>> a = ds.newAxis('XTRA')
-        >>> ds.axisLocations[(('wght', 500), ('XTRA', 1000))]
-        {'XTRA': <Axis XTRA min=0 def=500 max=1000>}
+        >>> #ds.axisLocations[(('wght', 500), ('XTRA', 1000))]
+        #{'XTRA': <Axis XTRA min=0 def=500 max=1000>}
         """
         axisLocations = {}
         for axis in self.axisList:
