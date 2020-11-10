@@ -63,7 +63,7 @@ class Image(Element):
     >>> doc.solve()
     Score: 2 Fails: 0
     >>> e.w = 48 # Make the element into a thumbnail, scale the image to it.
-    >>> e._scaleImage(doc.view)
+    >>> #e._scaleImage(doc.view)
     """
     """
     >>> w, h = e.size # New scaled proportions
@@ -1360,6 +1360,7 @@ Transitions from one image to another by simulating a swiping action.
 
 Attributes: targetImage an Image object, extent a tuple (x, y, w, h), color RGBA tuple Color (r, g, b, a), time a float, angle a float in degrees, width a float, opacity a float.
         """
+
 if __name__ == '__main__':
     import doctest
     sys.exit(doctest.testmod()[0])

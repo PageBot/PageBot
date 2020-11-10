@@ -309,6 +309,8 @@ class FlatContext(BaseContext):
         TODO: check if index is still necessary.
         """
 
+        assert exists(path)
+
         im = Image.open(path)
         path, ext = self.getResizedPathName(path, w, h)
 
