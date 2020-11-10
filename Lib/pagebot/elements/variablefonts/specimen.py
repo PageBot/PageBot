@@ -186,9 +186,7 @@ class TypeList(Group):
     >>> from pagebot.constants import A4Rounded
     >>> from pagebot import getContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getContext('DrawBot')
-    >>> context
-    <DrawBotContext>
+    >>> context = getContext()
     >>> W, H = A4Rounded
     >>> fontSize = pt(32) # Size of main sample
     >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
@@ -280,9 +278,7 @@ class TypeFeatures(Group):
     >>> from pagebot.constants import A4Rounded
     >>> from pagebot import getContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getContext('DrawBot')
-    >>> context
-    <DrawBotContext>
+    >>> context = getContext()
     >>> W, H = A4Rounded
     >>> fontSize = pt(32) # Size of main sample
     >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
@@ -388,9 +384,7 @@ class TypeGlyphSet(Group):
     >>> from pagebot.constants import A4Rounded
     >>> from pagebot.contexts import getContext
     >>> from pagebot.toolbox.units import pt
-    >>> context = getContext('DrawBot')
-    >>> context
-    <DrawBotContext>
+    >>> context = getContext()
     >>> W, H = A4Rounded
     >>> fontSize = pt(32) # Size of main sample
     >>> adobeUrl = 'https://fonts.adobe.com/fonts/upgrade'
