@@ -1,27 +1,17 @@
 # What is PageBot?
 
-PageBot® is a page layout environment that enables designers to create high quality
-documents using Python programming. It is available as a Python library with
+PageBot® is a scriptable page layout, vector graphics and typography environment that enables designers to create high quality
+documents in various print-ready and web-based formats. using Python. It is available as a Python library with
 multi-platform support based on [Flat](http://xxyxyz.org/flat) and as a Mac OS
-X extension that uses [DrawBot](http://www.drawbot.com). Our aim is to create a
-Python-based scriptable environment to generate professionally designed output in various
-print-ready and web-based formats.
+X extension that uses [DrawBot](http://www.drawbot.com).
 
 PageBot consists of three abstraction levels:
 
-* Builders, the libraries and formats we depend on to generate output, for example DrawBot, Flat and markup languages such as HTML.
-* Contexts that provide a fixed API for the builders,
-* Documents, Views and Elements, which are unique to PageBot.
+* Builders, the libraries and formats PageBot usesto generate the final result, for example DrawBot, Flat and markup languages.
+* Contexts that provide a fixed API for the builders and connect everything to specific output formats.
+* Documents, Views and Elements, our output independent classes.
 
 The official PageBot documentation can be found at [pagebot.io](http://pagebot.io).
-
-## Contexts
- 
-Contexts connect our Document / Element structure with a specific output format. Generally contexts are invisible, instead being loaded at the Document / View level. For testing purposes, they can be addressed separately.
-
-## Document, View and Element
-
-This is the main level of publications. A document is unaware of which output format it is rendering.
 
 # Installation
 
