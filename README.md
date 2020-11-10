@@ -7,7 +7,21 @@ X extension that uses [DrawBot](http://www.drawbot.com). Our aim is to create a
 Python-based scriptable environment to generate professionally designed output in various
 print-ready and web-based formats.
 
-The PageBot homepage is located at [pagebot.io](http://pagebot.io).
+PageBot consists of three abstraction levels:
+
+* Builders, the libraries and formats we depend on to generate output, for example DrawBot, Flat and markup languages such as HTML.
+* Contexts that provide a fixed API for the builders,
+* Documents, Views and Elements, which are unique to PageBot.
+
+The official PageBot documentation can be found at [pagebot.io](http://pagebot.io).
+
+## Contexts
+ 
+Contexts connect our Document / Element structure with a specific output format. Generally contexts are invisible, instead being loaded at the Document / View level. For testing purposes, they can be addressed separately.
+
+## Document, View and Element
+
+This is the main level of publications. A document is unaware of which output format it is rendering.
 
 # Installation
 
