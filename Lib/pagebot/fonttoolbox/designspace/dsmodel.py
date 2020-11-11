@@ -40,7 +40,11 @@ def getComponents(glyph):
 class Model:
     """
     See: https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview
+    """
 
+    """
+    FIXME: raises NotImplementedError, this only works if NewFont() is registered?
+    Maybe create first and the run on a file?
     >>> import os
     >>> from fontParts.world import NewFont
     >>> x = y = 800
