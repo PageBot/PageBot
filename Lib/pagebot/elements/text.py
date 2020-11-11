@@ -42,9 +42,9 @@ class Text(Element, TextConditions, TextAlignments):
     TODO: placed upside down compared to other elements, reverse.
 
     >>> from pagebot.contexts import getContext
-        >>> from pagebot.document import Document
+    >>> from pagebot.document import Document
     >>> context = getContext()
-    >>> doc = Document(w=300, h=400, autoPages=1, context=context)
+    >>> doc = Document(w=300, h=400, context=context)
     >>> page = doc[1]
     >>> t = Text('ABCD', parent=page)
     >>> t
@@ -381,10 +381,13 @@ class Text(Element, TextConditions, TextAlignments):
         >>> from pagebot.toolbox.color import blackColor, noColor
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot.contexts import getContext
+        >>> from pagebot.document import Document
         >>> context = getContext()
+        >>> doc = Document(w=300, h=400, context=context)
+        >>> page = doc[1]
         >>> style = dict(textFill=blackColor, textStroke=noColor)
         >>> bs = context.newString('Hello world', style)
-        >>> t = Text(bs, name='Child', w=100)
+        >>> t = Text(bs, name='Child', w=100, parent=page)
         >>> copyE = t.copy() # Copy the element attribute, including the string of self.
         >>> copyE.bs
         $Hello worl...$
@@ -535,9 +538,12 @@ class Text(Element, TextConditions, TextAlignments):
 
         >>> from pagebot.constants import LEFT, CENTER, RIGHT
         >>> from pagebot.contexts import getContext
+        >>> from pagebot.document import Document
         >>> context = getContext()
+        >>> doc = Document(w=300, h=400, context=context)
+        >>> page = doc[1]
         >>> bs = context.newString('ABCD', dict(xAlign=CENTER))
-        >>> t = Text(bs)
+        >>> t = Text(bs, parent=page)
         >>> bs.xAlign
         'center'
         >>> bs.xAlign = RIGHT
@@ -572,10 +578,13 @@ class Text(Element, TextConditions, TextAlignments):
         >>> from pagebot.constants import MIDDLE
         >>> from pagebot.contexts import getContext
         >>> context = getContext()
+        >>> from pagebot.document import Document
+        >>> doc = Document(w=300, h=400, context=context)
+        >>> page = doc[1]
         >>> bs = context.newString('ABCD') # No height defined.
         >>> bs.yAlign
         'baseline'
-        >>> t = Text(bs, yAlign=BOTTOM)
+        >>> t = Text(bs, yAlign=BOTTOM, parent=page)
         >>> t.yAlign
         'bottom'
         """
