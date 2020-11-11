@@ -53,6 +53,7 @@ class GlyphSquare(Element):
 
     def __init__(self, glyph, uCode, **kwargs):
         Element.__init__(self,  **kwargs)
+        assert glyph, glyph.font
         self.glyph = glyph # Glyph object. Can be used for additional information later.
         self.uCode = uCode # Unicode from cmap
 
@@ -72,7 +73,12 @@ class GlyphSquare(Element):
         self.buildFrame(view, p) # Draw optional frame or borders.
         # Calculate the scaled width for self.glyph, depending on the em-square
         # of fonts.
-        width = self.glyph.width/f.info.unitsPerEm * SQSIZE
+
+        #print(self.glyph.font)
+        #w = self.glyph.width
+        # FIXME
+        return
+        width = w /f.info.unitsPerEm * SQSIZE
         # Draw the vertical width line. Not dashed for now.
         self.context.fill(None)
         self.context.stroke(color(1, 0, 0), w=0.5)
@@ -174,6 +180,9 @@ class Fontographer35KeyMap(BaseTypeSpecimen):
 
         squareIndex += 1
         glyph = font[glyphName]
+
+        if glyph is None or not glyph:
+            return
 
         # Creates an element for this glyph. Note the conditions that will
         # later be checked for the position status by
