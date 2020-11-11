@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -11,8 +12,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     books/photobook/__init__.py
+#     __init__.py
 #
+
 from pagebot.filepaths import getResourcesPath
 from pagebot.conditions import *
 from pagebot.elements import *

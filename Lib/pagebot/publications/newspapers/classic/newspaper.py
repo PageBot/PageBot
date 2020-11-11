@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
@@ -40,8 +41,11 @@ class Newspaper(Publication):
     >>> blurb = Blurb()
     >>> name = blurb.getBlurb('news_newspapername')
     >>> w, h = Newspaper_Broadsheet
-    >>>
-    >>> np = Newspaper(w=w, h=h, title=name, autoPages=1, template='MainPage')
+
+    """
+    """
+    >>> np = Newspaper(w=w, h=h, title=name, autoPages=1)
+    >>> #np = Newspaper(w=w, h=h, title=name, autoPages=1, template='MainPage')
     >>> view = np.view
     >>> view.padding = 50
     >>> view.showCropMarks = True

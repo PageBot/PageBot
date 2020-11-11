@@ -20,12 +20,13 @@ from pagebot.toolbox.finder import Finder
 from pagebot.constants import *
 
 class Publication(Element):
-    """Implementing data and templates for generic publications.
-    See also other – more specific – implementations, such as Poster, Brochure and Magazines.
+    """Implementing data and templates for generic publications. See also
+    other – more specific – implementations, such as Poster, Brochure and
+    Magazines.
 
-    An old approach was to make Publication subclass from Document, but it shows to be more
-    flexible as holding all kinds of information, generating multiple types of documents,
-    the Publication class is now an independent base class, holding multiple documents.
+    An old approach was to subclass Publication from Document, but it
+    proves to be more flexible if the Publication class is now an independent
+    base class, holding multiple documents.
 
     >>> from pagebot.constants import A4
     >>> from pagebot.filepaths import getResourcesPath
@@ -62,9 +63,10 @@ class Publication(Element):
         self.templates = templates
         self.initialize()
 
+
     def initialize(self):
-        """Doing nothing by default. To be redefined by inheriting publications classes
-        for default initialization of document and pages.
+        """Doing nothing by default. To be redefined by inheriting publications
+        classes for default initialization of document and pages.
         """
 
     def getAPI(self):
@@ -115,10 +117,10 @@ class Publication(Element):
             baselineGrid = self.baselineGrid
         if theme is None:
             theme = self.theme
-        document = Document(name=name, w=w, h=h, padding=padding, context=context,
-            theme=theme, gw=gw, gh=gh, gridX=gridX, gridY=gridY, autoPages=autoPages,
-            baselineGrid=baselineGrid, baselineGridStart=self.baselineGridStart,
-            **kwargs)
+        document = Document(name=name, w=w, h=h, padding=padding,
+                context=context, theme=theme, gw=gw, gh=gh, gridX=gridX,
+                gridY=gridY, autoPages=autoPages, baselineGrid=baselineGrid,
+                baselineGridStart=self.baselineGridStart, **kwargs)
         view = document.view
         view.showGrid = self.showGrid
         view.showPadding = self.showPadding
@@ -204,6 +206,27 @@ class Publication(Element):
             finder = finderOrPath
         self.finders[finder.rootPath] = finder # Overwrite if there is already one on that root path,
         return finder # Answer the finders.
+
+    def addTemplate(self, name, template):
+        """Adds the template to the self.templates of dictionaries. There is no
+        check, so the calling function can overwrite existing templates. Answer the
+        template.
+
+        >>> name ='TestTemplate'
+        >>> t = Template(w=200, h=300, name=name)
+        """
+
+        """
+        TODO: rewrite for publication
+        >>> doc = Document(name='TestDoc')
+        >>> doc.addTemplate('myTemplate', t)
+        <Template>
+        >>> doc.getTemplate('myTemplate').name == name
+        True
+        """
+        template.parent = self
+        self.templates[name] = template
+        return template
 
     #   E X P O R T I N G
 

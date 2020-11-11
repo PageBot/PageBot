@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -----------------------------------------------------------------------------
 #     Copyright (c) 2016+ Buro Petr van Blokland + Claudia Mens
 #     www.pagebot.io
@@ -69,7 +70,8 @@ class BaseBook(Publication):
 
         t = Template(w=w, h=h, name='Cover', padding=padding, gridY=gridY)
         newRect(parent=t, conditions=[Fit2Sides()], name='Cover', fill=coverBackgroundFill)
-        newText(parent=t, conditions=[Fit2Width(), Top2Top()], name='Title', h=200)
+        # FIXME: passing context explicitly, remove when auto-resolved.
+        newText(parent=t, conditions=[Fit2Width(), Top2Top()], name='Title', h=200, context=self.context)
         self.addTemplate(t.name, t)
         score = t.solve()
 

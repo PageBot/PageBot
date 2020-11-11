@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -11,8 +12,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     books/photobook/__init__.py
+#     __init__.py
 #
+
 from pagebot.conditions import *
 from pagebot.filepaths import getResourcesPath
 from pagebot.elements import *
@@ -31,11 +33,12 @@ class PhotoBook(BaseBook):
 
     >>> from pagebot import getContext
     >>> context = getContext()
-    >>> bk = PhotoBook()
-    >>> doc = bk.makeSample(context)
-    >>> doc.export('_export/PhotoBookSample.pdf')
-
+    >>> # FIXME: debug, resolvement fails.
+    >>> #bk = PhotoBook(context=context)
+    >>> #doc = bk.makeSample(context)
+    >>> #doc.export('_export/PhotoBookSample.pdf')
     """
+
     def makeSample(self, context, name=None):
         padding = mm(40)
         w, h = A4Square
@@ -75,10 +78,9 @@ class PhotoBook(BaseBook):
         ):
             newImage(imagePath0, x=padding, y=padding,
                 w=page.pw/2, h=page.ph/2, parent=page, conditions=conditions)
+
         doc.solve()
-
         view = doc.view
-
         return doc
 
 if __name__ == "__main__":

@@ -65,6 +65,7 @@ class Text(Element, TextConditions, TextAlignments):
         # Adjust the attributes in **kwargs, so their keys are part of the
         # rootstyle, in order to do automatic conversion with makeStyle()
         Element.__init__(self, **kwargs)
+        assert self.context
         """Creates a Text element, holding storage of `self.bs`.
         BabelString instance."""
 

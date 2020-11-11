@@ -105,6 +105,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         (0pt, 0pt, 100pt, 100pt, (0pt, 0pt, 0pt, 0pt), (0pt, 0pt, 0pt, 0pt))
         >>> from pagebot.document import Document
         >>> from pagebot.contexts import getContext
+        >>> # FIXME: don't call Flat explicitly?
         >>> context = getContext('Flat')
         >>> size = pt(300, 400)
         >>> doc = Document(size=size, autoPages=1, padding=30, context=context)

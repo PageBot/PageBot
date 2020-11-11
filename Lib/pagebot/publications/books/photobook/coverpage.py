@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -11,8 +12,9 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     books/photobook/coverpage.py
+#     coverpage.py
 #
+
 from pagebot.conditions import *
 from pagebot.elements import *
 from pagebot.constants import *
