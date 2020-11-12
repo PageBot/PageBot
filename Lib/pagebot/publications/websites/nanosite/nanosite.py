@@ -29,8 +29,8 @@ from pagebot.elements.views import MampView
 from pagebot.elements.web.nanosite.siteelements import *
 
 class NanoSite(BaseSite):
-    """NanoSite implements a bacic website generator class, that can be used
-    to inherit from or as example how to make website publication classes.
+    """NanoSite implements a bacic website generator class, that can be used to
+    inherit from or as example how to make website publication classes.
 
     >>> import os
     >>> from pagebot.filepaths import getResourcesPath
@@ -186,7 +186,6 @@ class NanoSite(BaseSite):
 
         url = view.getUrl(siteName)
         os.system(u'/usr/bin/open "%s"' % url)
-
         return doc
 
 if __name__ == '__main__':

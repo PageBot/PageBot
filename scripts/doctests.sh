@@ -155,21 +155,6 @@ $PY $PWD/mathematics/transform3d.py
 $PY $PWD/filepaths.py
 
 $PY $PWD/publications/publication.py
-$PY $PWD/publications/typespecimens/__init__.py
-$PY $PWD/publications/typespecimens/basetypespecimen.py
-#$PY $PWD/publications/typespecimens/fontographer35keymap.py
-$PY $PWD/publications/typespecimens/simplespecimen.py
-$PY $PWD/publications/typespecimens/specimens.py
-$PY $PWD/publications/typespecimens/typespecimen.py
-$PY $PWD/publications/typespecimens/proofing/__init__.py
-$PY $PWD/publications/typespecimens/proofing/pagewide.py
-$PY $PWD/publications/typespecimens/proofing/proof.py
-$PY $PWD/publications/typespecimens/proofing/tx.py
-$PY $PWD/publications/websites/nanosite/nanosite.py
-$PY $PWD/publications/newspapers/basenewspaper.py
-# TODO: add rest of publications...
-# ...
-$PY $PWD/publications/calendars/basecalendar.py
 
 $PY $PWD/readers/__init__.py
 $PY $PWD/readers/mdreader.py
