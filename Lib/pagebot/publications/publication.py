@@ -63,7 +63,6 @@ class Publication(Element):
         self.templates = templates
         self.initialize()
 
-
     def initialize(self):
         """Doing nothing by default. To be redefined by inheriting publications
         classes for default initialization of document and pages.
@@ -140,7 +139,7 @@ class Publication(Element):
     newSampleDocument = newDocument # To be redefined by inheriting publication classes.
 
     def _get_document(self):
-        return self.getDocument()
+        return self.getDocument(name=self.name)
     document = property(_get_document)
 
     def getDocument(self, name='Untitled', force=True):
