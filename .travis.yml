@@ -16,7 +16,6 @@ matrix:
         - ./scripts/pylint.sh
         - ./scripts/doctests-linux.sh
         - pytest
-          #- ./scripts/doctests.sh
           #after_success:
           #- codecov
     - os: osx
@@ -31,6 +30,7 @@ matrix:
               packages: python3.9
       before_install:
         - pip3 install --upgrade pip
+        - pip3 install pytest
       install:
         - ./scripts/osx.sh
       script:
@@ -39,7 +39,6 @@ matrix:
         - ./scripts/doctests-osx.sh
         - pytest
           #- ./scripts/doctests.sh
-          #- pytest
           #after_success:
           #- codecov
 branches:
