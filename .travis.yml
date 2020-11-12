@@ -37,7 +37,8 @@ matrix:
         - mkdir _export
         - ./scripts/pylint.sh
         - ./scripts/doctests-osx.sh
-        - ./scripts/doctests.sh
+        - pytest
+          #- ./scripts/doctests.sh
           #- pytest
           #after_success:
           #- codecov
