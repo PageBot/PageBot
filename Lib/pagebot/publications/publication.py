@@ -143,7 +143,7 @@ class Publication(Element):
         return self.getDocument()
     document = property(_get_document)
 
-    def getDocument(self, name=None, force=True):
+    def getDocument(self, name='Untitled', force=True):
         """Answer the named document, searching through the list of child elements.
         If it does not exist and he force flag is set, then create a new document
         and wrap it as child of self.
