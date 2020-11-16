@@ -20,13 +20,11 @@ from pagebot.toolbox.finder import Finder
 from pagebot.constants import *
 
 class Publication(Element):
-    """Implementing data and templates for generic publications. See also
-    other – more specific – implementations, such as Poster, Brochure and
-    Magazines.
+    """Implements data and templates for generic publications.
 
-    An old approach was to subclass Publication from Document, but it
-    proves to be more flexible if the Publication class is now an independent
-    base class, holding multiple documents.
+    Note: an earlier approach was to subclass Publication from Document, but it
+    proved to be more flexible if the Publication class is an independent
+    class that holds one or more documents.
 
     >>> from pagebot.constants import A4
     >>> from pagebot.filepaths import getResourcesPath
@@ -50,6 +48,19 @@ class Publication(Element):
     TEMPLATES = {} # To be redefined by inheriting publication classes
 
     def __init__(self, findersOrPaths=None, api=None, templates=None, **kwargs):
+        """
+
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> from pagebot.filepaths import getResourcesPath
+        >>> path = getResourcesPath()
+        >>> publication = Publication(findersOrPaths=path, context=context)
+        >>> assert publication.context
+        >>> publication.templates
+        {}
+        >>> len(publication.finders)
+        27
+        """
         Element.__init__(self, **kwargs)
         if api is None:
             api = {} # All values will be default.
