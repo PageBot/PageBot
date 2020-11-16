@@ -68,22 +68,22 @@ class FootnoteExtension(Extension):
         self.parser = md.parser
         self.md = md
         # Insert a preprocessor before ReferencePreprocessor
-        md.preprocessors.add(
+        md.preprocessors.register(
             "footnote", FootnotePreprocessor(self), "<reference"
         )
         # Insert an inline pattern before ImageReferencePattern
         FOOTNOTE_RE = r'\[\^([^\]]*)\]'  # blah blah [^1] blah
-        md.inlinePatterns.add(
+        md.inlinePatterns.register(
             "footnote", FootnotePattern(FOOTNOTE_RE, self), "<reference"
         )
         # Insert a tree-processor that would actually add the footnote div
         # This must be before all other treeprocessors (i.e., inline and
         # codehilite) so they can run on the the contents of the div.
-        md.treeprocessors.add(
+        md.treeprocessors.register(
             "footnote", FootnoteTreeprocessor(self), "_begin"
         )
         # Insert a postprocessor after amp_substitute oricessor
-        md.postprocessors.add(
+        md.postprocessors.register(
             "footnote", FootnotePostprocessor(self), ">amp_substitute"
         )
 
