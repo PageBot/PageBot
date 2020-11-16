@@ -58,8 +58,8 @@ class Publication(Element):
         >>> assert publication.context
         >>> publication.templates
         {}
-        >>> len(publication.finders)
-        27
+        >>> len(publication.finders) > 0
+        True
         """
         Element.__init__(self, **kwargs)
         if api is None:
