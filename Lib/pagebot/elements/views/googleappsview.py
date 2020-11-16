@@ -25,7 +25,7 @@ class GoogleAppsView(HtmlView):
 
     This is different from the GoogleCloudView, which works similar to MampView
     (local server) and GitView (gitub/docs server), serving locally saved static
-    HTML/CSS/JS file, that are created by the WebSite publications class, using
-    the HtmlContext as HTML/CSS generator.
+    HTML/CSS/JS file, that are created by the WebSite class, using the
+    HtmlContext as HTML/CSS generator.
     """
     viewId = 'GoogleApps'

@@ -19,10 +19,10 @@
 from pagebot.elements.views.htmlview import HtmlView
 
 class GoogleCloudView(HtmlView):
-    """The GoogleCloudView works similar to MampView (local server) and
-    GitView (gitub/docs server), serving locally saved static HTML/CSS/JS file,
-    that are created by the WebSite publications class, using the HtmlContext as
-    HTML/CSS generator.
+    """The GoogleCloudView works similar to MampView (local server) and GitView
+    (gitub/docs server), serving locally saved static HTML/CSS/JS file, that
+    are created by the WebSite class, using the HtmlContext as HTML/CSS
+    generator.
 
     This is different from the GoogleAppsView, which is using a live Python server.
     For this PageBot + HtmlContext + FlatContext are uploaded and are running as live

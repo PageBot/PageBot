@@ -20,13 +20,13 @@ import os
 import shutil
 import traceback
 
-from pagebot.publications.websites.basesite import BaseSite
 from pagebot.constants import *
 from pagebot.base.composer import Composer
 from pagebot.base.typesetter import Typesetter
 from pagebot.elements import *
 from pagebot.elements.views import MampView
 from pagebot.elements.web.nanosite.siteelements import *
+from pagebot.web.basesite import BaseSite
 
 class NanoSite(BaseSite):
     """NanoSite implements a bacic website generator class, that can be used to

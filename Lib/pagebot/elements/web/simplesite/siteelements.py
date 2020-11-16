@@ -14,7 +14,7 @@
 #
 #     siteelements.py
 #
-from pagebot.publications.publication import Publication
+from pagebot.publication import Publication
 from pagebot.elements import *
 
 class Site(Publication):

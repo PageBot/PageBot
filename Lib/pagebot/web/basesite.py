@@ -14,9 +14,9 @@
 #
 #     basesite.py
 #
-#     Implements the basic behavior of website publications classes.
+#     Implements the basic behavior of website classes.
 #
-from pagebot.publications.publication import Publication
+from pagebot.publication import Publication
 
 class BaseSite(Publication):
 

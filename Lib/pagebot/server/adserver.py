@@ -24,9 +24,9 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 
-from pagebot.publications.websites.nanosite.nanosite import NanoSite
 #from pagebot.server.pagebothandler import PageBotHandler
 from pagebot.contexts import HtmlContext
+from pagebot.web.nanosite.nanosite import NanoSite
 
 PORT = 5555
 SSLPORT = 443
