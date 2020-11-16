@@ -542,7 +542,7 @@ class Dating:
                 if isinstance(date, str):
                     # Could be one of the follovwing formats
                     # YYYY-MM-DD HH:MM:SS
-                    stamp = re.compile("(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)([\-\+]\d+)?")
+                    stamp = re.compile(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)([\-\+]\d+)?')
                     m = stamp.match(date)
                     if m:
                         year = int(m.group(1))

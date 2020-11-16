@@ -34,7 +34,7 @@ class Blurb:
     1093
     """
 
-    reNoTags = re.compile('\<[^\>]*|([^\<\>]*)')
+    reNoTags = re.compile(r'\<[^\>]*|([^\<\>]*)')
 
     def __init__(self):
     #def __init__(self, customContent=None):

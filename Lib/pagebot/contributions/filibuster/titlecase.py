@@ -9,7 +9,7 @@ import unittest
 import sys
 import re
 
-SMALL = 'a|an|and|as|at|but|by|en|for|if|in|of|on|or|the|to|v\.?|via|vs\.?'
+SMALL = r'a|an|and|as|at|but|by|en|for|if|in|of|on|or|the|to|v\.?|via|vs\.?'
 PUNCT = "[!\"#$%&'‘()*+,-./:;?@[\\\\\\]_`{|}~]"
 
 SMALL_WORDS = re.compile('^(%s)$' % SMALL, re.I)
@@ -29,7 +29,7 @@ def titlecase(text):
     The list of "SMALL words" which are not capped comes from the New York
     Times Manual of Style, plus 'vs' and 'v'.
     """
-    words = re.split('\s', text)
+    words = re.split(r'\s', text)
     line = []
 
     for word in words:

@@ -455,7 +455,7 @@ def commaString2IntegerList(s):
 def list2String(l, separator=''):
     return separator.join([asString(ll) for ll in l])
 
-PLAINWORDS = re.compile('([a-z0-9_\<\>]*)')
+PLAINWORDS = re.compile(r'([a-z0-9_\<\>]*)')
 
 def string2PlainWords(s):
     return PLAINWORDS.findall(s.lower())

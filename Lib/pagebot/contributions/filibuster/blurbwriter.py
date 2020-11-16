@@ -89,9 +89,9 @@ class BlurbWriter:
         # Last processed tag, useful when debugging loops.
         self.lasttag = 'no last tag'
         self.choicetree = []
-        p = '\<#(?P<tagname>.*)#\>'
+        p = r'\<#(?P<tagname>.*)#\>'
         self.tag = re.compile(p, re.IGNORECASE)
-        p = '\<-(?P<tagname>.*?)-\>'
+        p = r'\<-(?P<tagname>.*?)-\>'
         self.pstatement = re.compile(p, re.IGNORECASE)
         self.allkeys = self.keys()
         self.importcontent(contentdict)
