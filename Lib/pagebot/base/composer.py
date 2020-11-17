@@ -26,7 +26,18 @@ class Composer:
     If necessary elements can be split, new elements can be made on the page
     and element can be reshaped byt width and height, if that results in better
     placements."""
+
     def __init__(self, doc):
+        """
+        TODO: test all target types.
+
+        >>> from pagebot import getContext
+        >>> context = getContext()
+        >>> from pagebot.document import Document
+        >>> doc = Document(context=context)
+        >>> composer = Composer(doc)
+        >>> d = composer.compose()
+        """
         self.doc = doc
 
 

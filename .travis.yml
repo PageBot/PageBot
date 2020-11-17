@@ -9,6 +9,7 @@ matrix:
       before_install:
         - python --version
         - pip install --upgrade pip
+          #- pip install pytest pytest-cov codecov
       install:
         - ./scripts/linux.sh
       script:
@@ -30,7 +31,7 @@ matrix:
               packages: python3.9
       before_install:
         - pip3 install --upgrade pip
-        - pip3 install pytest
+        - pip3 install pytest pytest-cov codecov
       install:
         - ./scripts/osx.sh
       script:
