@@ -28,7 +28,7 @@ from markdown.preprocessors import Preprocessor
 from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
 from markdown.postprocessors import Postprocessor
-from markdown.util import etree
+import xml.etree.ElementTree as etree
 
 LIT_BACKLINK_TEXT = "AAzz1337820767766393qq"
 NBSP_PLACEHOLDER = "qq3936677670287331zzAA"
@@ -62,7 +62,7 @@ class LiteratureExtension(Extension):
 
         self.reset()
 
-    def extendMarkdown(self, md, md_globals):
+    def extendMarkdown(self, md):
         """ Add pieces to Markdown. """
         md.registerExtension(self)
         self.parser = md.parser
