@@ -81,9 +81,11 @@ Bugs, enhancements and requested features can be added to the GitHub issue track
 # External Links
 
 - Download: [PyPi](https://pypi.org/project/pagebot/)
-- Continuous Integration: [Travis](https://travis-ci.org/PageBot/PageBot)
 - Documentation: [ReadTheDocs](https://pagebot.readthedocs.io/en/latest/)
-- Examples repository: [PageBotExamples](https://github.com/PageBot/PageBotExamples)
+- Examples repository: [PageBotExamples](https://github.com/PageBot/
+- Continuous integration: [Travis](https://travis-ci.org/PageBot/PageBot)
+- Code coverage: [Codecov](https://codecov.io/gh/PageBot/PageBot)
+PageBotExamples)
 
 # Related
 
@@ -111,11 +113,9 @@ color-strips, file name, etc. The result of all views can be placed on pages as
 illustration.
 * Graphics - using all Drawbot drawing tools.
 * All image filtering supplied by Drawbot ImageObject.
-* Access and modify images on pixel-level.
 * Cascading styles, where Element values inherit from parent Elements, similar
   to CSS behavior.   
-* Text flows are using the macOS FormattedString for all typographic
-  parameters.
+* Text flows are using the macOS FormattedString for all typographic parameters.
 * Random Text generator for headlines and articles.
 * Read text from MarkDown and XML (.MD .XML)
 * Support large amount of text processing functions:
@@ -123,9 +123,8 @@ illustration.
    * Text to fit a box and elastic box to fit text
    * Tabular setting
    * Text Flow from one element to another. 
-   * Variable Font UI access and instance creation, as the whole "fonttools"
-     Python library is available.
-   * Access to all font metrics.
+   * Variable Font UI access and instance creation based on fontTools
+   * Access to font metrics.
    * Outline Font access modification.
    * Space, groups and kerning access and modifcation.
    * OT layout and feature access and modification.
