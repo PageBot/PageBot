@@ -24,16 +24,9 @@ import codecs
 import traceback
 import xml.etree.ElementTree as ET
 
-try:
-    import markdown
-    from markdown.extensions.nl2br import Nl2BrExtension
-    from markdown.extensions.fenced_code import FencedCodeExtension
-except ImportError:
-    print('[Typesetter] ImportError')
-    print('Please install python markdown')
-    print(traceback.format_exc())
-    import sys
-    sys.exit()
+import markdown
+from markdown.extensions.nl2br import Nl2BrExtension
+from markdown.extensions.fenced_code import FencedCodeExtension
 
 from pagebot.contributions.markdown.literature import LiteratureExtension
 from pagebot.contributions.markdown.footnotes import FootnoteExtension
@@ -87,7 +80,7 @@ class Typesetter:
         InlineExtension(),
         FencedCodeExtension(),
         FootnoteExtension(),
-        #LiteratureExtension(),
+        LiteratureExtension(),
         Nl2BrExtension(),
     ]
 
@@ -706,7 +699,7 @@ class Typesetter:
         >>> md = '''## Subtitle at start\\n\\n~~~\\npage = page.next\\n~~~\\n\\n# Title\\n\\n##Subtitle\\n\\nPlain text'''
         >>> context = HtmlContext()
         >>> t = Typesetter(context)
-        >>> #fileName = t.markDown2XmlFile('/tmp/PageBot_Typesetter_test.xml', md)
+        >>> fileName = t.markDown2XmlFile('/tmp/PageBot_Typesetter_test.xml', md)
         >>> #os.remove(fileName)
         """
         if mdExtensions is None:
