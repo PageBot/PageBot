@@ -9,7 +9,7 @@ matrix:
       before_install:
         - python --version
         - pip install --upgrade pip
-        - pip install pytest pytest-cov codecov
+        - pip install --upgrade pytest pytest-cov codecov
       install:
         - ./scripts/linux.sh
       script:

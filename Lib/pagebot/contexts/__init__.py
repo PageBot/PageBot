@@ -36,10 +36,10 @@ if platform == 'darwin':
         hasDrawBot = False
 
     if hasDrawBot:
-        #try:
-        from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
-        #except ImportError:
-        #    print(traceback.format_exc())
+        try:
+            from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
+        except ImportError:
+            print(traceback.format_exc())
 
 
 def getContext(contextType=None):
