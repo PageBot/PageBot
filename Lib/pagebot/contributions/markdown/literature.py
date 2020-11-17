@@ -23,12 +23,12 @@ License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 
 import re
 from collections import OrderedDict
+import xml.etree.ElementTree as etree
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
 from markdown.inlinepatterns import Pattern
 from markdown.treeprocessors import Treeprocessor
 from markdown.postprocessors import Postprocessor
-import xml.etree.ElementTree as etree
 
 LIT_BACKLINK_TEXT = "AAzz1337820767766393qq"
 NBSP_PLACEHOLDER = "qq3936677670287331zzAA"

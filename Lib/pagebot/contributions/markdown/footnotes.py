@@ -16,16 +16,16 @@ License: [BSD](https://opensource.org/licenses/bsd-license.php)
 
 """
 
+import re
+import copy
+import xml.etree.ElementTree as etree
+from collections import OrderedDict
 from markdown import Extension
 from markdown.blockprocessors import BlockProcessor
 from markdown.inlinepatterns import InlineProcessor
 from markdown.treeprocessors import Treeprocessor
 from markdown.postprocessors import Postprocessor
 from markdown import util
-from collections import OrderedDict
-import re
-import copy
-import xml.etree.ElementTree as etree
 
 FN_BACKLINK_TEXT = util.STX + "zz1337820767766393qq" + util.ETX
 NBSP_PLACEHOLDER = util.STX + "qq3936677670287331zz" + util.ETX
@@ -139,27 +139,27 @@ class FootnoteExtension(Extension):
         res = finder(root)
         return res
 
-    def setFootnote(self, id, text):
+    def setFootnote(self, identifier, text):
         """ Store a footnote for later retrieval. """
-        self.footnotes[id] = text
+        self.footnotes[identifier] = text
 
     def get_separator(self):
         """ Get the footnote separator. """
         return self.getConfig("SEPARATOR")
 
-    def makeFootnoteId(self, id):
-        """ Return footnote link id. """
+    def makeFootnoteId(self, identifier):
+        """ Return footnote link identifier. """
         if self.getConfig("UNIQUE_IDS"):
-            return 'fn%s%d-%s' % (self.get_separator(), self.unique_prefix, id)
+            return 'fn%s%d-%s' % (self.get_separator(), self.unique_prefix, identifier)
         else:
-            return 'fn{}{}'.format(self.get_separator(), id)
+            return 'fn{}{}'.format(self.get_separator(), identifier)
 
-    def makeFootnoteRefId(self, id, found=False):
-        """ Return footnote back-link id. """
+    def makeFootnoteRefId(self, identifier, found=False):
+        """ Return footnote back-link identifier. """
         if self.getConfig("UNIQUE_IDS"):
-            return self.unique_ref('fnref%s%d-%s' % (self.get_separator(), self.unique_prefix, id), found)
+            return self.unique_ref('fnref%s%d-%s' % (self.get_separator(), self.unique_prefix, identifier), found)
         else:
-            return self.unique_ref('fnref{}{}'.format(self.get_separator(), id), found)
+            return self.unique_ref('fnref{}{}'.format(self.get_separator(), identifier), found)
 
     def makeFootnotesDiv(self, root):
         """ Return div of footnotes as et Element. """
@@ -173,18 +173,18 @@ class FootnoteExtension(Extension):
         ol = etree.SubElement(div, "ol")
         surrogate_parent = etree.Element("div")
 
-        for index, id in enumerate(self.footnotes.keys(), start=1):
+        for index, identifier in enumerate(self.footnotes.keys(), start=1):
             li = etree.SubElement(ol, "li")
-            li.set("id", self.makeFootnoteId(id))
+            li.set("id", self.makeFootnoteId(identifier))
             # Parse footnote with surrogate parent as li cannot be used.
             # List block handlers have special logic to deal with li.
             # When we are done parsing, we will copy everything over to li.
-            self.parser.parseChunk(surrogate_parent, self.footnotes[id])
+            self.parser.parseChunk(surrogate_parent, self.footnotes[identifier])
             for el in list(surrogate_parent):
                 li.append(el)
                 surrogate_parent.remove(el)
             backlink = etree.Element("a")
-            backlink.set("href", "#" + self.makeFootnoteRefId(id))
+            backlink.set("href", "#" + self.makeFootnoteRefId(identifier))
             backlink.set("class", "footnote-backref")
             backlink.set(
                 "title",
@@ -192,7 +192,7 @@ class FootnoteExtension(Extension):
             )
             backlink.text = FN_BACKLINK_TEXT
 
-            if len(li):
+            if len(li > 0):
                 node = li[-1]
                 if node.tag == "p":
                     node.text = node.text + NBSP_PLACEHOLDER
@@ -220,7 +220,7 @@ class FootnoteBlockProcessor(BlockProcessor):
         block = blocks.pop(0)
         m = self.RE.search(block)
         if m:
-            id = m.group(1)
+            identifier = m.group(1)
             fn_blocks = [m.group(2)]
 
             # Handle rest of block
@@ -241,7 +241,7 @@ class FootnoteBlockProcessor(BlockProcessor):
                 fn_blocks.extend(self.detectTabbed(blocks))
 
             footnote = "\n\n".join(fn_blocks)
-            self.footnotes.setFootnote(id, footnote.rstrip())
+            self.footnotes.setFootnote(identifier, footnote.rstrip())
 
             if block[:m.start()].strip():
                 # Add any content before match back to blocks as separate block
@@ -299,14 +299,14 @@ class FootnoteInlineProcessor(InlineProcessor):
         self.footnotes = footnotes
 
     def handleMatch(self, m, data):
-        id = m.group(1)
-        if id in self.footnotes.footnotes.keys():
+        identifier = m.group(1)
+        if identifier in self.footnotes.footnotes.keys():
             sup = etree.Element("sup")
             a = etree.SubElement(sup, "a")
-            sup.set('id', self.footnotes.makeFootnoteRefId(id, found=True))
-            a.set('href', '#' + self.footnotes.makeFootnoteId(id))
+            sup.set('id', self.footnotes.makeFootnoteRefId(identifier, found=True))
+            a.set('href', '#' + self.footnotes.makeFootnoteId(identifier))
             a.set('class', 'footnote-ref')
-            a.text = str(list(self.footnotes.footnotes.keys()).index(id) + 1)
+            a.text = str(list(self.footnotes.footnotes.keys()).index(identifier) + 1)
             return sup, m.start(0), m.end(0)
         else:
             return None, None, None

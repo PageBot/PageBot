@@ -21,7 +21,6 @@
 import re
 import copy
 import codecs
-import traceback
 import xml.etree.ElementTree as ET
 
 import markdown
