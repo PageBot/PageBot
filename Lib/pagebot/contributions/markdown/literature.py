@@ -55,7 +55,7 @@ class LiteratureExtension(Extension):
                  "The text string that links from the literature reference "
                  "to the reader's place."]
         }
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
         # In multiple invocations, emit links that don't get tangled.
         self.unique_prefix = 0

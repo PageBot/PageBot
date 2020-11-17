@@ -192,7 +192,7 @@ class FootnoteExtension(Extension):
             )
             backlink.text = FN_BACKLINK_TEXT
 
-            if len(li > 0):
+            if li:
                 node = li[-1]
                 if node.tag == "p":
                     node.text = node.text + NBSP_PLACEHOLDER
@@ -271,9 +271,9 @@ class FootnoteBlockProcessor(BlockProcessor):
                     blocks.insert(0, block[m.start():])
                     # End of this footnote.
                     break
-                else:
-                    # Entire block is part of this footnote.
-                    fn_blocks.append(self.detab(block))
+
+                # Entire block is part of this footnote.
+                fn_blocks.append(self.detab(block))
             else:
                 # End of this footnote.
                 break
@@ -315,7 +315,8 @@ class FootnoteInlineProcessor(InlineProcessor):
 class FootnotePostTreeprocessor(Treeprocessor):
     """ Amend footnote div with duplicates. """
 
-    def __init__(self, footnotes):
+    def __init__(self, footnotes, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.footnotes = footnotes
 
     def add_duplicates(self, li, duplicates):
@@ -368,7 +369,8 @@ class FootnotePostTreeprocessor(Treeprocessor):
 class FootnoteTreeprocessor(Treeprocessor):
     """ Build and append footnote div to end of document. """
 
-    def __init__(self, footnotes):
+    def __init__(self, footnotes, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.footnotes = footnotes
 
     def run(self, root):
@@ -389,8 +391,10 @@ class FootnoteTreeprocessor(Treeprocessor):
 
 
 class FootnotePostprocessor(Postprocessor):
-    """ Replace placeholders with html entities. """
-    def __init__(self, footnotes):
+    """ Replace placeholders with HTML entities. """
+
+    def __init__(self, footnotes, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.footnotes = footnotes
 
     def run(self, text):
