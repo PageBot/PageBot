@@ -29,7 +29,6 @@ DEFAULT_CONTEXT_TYPE = 'Flat'
 CONTEXT_TYPE = None
 
 if platform == 'darwin':
-
     try:
         import drawBot
         hasDrawBot = True
@@ -37,10 +36,10 @@ if platform == 'darwin':
         hasDrawBot = False
 
     if hasDrawBot:
-        try:
-            from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
-        except ImportError:
-            print(traceback.format_exc())
+        #try:
+        from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
+        #except ImportError:
+        #    print(traceback.format_exc())
 
 
 def getContext(contextType=None):
@@ -108,6 +107,8 @@ def getFlatContext():
     return FlatContext()
 
 def getDrawBotContext():
+    assert platform == 'darwin'
+    assert DrawBotContext
     return DrawBotContext()
 
 def getHtmlContext():
