@@ -16,8 +16,8 @@ matrix:
         - ./scripts/pylint.sh
         - ./scripts/doctests-linux.sh
         - pytest
-          #after_success:
-          #- codecov
+      after_success:
+        - codecov
     - os: osx
       #osx_image: xcode12.2
       language: sh
