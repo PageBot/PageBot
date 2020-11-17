@@ -55,11 +55,13 @@ class LiteratureExtension(Extension):
                  "The text string that links from the literature reference "
                  "to the reader's place."]
         }
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
         # In multiple invocations, emit links that don't get tangled.
         self.unique_prefix = 0
 
+        self.found_refs = {}
+        self.used_refs = set()
         self.reset()
 
     def extendMarkdown(self, md):
@@ -68,24 +70,17 @@ class LiteratureExtension(Extension):
         self.parser = md.parser
         self.md = md
         # Insert a preprocessor before ReferencePreprocessor
-        md.preprocessors.add(
-            "literature", LiteraturePreprocessor(self), "<reference"
-        )
+        md.preprocessors.register(LiteraturePreprocessor(self), "literature", 1)
+
         # Insert an inline pattern before ImageReferencePattern
         LITERATURE_RE = r'\[\=([^\]]*)\]'  # blah blah [^1] blah
-        md.inlinePatterns.add(
-            "literature", LiteraturePattern(LITERATURE_RE, self), "<reference"
-        )
+        md.inlinePatterns.register(LiteraturePattern(LITERATURE_RE, self), "literature", 80)
         # Insert a tree-processor that would actually add the literatures div
         # This must be before all other treeprocessors (i.e., inline and
         # codehilite) so they can run on the the contents of the div.
-        md.treeprocessors.add(
-            "literature", LiteratureTreeprocessor(self), "_begin"
-        )
+        md.treeprocessors.register(LiteratureTreeprocessor(self), "literature", 100)
         # Insert a postprocessor after amp_substitute oricessor
-        md.postprocessors.add(
-            "literature", LiteraturePostprocessor(self), ">amp_substitute"
-        )
+        md.postprocessors.register(LiteraturePostprocessor(self), "literature", 120)
 
     def reset(self):
         """ Clear literature references on reset, and prepare for distinct document. """
