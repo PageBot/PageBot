@@ -108,7 +108,6 @@ def getFlatContext():
 
 def getDrawBotContext():
     assert platform == 'darwin'
-    assert DrawBotContext
     return DrawBotContext()
 
 def getHtmlContext():
