@@ -780,9 +780,18 @@ def css(name, e=None, styles=None, default=None):
 
     >>> style1 = makeStyle({}, name='style1', fontSize=pt(24))
     >>> style2 = makeStyle({}, name='style2', fontSize=pt(36))
+    >>> style3 = {'fontSize': pt(48)}
     >>> styles = [style1, style2]
     >>> css('fontSize', styles=styles)
     24pt
+    >>> css('fontSize', styles=style2)
+    36pt
+    >>> from pagebot.elements import newRect
+    >>> e = newRect(style=style3)
+    >>> css('fontSize', e=e)
+    48pt
+    >>> css('fontSize', styles={}, default=pt(12))
+    12pt
     """
     # Can be single style or stack of styles.
     if styles is not None:
