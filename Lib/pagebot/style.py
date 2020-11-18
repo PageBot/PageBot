@@ -39,7 +39,24 @@ def makeStyle(style=None, raiseError=True, **kwargs):
     specific arguments. If style is None, then create a new style dict. In
     that case all the element style values need to be defined by argument. The
     calling element must test if its minimum set (such as self.w and self.h)
-    are properly defined."""
+    are properly defined.
+
+    >>> style = makeStyle()
+    >>> style
+    {}
+    >>> style = makeStyle(style=style)
+    >>> style['fontSize']
+    12pt
+    >>> style = {'bogus': 'bla'}
+    >>> style = makeStyle(style=style, raiseError=False)
+    [makeStyle] Attribute “bogus” not allowed in (root) style!
+    >>> style = {'fontSize': pt(24), 'leading': em(1.2)}
+    >>> style = makeStyle(style=style, raiseError=False)
+    >>> style['fontSize']
+    24pt
+    >>> style['leading']
+    1.2em
+    """
     if style is None:
         new = newStyle(**kwargs)  # Copy arguments in new style.
     else:
