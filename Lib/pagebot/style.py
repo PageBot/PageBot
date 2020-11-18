@@ -776,7 +776,14 @@ def css(name, e=None, styles=None, default=None):
     """Answers the named style values. Search in optional style dict first,
     otherwise up the parent tree of styles in element e. Both e and style can
     be None. In that case None is answered. Note that this is a generic
-    "Cascading style request", outside the realm of HTML/CSS."""
+    "Cascading style request", outside the realm of HTML/CSS.
+
+    >>> style1 = makeStyle({}, name='style1', fontSize=pt(24))
+    >>> style2 = makeStyle({}, name='style2', fontSize=pt(36))
+    >>> styles = [style1, style2]
+    >>> css('fontSize', styles=styles)
+    24pt
+    """
     # Can be single style or stack of styles.
     if styles is not None:
         if not isinstance(styles, (tuple, list)):
