@@ -19,6 +19,7 @@
 import os
 import shutil
 import traceback
+from sys import platform
 
 from pagebot import getContext
 from pagebot.constants import *
@@ -27,6 +28,7 @@ from pagebot.base.typesetter import Typesetter
 from pagebot.elements import *
 from pagebot.elements.views import MampView
 from pagebot.elements.web.nanosite.siteelements import *
+from pagebot.filepaths import getMampPath
 from pagebot.web.basesite import BaseSite
 
 class NanoSite(BaseSite):
@@ -45,7 +47,7 @@ class NanoSite(BaseSite):
     >>> os.path.exists(srcPath)
     True
     >>> ns = NanoSite(name=name, theme=theme)
-    >>> doc = ns.produce(srcPath, cssPy=cssPy, spellCheck=True)
+    >>> doc = ns.produce(srcPath, cssPy=cssPy, spellCheck=True, doOpen=False)
     >>> doc
     <Document "PageBot NanoSite" Pages=6 Templates=1 Views=1>
     """
@@ -95,7 +97,7 @@ class NanoSite(BaseSite):
 
     def produce(self, srcPaths, viewId=None, cssPy=None, resourcePaths=None,
             cssUrls=None, defaultImageWidth=None, name=None, title=None,
-            theme=None, verbose=False, spellCheck=False, **kwargs):
+            theme=None, verbose=False, spellCheck=False, doOpen=True, **kwargs):
         """Create a Document with the current settings of self. Then build the
         document using the defined view (detault is MampView.viewId) to make
         the Mamp site. Finally answer the created Document instance."""
@@ -174,12 +176,14 @@ class NanoSite(BaseSite):
                 print(unknownWords)
 
         view = doc.view
-        MAMP_PATH = '/Applications/MAMP/htdocs/'
+
+
+        mampPath = getMampPath()
         siteName =  doc.name.replace(' ', '_')
-        filePath = MAMP_PATH + siteName
+        filePath = mampPath + siteName
 
         if verbose:
-            print('Site path: %s' % MAMP_PATH)
+            print('Site path: %s' % filePatah)
 
         if os.path.exists(filePath):
             # Comment this line, if more safety is required. In that case
@@ -188,8 +192,10 @@ class NanoSite(BaseSite):
 
         doc.export(filePath)
 
-        url = view.getUrl(siteName)
-        os.system(u'/usr/bin/open "%s"' % url)
+        if doOpen:
+            url = view.getUrl(siteName)
+            os.system(u'/usr/bin/open "%s"' % url)
+
         return doc
 
 if __name__ == '__main__':

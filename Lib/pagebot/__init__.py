@@ -37,6 +37,8 @@ def getContext(contextType=None, resourcesPath=None):
             contextType = 'Flat'
         elif platform == 'darwin':
             contextType = 'DrawBot'
+        else:
+            raise NotImplementedError
 
     return getPlatformContext(contextType=contextType)
 

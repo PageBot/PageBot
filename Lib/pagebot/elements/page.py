@@ -451,7 +451,7 @@ class Page(Element):
         >>> page.cssCode = 'body {background-color:black}'
         >>> # No extension for site folder if exporting to a website
         >>> exportPath = '_export/Home'
-        >>> #doc.export(exportPath)
+        >>> doc.export(exportPath)
         >>> #result = os.system('open %s/index.html' % exportPath)
         """
         # Get current context and builder from this view.

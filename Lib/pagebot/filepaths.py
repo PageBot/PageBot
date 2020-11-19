@@ -70,7 +70,10 @@ def getContextMampPath():
         MAMP_PATH = '/Applications/MAMP/htdocs/'
 
     elif platform == 'linux':
-        # TODO: What's the actual path on Linux?
-        MAMP_PATH = '/tmp/MAMP_PATH/'
+        # TODO: implement connection to LAMP:
+        # https://help.ubuntu.com/community/ApacheMySQLPHP
+        MAMP_PATH = '/tmp/LAMP/'
+    else:
+        raise NotImplementedError
 
     return MAMP_PATH
