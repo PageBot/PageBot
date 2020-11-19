@@ -31,5 +31,21 @@ def readXML(path, xPath=None):
     return root
 
 def readHTML(path, xPath=None):
-    """Read the HTML body tag from path and answer the compiled etree."""
+    """Read the HTML body tag from path and answer the compiled etree.
+
+
+    >>> from pagebot.filepaths import getResourcesPath
+    >>> resourcesPath = getResourcesPath()
+    >>> testHtml = resourcesPath + '/templates/test.html'
+    >>> body = readHTML(testHtml)[0]
+    >>> body.tag
+    'body'
+    >>> len(list(body))
+    2
+    """
     return readXML(path, xPath='body')
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
