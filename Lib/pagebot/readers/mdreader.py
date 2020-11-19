@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -42,13 +43,23 @@ def markDown2XMLFile(path):
     xml = xml.replace('&nbsp;', ' ')
 
     xmlPath = path + '.xml'
-    print(xmlPath)
     f = codecs.open(xmlPath, mode="w", encoding="utf-8")
     f.write(xml)
     f.close()
     return xmlPath # Return altered fileName if converted. Otherwise return original fileName
 
 def readMD(path):
-    """Read the markdown from path and answer the compiled etree."""
+    """Read the markdown from path and answer the compiled etree.
+
+    >>> from pagebot.filepaths import getResourcesPath
+    >>> resourcesPath = getResourcesPath()
+    >>> path = resourcesPath + '/texts/SAMPLE.md'
+    >>> doc = readMD(path)
+    """
     xmlPath = markDown2XMLFile(path)
     return readXML(xmlPath)
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
