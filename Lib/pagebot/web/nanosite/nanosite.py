@@ -20,6 +20,7 @@ import os
 import shutil
 import traceback
 
+from pagebot import getContext
 from pagebot.constants import *
 from pagebot.base.composer import Composer
 from pagebot.base.typesetter import Typesetter
@@ -44,16 +45,18 @@ class NanoSite(BaseSite):
     >>> os.path.exists(srcPath)
     True
     >>> ns = NanoSite(name=name, theme=theme)
-    >>> #doc = ns.produce(srcPath, cssPy=cssPy, spellCheck=True)
-    >>> #doc
-    #<Document "PageBot NanoSite" Pages=6 Templates=1 Views=1>
+    >>> doc = ns.produce(srcPath, cssPy=cssPy, spellCheck=True)
+    >>> doc
+    <Document "PageBot NanoSite" Pages=6 Templates=1 Views=1>
     """
     DEFAULT_VIEW_ID = MampView.viewId
 
     def makeNavigation(self, doc):
         """After all pages of the site are generated, we can use the compiled
         page tree from doc to let all Navigation elements build the menu for
-        each page."""
+        each page.
+
+        """
         for pages in doc.pages.values():
             for page in pages:
                 navigation = page.select('Navigation')
@@ -103,9 +106,10 @@ class NanoSite(BaseSite):
         if not isinstance(srcPaths, (list, tuple)):
             srcPaths = [srcPaths]
 
+        context = getContext('Html')
         doc = self.newDocument(viewId=viewId or self.DEFAULT_VIEW_ID,
                 autoPages=1, defaultImageWidth=defaultImageWidth, name=name or
-                self.name, title=title or self.title, theme=theme, **kwargs)
+                self.name, title=title or self.title, theme=theme, context=context, **kwargs)
 
         # Write the CSS, set the view css paths and translate cssPy into css
         # source file.

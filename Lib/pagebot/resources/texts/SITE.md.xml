@@ -38,16 +38,13 @@ page.url = 'index.html'
 content = page.select('Content')
 box = content.newBanner()
 </code></pre>
-
 <h1>PageBot Library</h1>
 <pre><code>box = content.newIntroduction()
 </code></pre>
-
 <h1>What is PageBot?</h1>
 <pre><code>section = content.newSection()
 box = section.newMain()
 </code></pre>
-
 <p>PageBot is library of Python classes that contain all knowledge to create high quality publications using code, such as PDF documents, images, animations and websites.</p>
 <p>It is available both as Python library context for <a href="https://www.drawbot.com">DrawBot</a> and as part of a collection of stand-alone desktop applications that can be created from it. </p>
 <p>Initiated by <a href="https://typetr.typenetwork.com">TYPETR</a>, the aim is to create a system for scriptable applications generating high quality typographic documents for a variety of output media, that support high quality fonts.</p>
@@ -69,7 +66,6 @@ page.url = 'tour.html'
 content = page.select('Content')
 box = content.newBanner()
 </code></pre>
-
 <h2>PageBot tour</h2>
 <pre><code># ----------------------------------------
 # reference
@@ -82,7 +78,6 @@ page.url = 'reference.html'
 content = page.select('Content')
 box = content.newBanner()
 </code></pre>
-
 <h2>PageBot reference</h2>
 <pre><code># ----------------------------------------
 # functions
@@ -95,12 +90,10 @@ page.url = 'functions.html'
 content = page.select('Content')
 box = content.newBanner()
 </code></pre>
-
 <h2>PageBot functions</h2>
 <pre><code>section = content.newSection()
 box = section.newMain()
 </code></pre>
-
 <p>An overview of PageBot functions reads like this:</p>
 <ul>
 <li>Various types of Element objects can be placed on a page or inside other Element objects.</li>
@@ -146,12 +139,10 @@ page.url = 'examples.html'
 content = page.select('Content')
 box = content.newBanner()
 </code></pre>
-
 <h1>Examples</h1>
 <pre><code>section = content.newSection()
 box = section.newMain()
 </code></pre>
-
 <pre><code># ----------------------------------------
 # future.html
 # ----------------------------------------
@@ -163,12 +154,10 @@ page.url = 'future.html'
 content = page.select('Content')
 box = content.newBanner()
 </code></pre>
-
 <h1>Future developments</h1>
 <pre><code>section = content.newSection()
 box = section.newMain()
 </code></pre>
-
 <ul>
 <li>Element classes supporting various types of graphs, info-graphics, maps, PageBot document layout, Variable Font axes layout, font metrics.</li>
 <li>Views for thumbnail page overview, combined booklet-sheets for print, site-maps, etc.</li>

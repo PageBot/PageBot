@@ -53,7 +53,7 @@ def makeStyle(style=None, raiseError=True, **kwargs):
     >>> style = {'fontSize': pt(24), 'leading': em(1.2)}
     >>> style = makeStyle(style=style, raiseError=False)
     >>> style['fontSize']
-    24pt
+    242pt
     >>> style['leading']
     1.2em
     """
