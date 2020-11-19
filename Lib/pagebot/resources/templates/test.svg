@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://web.resource.org/cc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" height="360px" cursor="default" id="svg_document" width="480px" baseProfile="full" version="1.1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 480 360">
+
+<title id="svg_document_title">Untitled.svg</title>
+<defs id="svg_document_defs"></defs>
+<g id="main_group">
+<rect height="360px" x="12px" y="7px" id="background_rect" width="570px" fill="#90ee90"></rect>
+<circle stroke="#000000" id="circle1" stroke-width="3px" cy="148px" fill="#ffffff" r="119px" cx="719px" transform=""></circle>
+<text id="sample_text_element" style="outline-style:none;" xml:space="preserve" x="226px" text-rendering="geometricPrecision" font-family="Helvetica" y="183px" fill="black" font-size="30px" transform="" text-anchor="middle">Sample Text Element</text>
+</g>
+
+<circle stroke="#000000" id="circle2" stroke-width="3px" cy="195px" fill="#ffffff" r="150px" cx="701px" transform=""></circle>
+</svg>

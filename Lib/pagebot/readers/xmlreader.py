@@ -19,9 +19,16 @@
 import xml.etree.ElementTree as ET
 
 def readXML(path, xPath=None):
-    """Read the XML from path and answer the compiled etree."""
+    """Read the XML from path and answer the compiled etree.
+
+    >>> from pagebot.filepaths import getResourcesPath
+    >>> resourcesPath = getResourcesPath()
+    >>> testSvg = resourcesPath + '/templates/test.svg'
+    >>> root = readHTML(testSvg, xPath=None)
+    >>> #root
+    """
     fileExtension = path.split('.')[-1].lower()
-    assert fileExtension.lower() in ('xml', 'xsl', 'html')
+    assert fileExtension.lower() in ('xml', 'xsl', 'html', 'svg', 'ufo')
     tree = ET.parse(path)
     root = tree.getroot() # Get the root element of the tree.
 
