@@ -25,7 +25,7 @@ jobs:
       after_success:
         - codecov
     - os: osx
-      #language: sh
+      language: sh
       env:
           - HOMEBREW_NO_ANALYTICS=1
           - HOMEBREW_NO_INSTALL_CLEANUP=1
