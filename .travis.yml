@@ -15,7 +15,7 @@ jobs:
       before_install:
         - python --version
         - pip install --upgrade pip
-        - pip install --upgrade pylint pytest pytest-cov codecov
+        - pip install -r test-requirements.txt
       install:
         - pip install -r requirements.txt
       script:
