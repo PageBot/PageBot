@@ -1,12 +1,13 @@
 #https://docs.travis-ci.com/user/languages/python/
 ---
 
-language: python
+#language: python
 
 jobs:
+  fast_finish: true
   include:
     - os: linux
-      #language: python
+      language: python
       dist: bionic
       python: 3.6
       python: 3.7
@@ -24,8 +25,10 @@ jobs:
         - coverage run -m pytest
       after_success:
         - codecov
+    # https://docs.travis-ci.com/user/reference/osx
     - os: osx
-      language: sh
+      osx_image: xcode12.2
+      language: shell
       env:
           - HOMEBREW_NO_ANALYTICS=1
           - HOMEBREW_NO_INSTALL_CLEANUP=1
@@ -43,15 +46,6 @@ jobs:
         - ./scripts/pylint.sh
         - ./scripts/doctests-osx.sh
         - pytest
-    - os: windows
-      #language: python
-      python: 3.6
-      before_install:
-        - python --version
-        - pip install --upgrade pip
-        - pip install --upgrade pytest 
-      install:
-        - pip install -r requirements.txt
 branches:
   only:
     - master
