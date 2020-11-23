@@ -195,6 +195,7 @@ class Document:
         """Gets the context from the view. Should always be initialized."""
         if hasattr(self, 'view') and hasattr(self.view, 'context'):
             return self.view.context
+        return None
 
     context = property(_get_context)
 

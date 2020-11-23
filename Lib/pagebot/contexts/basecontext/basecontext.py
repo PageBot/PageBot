@@ -20,9 +20,9 @@ from math import radians, sin, cos
 import xml.etree.ElementTree as ET
 import PIL
 
-from pagebot.constants import (LEFT, RIGHT, CENTER, DISPLAY_BLOCK,
-        DEFAULT_FRAME_DURATION, DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE,
-        DEFAULT_WIDTH, FILETYPE_SVG, FILETYPE_PDF, DEFAULT_FONT, XXXL)
+from pagebot.constants import (LEFT, RIGHT, CENTER, DEFAULT_FRAME_DURATION,
+        DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_WIDTH, FILETYPE_SVG,
+        FILETYPE_PDF, DEFAULT_FONT, XXXL)
 from pagebot.contexts.basecontext.abstractcontext import AbstractContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.errors import PageBotFileFormatError
