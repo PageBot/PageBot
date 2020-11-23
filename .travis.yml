@@ -1,9 +1,12 @@
 #https://docs.travis-ci.com/user/languages/python/
 ---
-matrix:
+
+language: python
+
+jobs:
   include:
     - os: linux
-      language: python
+      #language: python
       dist: bionic
       python: 3.6
       python: 3.7
@@ -22,7 +25,7 @@ matrix:
       after_success:
         - codecov
     - os: osx
-      language: sh
+      #language: sh
       env:
           - HOMEBREW_NO_ANALYTICS=1
           - HOMEBREW_NO_INSTALL_CLEANUP=1
@@ -32,7 +35,7 @@ matrix:
               packages: python3.9
       before_install:
         - pip3 install --upgrade pip
-        - pip3 install pylint pytest pytest-cov codecov
+        - pip3 install pylint pytest
       install:
         - ./scripts/osx.sh
       script:
@@ -40,9 +43,8 @@ matrix:
         - ./scripts/pylint.sh
         - ./scripts/doctests-osx.sh
         - pytest
-  allow_failures:
     - os: windows
-      language: python
+      #language: python
       python: 3.6
       before_install:
         - python --version

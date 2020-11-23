@@ -27,7 +27,8 @@ def readRE(path, pattern):
     >>> testHtml = resourcesPath + '/templates/test.html'
     >>> testString = '<html><body><p>test paragraph.</p></body></html>'
     >>> import re
-    >>> reNoTags = re.compile(r'\<[^\>]*|([^\<\>]*)')
+    >>> #reNoTags = re.compile(r'\<[^\>]*|([^\<\>]*)')
+    >>> reNoTags = re.compile(r'<[^>]*|([^<>]*)')
     >>> result = readRE(testHtml, reNoTags)
     """
     f = codecs.open(path, mode="r", encoding="utf-8")
