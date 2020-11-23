@@ -1,0 +1,5 @@
+digraph "classes_composer" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{Composer|doc\l|compose(galley, targets, page)\ldebug(s)\l}", shape="record"];
+}

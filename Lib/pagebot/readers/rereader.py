@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 # -----------------------------------------------------------------------------
 #
@@ -19,7 +20,15 @@ import codecs
 
 def readRE(path, pattern):
     """If fileName is pointing to a non-XML file, then try to read and apply
-    the pattern on the content.  Answer the result of the pattern match."""
+    the pattern on the content. Answer the result of the pattern match.
+
+    >>> from pagebot.filepaths import getResourcesPath
+    >>> resourcesPath = getResourcesPath()
+    >>> testHtml = resourcesPath + '/templates/test.html'
+    >>> re = re.compile(r'[abc]')
+    >>> result = re.read(textHtml, re)
+    >>> print(result)
+    """
     f = codecs.open(path, mode="r", encoding="utf-8")
     text = f.read()
     f.close()
