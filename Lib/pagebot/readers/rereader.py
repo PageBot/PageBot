@@ -25,11 +25,17 @@ def readRE(path, pattern):
     >>> from pagebot.filepaths import getResourcesPath
     >>> resourcesPath = getResourcesPath()
     >>> testHtml = resourcesPath + '/templates/test.html'
-    >>> re = re.compile(r'[abc]')
-    >>> result = re.read(textHtml, re)
-    >>> print(result)
+    >>> testString = '<html><body><p>test paragraph.</p></body></html>'
+    >>> import re
+    >>> reNoTags = re.compile(r'\<[^\>]*|([^\<\>]*)')
+    >>> result = readRE(testHtml, reNoTags)
     """
     f = codecs.open(path, mode="r", encoding="utf-8")
     text = f.read()
     f.close()
     return pattern.findall(text)
+
+if __name__ == "__main__":
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
