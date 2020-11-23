@@ -58,6 +58,8 @@ class Document:
     >>> doc.solve()
     Score: 0 Fails: 0
     >>> doc.build()
+    >>> doc = Document(name='TestWhd', whd=(400, 400, 2), padding=(30, 40, 50, 60))
+    >>> doc = Document(name='TestWhd', wh=(400, 300), padding=(30, 40, 50, 60))
     """
 
     # Allows inherited versions of the Page class.
@@ -78,9 +80,8 @@ class Document:
         elif wh is not None:
             # Alternative ways to define size.
             size = wh
-
-        # Also accept size tuples.
-        if size is not None:
+        elif size is not None:
+            # Also accept size tuples.
             w, h, d = point3D(size) # Set
 
         # If no theme is defined, then use the default theme class to create an
@@ -191,10 +192,9 @@ class Document:
     docLib = property(_get_docLib)
 
     def _get_context(self):
+        """Gets the context from the view. Should always be initialized."""
         if hasattr(self, 'view') and hasattr(self.view, 'context'):
             return self.view.context
-        else:
-            return None
 
     context = property(_get_context)
 
@@ -251,6 +251,10 @@ class Document:
         (<Page #66 default (300pt, 400pt)>, (66, 0))
         >>> doc.getPageNumber(page)
         (66, 0)
+        >>> page.pn
+        (66, 0)
+        >>> doc[(65, -1)]
+        <Page #65 default (300pt, 400pt)>
         >>> doc[-10] is None and doc[10000] is None # Answer None if out of range.
         True
         """
@@ -1476,9 +1480,7 @@ class Document:
     def save(self, path, **kwargs):
         """Saves the document in native JSON source code file, representing all
         the current settings, including the current document.view.
-        """
 
-        """
         >>> doc = Document(w=300, h=400)
         >>> doc.save('/tmp/pagebot.document.json') # Saves document as a JSON file.
         """
@@ -1487,7 +1489,8 @@ class Document:
         d = dict(
             class_=self.__class__.__name__,
             name=self.name,
-            rootStyle=asNormalizedJSON(self.rootStyle),
+            # FIXME: unit types still need to be serialized.
+            #rootStyle=asNormalizedJSON(self.rootStyle),
             pages=asNormalizedJSON(self.pages),
             view=asNormalizedJSON(self.view),
         )

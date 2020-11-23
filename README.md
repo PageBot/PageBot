@@ -81,6 +81,7 @@ Bugs, enhancements and requested features can be added to the GitHub issue track
 # External Links
 
 - Download: [PyPi](https://pypi.org/project/pagebot/)
+- Source: [GitHub](https://github.com/PageBot/PageBot)
 - Documentation: [ReadTheDocs](https://pagebot.readthedocs.io/en/latest/)
 - Examples repository: [PageBotExamples](https://github.com/PageBot/PageBotExamples)
 - Continuous integration: [Travis](https://travis-ci.org/PageBot/PageBot)

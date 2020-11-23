@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# pyreverse -p contexts_basecontext_basecontext ../Lib/pagebot/contexts/basecontext/basecontext.py
+# dot -Tpng classes_contexts_basecontext_basecontext.dot -o classes_contexts_basecontext_basecontext.png
+
 import os
 import subprocess
 
