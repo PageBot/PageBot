@@ -1,0 +1,44 @@
+name: PageBot Test Bench
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  test:
+
+    runs-on: macos-latest
+
+    steps:
+    - name: Set up Python 3.7
+      run: |
+        curl https://www.python.org/ftp/python/3.7.6/python-3.7.6-macosx10.9.pkg --output pythonInstaller.pkg
+        sudo installer -pkg pythonInstaller.pkg -target /
+    - name: Check python
+      run: |
+        python3 --version
+        python3 -c "import platform; print('macOS version:', platform.mac_ver()[0])"
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Setup Virtual Environment
+      run: |
+        python3 -m venv venv
+        source venv/bin/activate
+        python -c "import sys; print('\n'.join(sys.path))"
+    - name: Install
+      run: |
+        source venv/bin/activate
+        pip install -r ./requirements.txt
+        pip install .
+    - name: Run tests
+      run: |
+        - mkdir _export
+        source venv/bin/activate
+        - ./scripts/pylint.sh
+        - ./scripts/doctests-osx.sh
+        - pytest
