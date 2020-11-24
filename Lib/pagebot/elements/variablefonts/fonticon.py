@@ -35,7 +35,7 @@ class FontIcon(Element):
     >>> fi.size
     (120pt, 160pt)
     """
-    LABEL_RTRACKING = 0.02
+    LABEL_TRACKING = 0.02
     LABEL_RLEADING = 1.3
 
     def __init__(self, f, name=None, label=None, title=None, eId=None, c='F',
@@ -170,7 +170,7 @@ class FontIcon(Element):
             bs = c.newString(self.title,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_TRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize
             c.text(bs, (w/2-tw/2, self.h+th/2))
@@ -180,7 +180,7 @@ class FontIcon(Element):
             bs = c.newString(self.name,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_TRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize
             c.text(bs, (w/2-tw/2, y))
@@ -189,7 +189,7 @@ class FontIcon(Element):
             bs = c.newString(self.label,
                                    style=dict(font=self.labelFont.path,
                                               textFill=blackColor,
-                                              rTracking=self.LABEL_RTRACKING,
+                                              tracking=self.LABEL_TRACKING,
                                               fontSize=labelSize))
             tw, th = bs.textSize
             c.text(bs, (w/2-tw/2, y))

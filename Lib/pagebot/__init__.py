@@ -26,7 +26,8 @@ STATUS = 'beta'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
-contextTypes = ('DrawBot', 'Flat', 'Html', 'svg')
+contextTypes = ('Flat', 'Html', 'svg')
+contextTypesOSX = ('DrawBot',)
 
 def getContext(contextType=None, resourcesPath=None):
     """Returns a single context."""
@@ -67,6 +68,10 @@ def getAllContexts():
 
     for contextType in contextTypes:
         contexts.append(getPlatformContext(contextType=contextType))
+    if platform == 'darwin':
+        for contextType in contextTypesOSX:
+            contexts.append(getPlatformContext(contextType=contextType))
+
     return contexts
 
 def getFontByName(name):
