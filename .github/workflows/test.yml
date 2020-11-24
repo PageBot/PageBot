@@ -34,8 +34,7 @@ jobs:
         pip3 search pagebot
         source venv/bin/activate
         ./scripts/pylint.sh
-        #./scripts/doctests.sh
-        #./scripts/doctests-linux.sh
+        ./scripts/tests-linux.sh
         pytest
   test-macos:
     runs-on: macos-latest
@@ -65,6 +64,5 @@ jobs:
         pip3 search pagebot
         source venv/bin/activate
         ./scripts/pylint.sh
-        #./scripts/doctests.sh
-        #./scripts/doctests-osx.sh
-        pytest
+        ./scripts/tests-osx.sh 
+        #pytest

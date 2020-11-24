@@ -21,7 +21,7 @@ jobs:
       script:
         - mkdir _export
         - ./scripts/pylint.sh
-        - ./scripts/doctests-linux.sh
+        - ./scripts/tests-linux.sh
         - coverage run -m pytest
       after_success:
         - codecov
@@ -44,7 +44,7 @@ jobs:
       script:
         - mkdir _export
         - ./scripts/pylint.sh
-        - ./scripts/doctests-osx.sh
+        - ./scripts/tests-osx.sh
         - pytest
 branches:
   only:
