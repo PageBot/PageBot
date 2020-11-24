@@ -9,7 +9,35 @@ on:
     - master
 
 jobs:
-  test:
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check python
+      run: |
+        python3 --version
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Setup Virtual Environment
+      run: |
+        python3 -m venv venv
+        source venv/bin/activate
+        python -c "import sys; print('\n'.join(sys.path))"
+    - name: Install
+      run: |
+        source venv/bin/activate
+        pip3 install -r ./requirements.txt
+        pip3 install -r ./test-requirements.txt
+    - name: Run tests
+      run: |
+        mkdir _export
+        pip3 search pagebot
+        source venv/bin/activate
+        ./scripts/pylint.sh
+        #./scripts/doctests.sh
+        #./scripts/doctests-linux.sh
+        pytest
+  test-macos:
     runs-on: macos-latest
     steps:
     - name: Check python
@@ -37,6 +65,6 @@ jobs:
         pip3 search pagebot
         source venv/bin/activate
         ./scripts/pylint.sh
-        ./scripts/doctests.sh
+        #./scripts/doctests.sh
         #./scripts/doctests-osx.sh
-        #pytest
+        pytest
