@@ -37,7 +37,13 @@ class Gradient:
     startRadius radius around the startPoint in degrees (optionally)
     endRadius radius around the endPoint in degrees (optionally)
     Setting a gradient will ignore the fill.
+
+
+    >>> g = Gradient()
+    >>> g.radial
+    False
     """
+
     def __init__(self, start=None, end=None, colors=None, locations=None,
             startRadius=None, endRadius=None):
         #assert color is None or isinstance(color, Color)

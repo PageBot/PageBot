@@ -274,7 +274,7 @@ class Element(Alignments, ClipPath, Conditions, Flow, Imaging, Shrinking,
         # Generic naming and title.
         # Optional name of an element. Used as base for # id in case of
         # HTML/CSS export.
-        self.name = name
+        self.name = name or 'Untitled'
         # Optional to make difference between title name, style property
         self.title = title or name
 

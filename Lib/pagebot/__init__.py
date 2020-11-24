@@ -44,7 +44,12 @@ def getContext(contextType=None, resourcesPath=None):
 
 def getContexts(types):
     """Returns multiple contexts, contextTypes should be specified as a
-    list."""
+    list.
+
+
+    >>> getContexts(['Flat', 'Html'])
+    [<FlatContext>, <HtmlContext>]
+    """
     contexts = []
 
     for contextType in types:
@@ -54,7 +59,10 @@ def getContexts(types):
     return contexts
 
 def getAllContexts():
-    """Returns all available contexts."""
+    """Returns all available contexts.
+
+    >>> allContext = getAllContexts()
+    """
     contexts = []
 
     for contextType in contextTypes:
@@ -62,6 +70,9 @@ def getAllContexts():
     return contexts
 
 def getFontByName(name):
+    """
+    >>> getFontByName('PageBot')
+    """
     return findFont(name)
 
 '''
@@ -88,6 +99,11 @@ or directly as:
 pbGlobals = {}
 
 class Globals:
+    """
+    >>> g = Globals()
+    >>> g['bla'] = 'bla'
+    """
+
     # Allow adding by attribute and key.
     def __setitem__(self, key, value):
         setattr(self, key, value)
@@ -102,7 +118,10 @@ def getGlobals(scriptId):
     windows can be used as UI for scripts that perform as batch process.  Note
     that it is up to the responsibilty of individual scripts to create uniqued
     ids for attributes. Also they need to know from each other, in case
-    information is exchanged."""
+    information is exchanged.
+
+    >>> g = getGlobals('testScriptID')
+    """
     if not scriptId in pbGlobals:
         pbGlobals[scriptId] = Globals()
     return pbGlobals[scriptId]

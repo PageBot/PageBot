@@ -31,6 +31,11 @@ class Publication(Element):
     >>> from pagebot import getContext
     >>> context = getContext()
     >>> p = Publication(getResourcesPath(), context=context) # Finder created from path
+    >>> p.getAPI()
+    {}
+    >>> p.newDocument()
+    <Document "Untitled" Pages=1 Templates=1 Views=1>
+    >>> p.export()
     """
     FINDER_CLASS = Finder
 
