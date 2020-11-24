@@ -12,10 +12,11 @@ jobs:
   test:
     runs-on: macos-latest
     steps:
-    - name: Set up Python 3.7
+    - name: Set up Python 3.9
       run: |
-        curl https://www.python.org/ftp/python/3.7.6/python-3.7.6-macosx10.9.pkg --output pythonInstaller.pkg
-        sudo installer -pkg pythonInstaller.pkg -target /
+          brew install python@3.9
+          #curl https://www.python.org/ftp/python/3.7.6/python-3.7.6-macosx10.9.pkg --output pythonInstaller.pkg
+          #sudo installer -pkg pythonInstaller.pkg -target /
     - name: Check python
       run: |
         python3 --version
@@ -35,11 +36,12 @@ jobs:
         pip install -r ./test-requirements.txt
         git clone https://github.com/PageBot/PageBotOSX.git
         pip install -r ./PageBotOSX/requirements.txt
-        pip search pagebot
     - name: Run tests
       run: |
         mkdir _export
+        pip search pagebot
         source venv/bin/activate
         ./scripts/pylint.sh
+        ./scripts/doctests.sh
         #./scripts/doctests-osx.sh
         #pytest
