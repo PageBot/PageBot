@@ -37,8 +37,8 @@ jobs:
         pip install -r ./test-requirements.txt
     - name: Run tests
       run: |
-        - mkdir _export
+        mkdir _export
         source venv/bin/activate
-        - ./scripts/pylint.sh
-        - ./scripts/doctests-osx.sh
-        - pytest
+        ./scripts/pylint.sh
+        ./scripts/doctests-osx.sh
+        pytest
