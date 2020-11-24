@@ -35,10 +35,11 @@ jobs:
         pip install -r ./test-requirements.txt
         git clone https://github.com/PageBot/PageBotOSX.git
         pip install -r ./PageBotOSX/requirements.txt
+        pip search pagebot
     - name: Run tests
       run: |
         mkdir _export
         source venv/bin/activate
         ./scripts/pylint.sh
-        ./scripts/doctests-osx.sh
-        pytest
+        #./scripts/doctests-osx.sh
+        #pytest
