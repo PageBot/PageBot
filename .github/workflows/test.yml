@@ -10,9 +10,7 @@ on:
 
 jobs:
   test:
-
     runs-on: macos-latest
-
     steps:
     - name: Set up Python 3.7
       run: |
@@ -35,6 +33,8 @@ jobs:
         source venv/bin/activate
         pip install -r ./requirements.txt
         pip install -r ./test-requirements.txt
+        git clone https://github.com/PageBot/PageBotOSX.git
+        pip install -r ./PageBotOSX/requirements.txt
     - name: Run tests
       run: |
         mkdir _export
