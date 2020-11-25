@@ -14,8 +14,9 @@
 #
 #     glyphanalyzer.py
 #
-#     Implements a PageBot font classes to get info from a TTFont.
+#     Analysis of a TTFont glyph.
 #
+
 import sys
 import weakref
 
@@ -27,10 +28,40 @@ from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 SPANSTEP = 4
 
 class GlyphAnalyzer:
+    """Receives a TTFont glyph and retrieves properties such as stems, bars and
+    dimensions.
 
-    FUZZ = 4 # Default amount that a value can be off while treated the same.
+    >>> from pagebot.fonttoolbox.objects.font import findFont
+    >>> f = findFont('PageBot-Regular')
+    >>> g = f['H']
+    >>> g
+    <Glyph 'H' (Pts:12, Cnt:1, Cmp:0)>
+    >>> ga = GlyphAnalyzer(g)
+    >>> ga
+    <Analyzer of PageBot Regular[H]>
+    >>> ga.name
+    'H'
+    >>> ga.font
+    <Font PageBot-Regular>
+    >>> ga.parent
+    <Analyzer of PageBot Regular>
+    >>> ga.width
+    684
+    >>> ga.dimensions
+    []
+    >>> ga.verticals
+    {72: [Vertical [pc[index:0](72,0) vertical]], 156: [Vertical [pc[index:2](156,658) vertical, pc[index:10](156,297) vertical]], 528: [Vertical [pc[index:4](528,376) vertical, pc[index:8](528,0) vertical]], 612: [Vertical [pc[index:6](612,658) vertical]]}
+    >>> ga.horizontals
+    {658: [Horizontal [pc[index:1](72,658) horizontal, pc[index:5](528,658) horizontal]], 376: [Horizontal [pc[index:3](156,376) horizontal]], 0: [Horizontal [pc[index:7](612,0) horizontal, pc[index:11](156,0) horizontal]], 297: [Horizontal [pc[index:9](528,297) horizontal]]}
+    >>> ga.stems
+    {}
 
-    VERTICAL_CLASS = Vertical # Allow inheriting classes to change this
+    """
+
+    # Default amount that a value can be off while treated the same.
+    FUZZ = 4
+    # Allow inheriting classes to change this.
+    VERTICAL_CLASS = Vertical
     HORIZONTAL_CLASS = Horizontal
     STEM_CLASS = Stem
     BAR_CLASS = Bar
@@ -38,25 +69,33 @@ class GlyphAnalyzer:
     VERTICAL_COUNTER_CLASS = VerticalCounter
 
     def __init__(self, glyph):
-        self.glyph = glyph # Set weakref to glyph
+        # Set weakref to glyph.
+        self.glyph = glyph
         self.reset()
 
     def reset(self):
         """Clear all cached value to force recalculation."""
         # Get cache initialize on first access by any property.
         self._horizontals = None
-        self._stems = None # Recognized stems, so not filtered by FloqMemes
-        self._stem = None # Holds cache of the left most stem found
-        self._roundStems = None # Recognized round stems, not filtered by FloqMemes
+        # Recognized stems, so not filtered by Memes.
+        self._stems = None
+        # Holds cache of the left most stem found.
+        self._stem = None
+        # Recognized round stems, not filtered by Memes.
+        self._roundStems = None
         self._straightRoundStems = None
         self._allStems = None
         self._allHorizontalCounters = None
 
         self._verticals = None
-        self._bars = None # Recognized bars, so not filtered by FloqMemes
-        self._roundBars = None # Recognized round bars.
-        self._straightRoundBars = None # Bars with round on one side and straight on the other size.
-        self._allBars = None # Collection of all types of bars
+        # Recognized bars, so not filtered by Memes.
+        self._bars = None
+        # Recognized round bars..
+        self._roundBars = None
+        # Bars with round on one side and straight on the other size..
+        self._straightRoundBars = None
+        # Collection of all types of bars.
+        self._allBars = None
         self._allVerticalCounters = None
 
         self._blueBars = None # Collect bloeBars from H on property call.
@@ -113,9 +152,10 @@ class GlyphAnalyzer:
     rightMargin = property(_get_rightMargin)
 
     def _get_dimensions(self):
+        # TODO: Needs to be written
+        # User defined dimension references, overruling analyzer findings (UFO only).
         if self._dimensions is None:
-            # TODO: Needs to be written
-            self._dimensions = [] # User defined dimension references, overruling analyzer findings (UFO only)
+            self._dimensions = []
         return self._dimensions
     dimensions = property(_get_dimensions)
 
@@ -161,8 +201,8 @@ class GlyphAnalyzer:
     #   B L A C K
 
     def spanRoundsOnBlack(self, pc0, pc1):
-        """Answers if the line between *pc0* and
-        *pc1* just spans black area."""
+        """Answers if the line between *pc0* and *pc1* just spans black
+        area."""
         return self.lineOnBlack(pc0, pc1)
 
     def middleLineOnBlack(self, pc0, pc1, step=SPANSTEP):
@@ -190,35 +230,42 @@ class GlyphAnalyzer:
         return False
 
     def spanBlack(self, p0, p1, step=SPANSTEP):
-        """The spanBlack method answers if the number
-        of recursive steps between p1 and p2 are on black area
-        of the glyph. If step is smaller than the distance between the points,
-        then just check in the middle of the line.  The method does not check
-        on the end points of the segment, allowing to test these separate
-        through self.onBlack or self.coveredInBlack."""
+        """The spanBlack method answers if the number of recursive steps
+        between p1 and p2 are on black area of the glyph. If step is smaller
+        than the distance between the points, then just check in the middle of
+        the line.  The method does not check on the end points of the segment,
+        allowing to test these separate through self.onBlack or
+        self.coveredInBlack."""
         dx = p1[0] - p0[0]
         dy = p1[1] - p0[1]
-        distance = dx*dx + dy*dy # Save sqrt time, compare with square of step
+        # Save sqrt time, compare with square of step.
+        distance = dx*dx + dy*dy
         m = p0[0] + dx/2, p0[1] + dy/2
-        result = self.onBlack(m) # Check the middle of the vector distance.
-        if distance > step*step: # Check for the range of steps if the middle point of the line is still on black
+        # Check the middle of the vector distance..
+        result = self.onBlack(m)
+        # Check for the range of steps if the middle point of the line is still on black.
+        if distance > step*step:
             result = result and self.spanBlack(p0, m, step) and self.spanBlack(m, p1, step)
+
         # Check if distance is still larger than step, otherwise just check in the middle
         return result
 
     #   W H I T E
 
     def spanWhite(self, p0, p1, step=SPANSTEP):
-        """The **spanWhite** method answers if the number
-        of recursive steps between *pc0* and *pc1* are all on white
-        area of the glyph. If step is smaller than the distance between the
-        points, then just check in the middle of the line.  """
+        """The **spanWhite** method answers if the number of recursive steps
+        between *pc0* and *pc1* are all on white area of the glyph. If step is
+        smaller than the distance between the points, then just check in the
+        middle of the line.  """
         dx = p1[0] - p0[0]
         dy = p1[1] - p1[1]
-        distance = dx*dx + dy*dy # Save sqrt time, compare with square of step
+        # Save sqrt time, compare with square of step.
+        distance = dx*dx + dy*dy
         m = p0[0] + dx/2, p0[1] + dy/2
-        result = self.onWhite(m) # Just take the middle of this small distance.
-        if distance > step*step: # Check for the range of steps if that point of the line is still on black
+        # Just take the middle of this small distance..
+        result = self.onWhite(m)
+        # Check for the range of steps if that point of the line is still on black.
+        if distance > step*step:
             result = result and self.spanWhite(p0, m, step) and self.spanWhite(m, p1, step)
         # Check if distance is still larger than step, otherwise just check in the middle
         return result
@@ -233,15 +280,15 @@ class GlyphAnalyzer:
         return not self.onBlack(p)
 
     def overlappingLinesInWindowOnBlack(self, pc0, pc1, step=SPANSTEP):
-        """Answers if the vertical span between *pc0*
-        and *pc1* just spans black area, by stepping from a point on one
-        line to a point on the other line. The trick is to fine the right
-        points. If the line it too angled (e.g. under certain circumstances the
-        line between the middle points is almost parallel to the line, then our
-        trick with testing on the blackness the 4 one-unit points around a
-        point fails, when the segments is tested close to one of the main
-        points. So we need to test on from the middle of the overlapping window
-        perpendicular to the other line."""
+        """Answers if the vertical span between *pc0* and *pc1* just spans
+        black area, by stepping from a point on one line to a point on the
+        other line. The trick is to fine the right points. If the line it too
+        angled (e.g. under certain circumstances the line between the middle
+        points is almost parallel to the line, then our trick with testing on
+        the blackness the 4 one-unit points around a point fails, when the
+        segments is tested close to one of the main points. So we need to test
+        on from the middle of the overlapping window perpendicular to the other
+        line."""
         pp0, pp1 = pc0.getProjectedWindowLine(pc1)
         return not None in (pp0, pp1) and self.lineOnBlack(pp0, pp1, step)
 
@@ -280,10 +327,12 @@ class GlyphAnalyzer:
         self._stems = stems = {}
         self._roundStems = roundStems = {}
         self._straightRoundStems = straightRoundStems = {}
-        self._allHorizontalCounters = horizontalCounters = {} # Space between all neighboring stems, running over white only.
+        # Space between all neighboring stems, running over white only.
+        self._allHorizontalCounters = horizontalCounters = {}
 
         verticals = self.verticals
-        checked = set() # Store what we checked, to avoid doubles in the loops
+        # Store what we checked, to avoid doubles in the loops.
+        checked = set()
 
         for _, vertical1 in sorted(verticals.items()): # x1, vertical1
             for _, vertical2 in sorted(verticals.items()): # x2, vertical2
@@ -501,9 +550,9 @@ class GlyphAnalyzer:
     #   H O R I Z O N T A L  C O U N T E R
 
     def isHorizontalCounter(self, pc0, pc1, tolerance=0):
-        """Answers is the connection between pc0.x and pc1.x
-        is running entirely over white, and they both are some sort of
-        horizontal extreme. The connection is a “white stem”."""
+        """Answers is the connection between pc0.x and pc1.x is running
+        entirely over white, and they both are some sort of horizontal extreme.
+        The connection is a “white stem”."""
         if not (pc0.isHorizontalRoundExtreme(tolerance) or pc0.isVertical(tolerance)):
             return False
         if not (pc1.isHorizontalRoundExtreme(tolerance) or pc1.isVertical(tolerance)):
@@ -733,7 +782,8 @@ class GlyphAnalyzer:
     # Answers the combination dict of bars and round bars.
     def _get_allBars(self):
         """Collect all bars in the dictionary with their value as key.
-        BlueBars are not added to self._allBars, to be addressed separately from self.blueBars """
+        BlueBars are not added to self._allBars, to be addressed separately
+        from self.blueBars """
         if self._allBars is None:
             self.findBars()
             self._allBars = {}
@@ -812,3 +862,8 @@ class GlyphAnalyzer:
     def _get_minX(self):
         return self.glyph.minX
     minX = property(_get_minX)
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
