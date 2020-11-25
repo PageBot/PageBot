@@ -12,11 +12,12 @@
 #     Supporting Flat, xxyxyz.org/flat
 # -----------------------------------------------------------------------------
 #
-#     inspectfont.py
+#     fontinfo.py
 #
 #     Implements info functions on font info.
 #
-#from pagebot.fonttoolbox.ttftools import getBestCmap
+
+# We should use getBestCmap() provided by fontTools.
 
 class cached_property:
     """

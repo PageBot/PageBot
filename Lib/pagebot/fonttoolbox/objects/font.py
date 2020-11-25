@@ -35,7 +35,7 @@ except:
 
 from pagebot.constants import *
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
-from pagebot.toolbox.transformer import path2FontName, path2Extension
+from pagebot.toolbox.transformer import path2FontName, path2Extension, asFormatted
 from pagebot.fonttoolbox.analyzers.fontanalyzer import FontAnalyzer
 from pagebot.fonttoolbox.fontpaths import getFontPaths
 from pagebot.fonttoolbox.objects.glyph import Glyph
@@ -158,7 +158,8 @@ def findFont(fontPath, default=None, lazy=True):
     >>> notSkiaFont is None
     True
     >>> # Default is a font.
-    >>> notSkiaFont = findFont('Skia-cannot-be-found', default=f) # Set RobotoFont as default
+    >>> # Set RobotoFont as default.
+    >>> notSkiaFont = findFont('Skia-cannot-be-found', default=f)
     >>> notSkiaFont is f # Found robotoFont instead
     True
     >>> # Default is a name.
@@ -194,7 +195,6 @@ def getFontPath(font):
     >>> path = getFontPath('PageBot-Regular')
     >>> path.endswith('PageBot-Regular.ttf')
     True
-
     """
     #assert isinstance(font, Font)
 
@@ -274,8 +274,7 @@ def getScaledLocation(vf, normalizedLocation):
 
     The optical size [opsz] is supposed to contain the font size, so it is not
     scaled. If [opsz] is not defined, then set it to default, if the axis
-    e xist.
-
+    exist.
 
     >>> from pagebot.fonttoolbox.objects.font import findFont
     >>> font = findFont('AmstelvarAlpha-VF')
@@ -296,49 +295,50 @@ def getScaledLocation(vf, normalizedLocation):
 
     return scaledLocation
 
-def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
+def getInstance2(vf, location=None, dstPath=None, name=None,
         opticalSize=None, styleName=None, cached=True, lazy=True):
     """Answers the VF-TTFont instance at location (created by
     fontTools.varLib.mutator.instantiateVariableFont) packed as Font instance.
-    """
-    """
+
     >>> vf = findFont('Amstelvar-Roman-VF')
-    >>> instance = getInstance(vf, opticalSize=8)
+    >>> instance = getInstance2(vf, opticalSize=8)
     >>> instance
     <Font Amstelvar-Roman-VF-opsz8>
     >>> instance.location
     {'opsz': 8}
     >>> instance['H'].width
     1740
-    >>> instance = getInstance(vf, location=dict(wght=300), cached=False, opticalSize=150)
+    >>> instance = getInstance2(vf, location=dict(wght=300), cached=False, opticalSize=150)
+    """
+    """
     >>> instance.location
     {'wght': 300, 'opsz': 150}
     >>> instance['H'].width
     1740
-    >>> instance = getInstance(vf, path='/tmp/TestVariableFontInstance.ttf', opticalSize=8)
+    >>> instance = getInstance2(vf, path='/tmp/TestVariableFontInstance.ttf', opticalSize=8)
     >>> instance
     <Font TestVariableFontInstance>
     """
 
-    """
     if location is None:
         location = {}
     if opticalSize is not None:
         location['opsz'] = opticalSize
 
-    if path is None and cached:
-        # Make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
-        # Only add axis values to the name that are not default.
-        instanceName = ""
-        for tag, value in sorted(location.items()):
-            if value != vf.axes[tag][1]:
-                instanceName += "-%s%s" % (tag, asFormatted(value))
-        instanceFileName = '.'.join(vf.path.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
+    #if path is None and cached:
 
-        targetDirectory = getInstancePath()
-        if not os.path.exists(targetDirectory):
-            os.makedirs(targetDirectory)
-        path = targetDirectory + instanceFileName
+    # Make a custom file name from the location e.g. VariableFont-wghtXXX-wdthXXX.ttf
+    # Only add axis values to the name that are not default.
+    instanceName = ""
+    for tag, value in sorted(location.items()):
+        if value != vf.axes[tag][1]:
+            instanceName += "-%s%s" % (tag, asFormatted(value))
+    instanceFileName = '.'.join(vf.path.split('/')[-1].split('.')[:-1]) + instanceName + '.ttf'
+
+    targetDirectory = getInstancePath()
+    if not os.path.exists(targetDirectory):
+        os.makedirs(targetDirectory)
+    path = targetDirectory + instanceFileName
 
     if cached and os.path.exists(path):
         instance = Font(path=path, name=name, location=location, opticalSize=opticalSize)
@@ -350,7 +350,6 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
             instance.save()
 
     return instance
-    """
 
 def getInstance(pathOrFont, location, dstPath=None, styleName=None,
         opticalSize=None, normalize=True, cached=True, lazy=True,
