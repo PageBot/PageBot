@@ -56,8 +56,9 @@ jobs:
         source venv/bin/activate
         pip3 install -r ./requirements.txt
         pip3 install -r ./test-requirements.txt
-        git clone https://github.com/PageBot/PageBotOSX.git
-        pip3 install -r ./PageBotOSX/requirements.txt
+        pip3 install pagebotosx
+        #git clone https://github.com/PageBot/PageBotOSX.git
+        #pip3 install -r ./PageBotOSX/requirements.txt
     - name: Run tests
       run: |
         mkdir _export
