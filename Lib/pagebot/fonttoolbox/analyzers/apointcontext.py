@@ -28,7 +28,20 @@ from pagebot.fonttoolbox.analyzers.apoint import APoint
 def calculateAngle(p1, p2, inDegrees=True):
     """Calculate the angle between points p1 and p2. Points can be either 2D or
     3D point tuples or Point instances. In the case of Point3D, only the 2D
-    projection in (x, y) plane is calculated."""
+    projection in (x, y) plane is calculated.
+
+
+    >>> p1 = (0, 0)
+    >>> p2 = (100, 100)
+    >>> angle = calculateAngle(p1, p2)
+    >>> angle
+    45.0
+    >>> p1 = (0, 0)
+    >>> p2 = (0, 30)
+    >>> angle = calculateAngle(p1, p2, inDegrees=False)
+    >>> angle == math.radians(90)
+    True
+    """
     xDiff = p2[0] - p1[0]
     yDiff = p2[1] - p1[1]
     angle = math.atan2(yDiff, xDiff)
@@ -40,7 +53,18 @@ def angleOfLines(p1, p2, q1, q2, inDegrees=True):
     """Answers the angle difference (radials or default degrees) between
     p1-->p2 and q1-->q2. Points can be either 2D or 3D point tuples or Point
     instances. In the case of Point3D, only the 2D projection in (x, y) plane
-    is calculated."""
+    is calculated.
+
+    >>> p1 = (0, 0)
+    >>> p2 = (100, 100)
+    >>> q1 = (100, 0)
+    >>> q2 = (0, 100)
+    >>> angleOfLines(p1, p2, q1, q1)
+    -45.0
+    >>> angle = angleOfLines(q1, q2, p1, p1, inDegrees=False)
+    >>> angle == math.radians(-135.0)
+    True
+    """
     angle1 = calculateAngle(p1, p2, inDegrees)
     angle2 = calculateAngle(q1, q2, inDegrees)
     angle = angle2 - angle1
@@ -57,7 +81,10 @@ class APointContext:
     from the point context in relation to the neighbor points. The total of 7
     points is derived from the average construction of a serif, so it is
     possible to hold (and interpret) an entire serif sequence inside one point
-    context."""
+    context.
+
+
+    """
     PARALLEL_TOLERANCE = 2 # Difference tolerance angle in degrees to take point contexts as parallel
 
     def __init__(self, points, index=None, contourIndex=None, clockwise=None, glyphName=None):
@@ -73,6 +100,14 @@ class APointContext:
         self._angle = None  # Cache axis once calculated.
 
     def __getitem__(self, index):
+        """
+        >>> o = APoint((0, 0))
+        >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
+        >>> pc1[0]
+        100
+        >>> pc1[1]
+        200
+        """
         return self.p[index]
 
     def __lt__(self, p):
@@ -216,6 +251,14 @@ class APointContext:
     normalizedAngle = property(_get_normalizedAngle)
 
     def __repr__(self):
+        """
+        >>> o = APoint((0, 0))
+        >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o), index=1, contourIndex=2, clockwise=True, glyphName='bla')
+        >>> pc1[1]
+        200
+        >>> print(pc1)
+        pc[index:1](100,200) (bla)
+        """
         s = 'pc'
         if self.index is not None:
             s += '[index:%s]' % self.index
