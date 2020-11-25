@@ -355,22 +355,47 @@ def FIXME_getInstance(vf, location=None, dstPath=None, name=None,
 def getInstance(pathOrFont, location, dstPath=None, styleName=None,
         opticalSize=None, normalize=True, cached=True, lazy=True,
         kerning=None):
-    """The getInstance refers to the file of the source variable font. The
-    nLocation is dictionary axis locations of the instance with values between
-    (0, 1000), e.g. dict(wght=0, wdth=1000) or values between (0, 1), e.g.
-    dict(wght=0.2, wdth=0.6). Set normalize to False if the values in location
-    already are matching the axis min/max of the font. If there is a [opsz]
-    Optical Size value defined, then store that information in the
+    """The getInstance function refers to the file of the source variable font.
+    The nLocation is dictionary axis locations of the instance with values
+    between (0, 1000), e.g. dict(wght=0, wdth=1000) or values between (0, 1),
+    e.g.  dict(wght=0.2, wdth=0.6). Set normalize to False if the values in
+    location already are matching the axis min/max of the font. If there is a
+    [opsz] Optical Size value defined, then store that information in the
     font.info.opticalSize.
 
     The optional *styleName* overwrites the *font.info.styleName* of the
-    *ttFont* or the automatic location name."""
+    *ttFont* or the automatic location name.
+
+
+    >>> vf = findFont('Amstelvar-Roman-VF')
+    >>> instance = getInstance(vf, location={}, opticalSize=8)
+    >>> instance
+    <Font Amstelvar-Roman-VF-opsz8>
+    """
+    """
+    >>> instance.location
+    {'opsz': 8}
+    >>> instance['H'].width
+    1740
+    >>> instance = getInstance(vf, location=dict(wght=300), cached=False, opticalSize=150)
+    >>> instance.location
+    {'wght': 300, 'opsz': 150}
+    >>> instance['H'].width
+    1740
+    >>> instance = getInstance(vf, path='/tmp/TestVariableFontInstance.ttf', opticalSize=8)
+    >>> instance
+    <Font Amstelvar-Roman-VF-wght300>
+    """
     # If forcing flag is undefined, then get info from location.
     if opticalSize is None:
         opticalSize = location.get('opsz')
+    else:
+        location['opsz'] = opticalSize
+
     instance = makeInstance(pathOrFont, location, dstPath=None, normalize=normalize, cached=cached,
         lazy=lazy, kerning=kerning)
-    # Answer the generated Variable Font instance. Add [opsz] value if is
+
+    # Answers the generated Variable Font instance. Add [opsz] value if is
     # defined in the location, otherwise None.
     instance.info.opticalSize = opticalSize
     instance.info.location = location

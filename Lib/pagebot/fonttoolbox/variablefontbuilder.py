@@ -173,7 +173,10 @@ def getVarFontInstance(fontOrPath, location, styleName=None, normalize=True,
     location already are matching the axis min/max of the font. If there is a
     [opsz] Optical Size value defined, then store that information in the
     font.info.opticalSize. The optional *styleName* overwrites the
-    *font.info.styleName* of the *ttFont* or the automatic location name."""
+    *font.info.styleName* of the *ttFont* or the automatic location name.
+
+    TODO: move to fonttoolbox.objects.font?
+    """
     if isinstance(fontOrPath, str):
         varFont = getFont(fontOrPath, lazy=lazy)
     else:
