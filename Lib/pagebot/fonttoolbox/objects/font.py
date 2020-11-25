@@ -26,12 +26,8 @@ import os
 from fontTools.ttLib import TTFont, TTLibError
 from fontTools.ttLib.tables._g_l_y_f import GlyphCoordinates
 from fontTools.varLib.models import supportScalar, normalizeLocation
-
-try:
-    # TODO: remove?
-    from fontTools.varLib.iup import iup_delta
-except:
-    from fontTools.varLib.mutator import iup_delta
+from fontTools.varLib.instancer import instantiateVariableFont
+from fontTools.varLib.iup import iup_delta
 
 from pagebot.constants import *
 from pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF import OTFKernReader
@@ -308,9 +304,9 @@ def getInstance2(vf, location=None, dstPath=None, name=None,
     {'opsz': 8}
     >>> instance['H'].width
     1740
+    """
+    """
     >>> instance = getInstance2(vf, location=dict(wght=300), cached=False, opticalSize=150)
-    """
-    """
     >>> instance.location
     {'wght': 300, 'opsz': 150}
     >>> instance['H'].width
