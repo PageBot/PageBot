@@ -67,4 +67,4 @@ jobs:
         source venv/bin/activate
         ./scripts/pylint.sh
         ./scripts/tests-osx.sh 
-        #pytest
+        pytest

@@ -1,0 +1,5 @@
+# https://github.com/src-d/hercules
+# https://github.com/marketplace/actions/hercules-insights
+- name: Hercules Insights
+  uses: src-d/hercules@v10.7.2
+
