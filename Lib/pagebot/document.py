@@ -16,7 +16,8 @@
 import copy
 import codecs
 from pagebot import getContext
-from pagebot.stylelib import styleLib # Library with named, predefined style dicts.
+# Library with named, predefined style dicts.
+from pagebot.stylelib import styleLib
 from pagebot.conditions.score import Score
 from pagebot.elements.page import Page
 from pagebot.elements.template import Template
