@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    pagebot.contributions.adobe
    pagebot.contributions.filibuster

@@ -20,7 +20,6 @@ pagebot.fonttoolbox.unicodes.unicoderangesdata module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

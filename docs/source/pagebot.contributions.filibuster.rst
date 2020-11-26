@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    pagebot.contributions.filibuster.content
 
@@ -35,6 +36,14 @@ pagebot.contributions.filibuster.example module
    :undoc-members:
    :show-inheritance:
 
+pagebot.contributions.filibuster.samplecontent module
+-----------------------------------------------------
+
+.. automodule:: pagebot.contributions.filibuster.samplecontent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pagebot.contributions.filibuster.test module
 --------------------------------------------
 
@@ -50,7 +59,6 @@ pagebot.contributions.filibuster.titlecase module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

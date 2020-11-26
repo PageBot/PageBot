@@ -20,7 +20,6 @@ pagebot.contributions.adobe.kerndump.getKerningPairsFromOTF module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

@@ -12,7 +12,6 @@ pagebot.elements.web.ui.slide module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

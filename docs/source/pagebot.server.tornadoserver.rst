@@ -1,22 +1,21 @@
-pagebot.publications.posters package
+pagebot.server.tornadoserver package
 ====================================
 
 Submodules
 ----------
 
-pagebot.publications.posters.baseposter module
+pagebot.server.tornadoserver.baseserver module
 ----------------------------------------------
 
-.. automodule:: pagebot.publications.posters.baseposter
+.. automodule:: pagebot.server.tornadoserver.baseserver
    :members:
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
-.. automodule:: pagebot.publications.posters
+.. automodule:: pagebot.server.tornadoserver
    :members:
    :undoc-members:
    :show-inheritance:

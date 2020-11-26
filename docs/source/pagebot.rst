@@ -5,40 +5,24 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
+   pagebot.base
    pagebot.conditions
    pagebot.contexts
    pagebot.contributions
    pagebot.elements
    pagebot.fonttoolbox
    pagebot.mathematics
-   pagebot.mining
-   pagebot.publications
    pagebot.readers
    pagebot.resources
    pagebot.server
-   pagebot.templates
    pagebot.themes
    pagebot.toolbox
+   pagebot.web
 
 Submodules
 ----------
-
-pagebot.article module
-----------------------
-
-.. automodule:: pagebot.article
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pagebot.composer module
------------------------
-
-.. automodule:: pagebot.composer
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 pagebot.constants module
 ------------------------
@@ -80,6 +64,14 @@ pagebot.gradient module
    :undoc-members:
    :show-inheritance:
 
+pagebot.publication module
+--------------------------
+
+.. automodule:: pagebot.publication
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pagebot.style module
 --------------------
 
@@ -95,15 +87,6 @@ pagebot.stylelib module
    :members:
    :undoc-members:
    :show-inheritance:
-
-pagebot.typesetter module
--------------------------
-
-.. automodule:: pagebot.typesetter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 Module contents
 ---------------

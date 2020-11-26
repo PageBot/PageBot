@@ -76,7 +76,6 @@ pagebot.fonttoolbox.analyzers.stems module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

@@ -5,10 +5,12 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
-   pagebot.contexts.base
+   pagebot.contexts.basecontext
    pagebot.contexts.flatcontext
    pagebot.contexts.markup
+   pagebot.contexts.sketchcontext
 
 Module contents
 ---------------

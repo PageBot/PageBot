@@ -52,10 +52,10 @@ pagebot.elements.views.mampview module
    :undoc-members:
    :show-inheritance:
 
-pagebot.elements.views.pagemapview module
------------------------------------------
+pagebot.elements.views.mapview module
+-------------------------------------
 
-.. automodule:: pagebot.elements.views.pagemapview
+.. automodule:: pagebot.elements.views.mapview
    :members:
    :undoc-members:
    :show-inheritance:
@@ -75,7 +75,6 @@ pagebot.elements.views.siteview module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

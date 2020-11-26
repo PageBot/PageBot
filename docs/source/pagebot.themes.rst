@@ -84,7 +84,6 @@ pagebot.themes.wordlywise module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

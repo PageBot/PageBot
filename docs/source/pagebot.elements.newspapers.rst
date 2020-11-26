@@ -20,7 +20,6 @@ pagebot.elements.newspapers.headers module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

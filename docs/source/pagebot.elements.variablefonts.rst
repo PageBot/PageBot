@@ -20,6 +20,14 @@ pagebot.elements.variablefonts.basefontshow module
    :undoc-members:
    :show-inheritance:
 
+pagebot.elements.variablefonts.bezieranimation module
+-----------------------------------------------------
+
+.. automodule:: pagebot.elements.variablefonts.bezieranimation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pagebot.elements.variablefonts.bio module
 -----------------------------------------
 
@@ -80,6 +88,14 @@ pagebot.elements.variablefonts.sampler module
 ---------------------------------------------
 
 .. automodule:: pagebot.elements.variablefonts.sampler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pagebot.elements.variablefonts.specimen module
+----------------------------------------------
+
+.. automodule:: pagebot.elements.variablefonts.specimen
    :members:
    :undoc-members:
    :show-inheritance:
@@ -163,7 +179,6 @@ pagebot.elements.variablefonts.widths module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

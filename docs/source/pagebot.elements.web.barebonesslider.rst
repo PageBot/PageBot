@@ -12,7 +12,6 @@ pagebot.elements.web.barebonesslider.siteelements module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

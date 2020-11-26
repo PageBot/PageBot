@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    pagebot.elements.web.barebonesslider
    pagebot.elements.web.nanosite

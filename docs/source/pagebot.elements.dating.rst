@@ -12,7 +12,6 @@ pagebot.elements.dating.calendarmonth module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

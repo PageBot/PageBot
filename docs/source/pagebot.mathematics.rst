@@ -4,14 +4,6 @@ pagebot.mathematics package
 Submodules
 ----------
 
-pagebot.mathematics.numpytransform module
------------------------------------------
-
-.. automodule:: pagebot.mathematics.numpytransform
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.mathematics.transform3d module
 --------------------------------------
 
@@ -19,7 +11,6 @@ pagebot.mathematics.transform3d module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

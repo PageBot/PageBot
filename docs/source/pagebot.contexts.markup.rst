@@ -20,14 +20,6 @@ pagebot.contexts.markup.htmlcontext module
    :undoc-members:
    :show-inheritance:
 
-pagebot.contexts.markup.htmlstring module
------------------------------------------
-
-.. automodule:: pagebot.contexts.markup.htmlstring
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pagebot.contexts.markup.sitebuilder module
 ------------------------------------------
 
@@ -59,7 +51,6 @@ pagebot.contexts.markup.xmlbuilder module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

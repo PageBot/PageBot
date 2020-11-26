@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    pagebot.fonttoolbox.analyzers
    pagebot.fonttoolbox.designspace
@@ -14,26 +15,18 @@ Subpackages
 Submodules
 ----------
 
+pagebot.fonttoolbox.fontnames module
+------------------------------------
+
+.. automodule:: pagebot.fonttoolbox.fontnames
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pagebot.fonttoolbox.fontpaths module
 ------------------------------------
 
 .. automodule:: pagebot.fonttoolbox.fontpaths
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pagebot.fonttoolbox.otlTools module
------------------------------------
-
-.. automodule:: pagebot.fonttoolbox.otlTools
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pagebot.fonttoolbox.ttftools module
------------------------------------
-
-.. automodule:: pagebot.fonttoolbox.ttftools
    :members:
    :undoc-members:
    :show-inheritance:
@@ -53,7 +46,6 @@ pagebot.fonttoolbox.variablefontbuilder module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

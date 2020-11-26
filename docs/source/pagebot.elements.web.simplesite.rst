@@ -12,7 +12,6 @@ pagebot.elements.web.simplesite.siteelements module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

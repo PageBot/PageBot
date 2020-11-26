@@ -28,15 +28,6 @@ pagebot.contexts.flatcontext.flatcontext module
    :undoc-members:
    :show-inheritance:
 
-pagebot.contexts.flatcontext.flatstring module
-----------------------------------------------
-
-.. automodule:: pagebot.contexts.flatcontext.flatstring
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 Module contents
 ---------------
 

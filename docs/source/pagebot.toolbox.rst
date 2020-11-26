@@ -52,6 +52,14 @@ pagebot.toolbox.hyphenation module
    :undoc-members:
    :show-inheritance:
 
+pagebot.toolbox.loremipsum module
+---------------------------------
+
+.. automodule:: pagebot.toolbox.loremipsum
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pagebot.toolbox.markers module
 ------------------------------
 
@@ -83,7 +91,6 @@ pagebot.toolbox.units module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

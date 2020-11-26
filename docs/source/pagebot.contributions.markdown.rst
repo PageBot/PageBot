@@ -28,7 +28,6 @@ pagebot.contributions.markdown.literature module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

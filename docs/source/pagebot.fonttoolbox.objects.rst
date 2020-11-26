@@ -44,7 +44,6 @@ pagebot.fonttoolbox.objects.prevarfamily module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
