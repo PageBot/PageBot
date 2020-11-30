@@ -68,7 +68,7 @@ class Gradient:
 class Shadow:
 
     def __init__(self, offset=None, blur=None, color=None):
-        """Set he parameter of the Shadow instance.
+        """Set the parameter of the Shadow instance.
         TODO: Make optional to use the z-position of an element really cast the shadow,
         defining both the offset (from light-source position) and blur from distance.
 
