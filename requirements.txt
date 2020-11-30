@@ -1,6 +1,6 @@
-booleanOperations==0.8.2
+booleanOperations
 fontTools>=4.17.1
-fontParts==0.9.6
+fontParts
 libsass==0.19.3
 markdown>=3.3.3
 recommonmark
