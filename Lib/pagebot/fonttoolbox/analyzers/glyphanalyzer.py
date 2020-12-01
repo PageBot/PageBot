@@ -447,11 +447,18 @@ class GlyphAnalyzer:
         return self._straightRoundStems
     straightRoundStems = property(_get_straightRoundStems)
 
-    def getBeamStemCounters(self, context, y=None):
+    '''
+    TODO: reimplement directly with booleanOperations.
+    def intersectWithLine(self, line):
+        pass
+
+    def getBeamStemCounters(self, y=None):
         """Calculate the stems and counters by a horizontal beam through the
         middle of the bounding box. This works best with the capital I. The
         value is uncached and should only be used if normal stem detection
         fails. Or in case of italic."""
+        assert self.parent
+        #assert self.parent.context
         beamStems = {}
         beamCounters = {}
         if y is None:
@@ -509,6 +516,7 @@ class GlyphAnalyzer:
                     beamCounters[size] = []
                 beamCounters[size].append(counter)
         return beamStems, beamCounters
+    '''
 
     def isPortrait(self, pc0, pc1):
         """Stems are supposed to be portrait within the FUZZ range. May not
