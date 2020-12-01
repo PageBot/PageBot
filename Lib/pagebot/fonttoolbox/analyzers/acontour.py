@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
+
 # -----------------------------------------------------------------------------
 #
 #     P A G E B O T
@@ -14,7 +15,25 @@
 #
 #     acontour.py
 #
+
 class AContour:
+    """
+    >>> from pagebot.fonttoolbox.analyzers.apoint import APoint
+    >>> p1 = APoint((101, 303), True)
+    >>> p2 = APoint((121, 203), False)
+    >>> contour = AContour()
+    >>> contour.append(p1)
+    >>> contour.append(p2)
+    >>> len(contour)
+    2
+    >>> contour[-1]
+    APoint(121,203,Off)
+    >>> contour.clockWise
+    True
+    >>> print(contour)
+    Cnt(2)
+
+    """
     def __init__(self):
         self.points = []
         self._clockWise = True
@@ -37,3 +56,8 @@ class AContour:
 
     def append(self, p):
         self.points.append(p)
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
