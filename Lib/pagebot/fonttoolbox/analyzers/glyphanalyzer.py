@@ -23,7 +23,7 @@ import weakref
 from pagebot.toolbox.transformer import asInt
 from pagebot.fonttoolbox.analyzers.apointcontextlist import Vertical, Horizontal
 from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, BlueBar, Counter, VerticalCounter
-from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
+#from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 SPANSTEP = 4
 
@@ -452,7 +452,7 @@ class GlyphAnalyzer:
     def intersectWithLine(self, line):
         pass
 
-    def getBeamStemCounters(self, y=None):
+    def getBeamStemCounters(self, pointcontext, y=None):
         """Calculate the stems and counters by a horizontal beam through the
         middle of the bounding box. This works best with the capital I. The
         value is uncached and should only be used if normal stem detection
@@ -466,7 +466,7 @@ class GlyphAnalyzer:
         line = ((-sys.maxsize, y), (sys.maxsize, y))
         # Get intersections with this line. We can assume they are sorted set
         # by x value
-        intersections = self.intersectWithLine(line, context)
+        intersections = self.intersectWithLine(line, pointcontext)
 
         # If could not make path or flattened path or no intersections or just
         # one, give up.
