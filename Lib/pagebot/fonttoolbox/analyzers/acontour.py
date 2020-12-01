@@ -32,6 +32,8 @@ class AContour:
     True
     >>> print(contour)
     Cnt(2)
+    >>> p3 = APoint((141, 151), False)
+    >>> contour[1] = p3
 
     """
     def __init__(self):

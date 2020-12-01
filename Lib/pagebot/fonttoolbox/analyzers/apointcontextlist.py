@@ -28,7 +28,39 @@ class APointContextList(list):
 
 class Vertical(APointContextList):
     """The Vertical class is a list of point contexts that share the same x-value
-    self.append, self.x, self.y, self.alternates, self.minYPoint, self.maxYPoint"""
+    self.append, self.x, self.y, self.alternates, self.minYPoint, self.maxYPoint
+
+    >>> from pagebot.fonttoolbox.analyzers.apoint import APoint
+    >>> from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
+    >>> b1 = APoint((0, 0))
+    >>> b2 = APoint((0, 100))
+    >>> b3 = APoint((40, 200))
+    >>> p1 = APoint((100, 200))
+    >>> a1 = APoint((200, 200))
+    >>> a2 = APoint((140, 100))
+    >>> a3 = APoint((40, 80))
+    >>> pc1 = APointContext((b1, b2, b3, p1, a1, a2, a3))
+    >>> b1 = APoint((100, 0))
+    >>> b2 = APoint((100, 100))
+    >>> b3 = APoint((140, 200))
+    >>> p1 = APoint((200, 200))
+    >>> a1 = APoint((300, 200))
+    >>> a2 = APoint((240, 100))
+    >>> a3 = APoint((140, 80))
+    >>> pc2 = APointContext((b1, b2, b3, p1, a1, a2, a3))
+    >>> v = Vertical()
+    >>> v.append(pc1)
+    >>> v.append(pc2)
+    >>> v.x, v.y
+    (100, None)
+    >>> v.minYPoint
+    pc(100,200) horizontal
+    >>> v.maxYPoint
+    pc(100,200) horizontal
+    >>> v.alternates
+    [pc(200,200) horizontal]
+
+    """
     # self.x
 
     def _get_x(self):
@@ -72,7 +104,39 @@ class Vertical(APointContextList):
 
 class Horizontal(APointContextList):
     """The Horizontal class is a list of point contexts that share the same y-value
-    self.append, self.x, self.y, self.alternates, self.minXPoint, self.maxXPoint."""
+    self.append, self.x, self.y, self.alternates, self.minXPoint, self.maxXPoint.
+
+    >>> from pagebot.fonttoolbox.analyzers.apoint import APoint
+    >>> from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
+    >>> b1 = APoint((0, 0))
+    >>> b2 = APoint((0, 100))
+    >>> b3 = APoint((40, 200))
+    >>> p1 = APoint((100, 200))
+    >>> a1 = APoint((200, 200))
+    >>> a2 = APoint((140, 100))
+    >>> a3 = APoint((40, 80))
+    >>> pc1 = APointContext((b1, b2, b3, p1, a1, a2, a3))
+    >>> b1 = APoint((100, 0))
+    >>> b2 = APoint((100, 100))
+    >>> b3 = APoint((140, 200))
+    >>> p1 = APoint((200, 200))
+    >>> a1 = APoint((300, 200))
+    >>> a2 = APoint((240, 100))
+    >>> a3 = APoint((140, 80))
+    >>> pc2 = APointContext((b1, b2, b3, p1, a1, a2, a3))
+    >>> v = Vertical()
+    >>> v.append(pc1)
+    >>> v.append(pc2)
+    >>> v.x, v.y
+    (100, None)
+    >>> v.minYPoint
+    pc(100,200) horizontal
+    >>> v.maxYPoint
+    pc(100,200) horizontal
+    >>> v.alternates
+    [pc(200,200) horizontal]
+
+    """
 
     def _get_x(self):
         # Horizontal has no defined x
@@ -118,3 +182,8 @@ class Horizontal(APointContextList):
 
 class Diagonal(APointContextList):
     pass
+
+if __name__ == '__main__':
+    import doctest
+    import sys
+    sys.exit(doctest.testmod()[0])
