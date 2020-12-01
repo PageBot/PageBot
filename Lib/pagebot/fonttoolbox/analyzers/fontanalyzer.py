@@ -35,6 +35,11 @@ class FontAnalyzer:
         >>> fa
         <Analyzer of PageBot Regular>
         >>> fa.stems
+        {}
+        >>> fa.horizontalCounters
+        {84: [[H.Counter: pc[index:0](72,0) vertical --> pc[index:2](156,658) vertical], [H.Counter: pc[index:0](72,0) vertical --> pc[index:10](156,297) vertical], [H.Counter: pc[index:4](528,376) vertical --> pc[index:6](612,658) vertical], [H.Counter: pc[index:8](528,0) vertical --> pc[index:6](612,658) vertical]], 456: [[H.Counter: pc[index:0](72,0) vertical --> pc[index:4](528,376) vertical], [H.Counter: pc[index:0](72,0) vertical --> pc[index:8](528,0) vertical], [H.Counter: pc[index:2](156,658) vertical --> pc[index:6](612,658) vertical], [H.Counter: pc[index:10](156,297) vertical --> pc[index:6](612,658) vertical]], 540: [[H.Counter: pc[index:0](72,0) vertical --> pc[index:6](612,658) vertical]], 372: [[H.Counter: pc[index:2](156,658) vertical --> pc[index:4](528,376) vertical], [H.Counter: pc[index:10](156,297) vertical --> pc[index:8](528,0) vertical]]}
+        >>> fa.bars
+        {}
 
         """
         self.font = font
