@@ -22,7 +22,7 @@ import weakref
 
 from pagebot.toolbox.transformer import asInt
 from pagebot.fonttoolbox.analyzers.apointcontextlist import Vertical, Horizontal
-from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, Counter, VerticalCounter
+from pagebot.fonttoolbox.analyzers.stems import Stem, Bar, BlueBar, Counter, VerticalCounter
 from pagebot.fonttoolbox.analyzers.apointcontext import APointContext
 
 SPANSTEP = 4
@@ -55,6 +55,34 @@ class GlyphAnalyzer:
     {658: [Horizontal [pc[index:1](72,658) horizontal, pc[index:5](528,658) horizontal]], 376: [Horizontal [pc[index:3](156,376) horizontal]], 0: [Horizontal [pc[index:7](612,0) horizontal, pc[index:11](156,0) horizontal]], 297: [Horizontal [pc[index:9](528,297) horizontal]]}
     >>> ga.stems
     {}
+    >>> ga.roundStems
+    {}
+    >>> ga.straightRoundStems
+    {}
+    >>> ga.allStems
+    {}
+    >>> ga.allBars
+    {}
+    >>> ga.verticalCounters
+    {658: [[H.VerticalCounter: pc[index:7](612,0) horizontal --> pc[index:5](528,658) horizontal], [H.VerticalCounter: pc[index:11](156,0) horizontal --> pc[index:1](72,658) horizontal]], 79: [[H.VerticalCounter: pc[index:9](528,297) horizontal --> pc[index:3](156,376) horizontal]]}
+    >>> ga.blueBars
+    {0: [H.baseline: (0, 0) --> (0, 50.0)], 658: [H.top: (0, 658) --> (0, 608.0)]}
+    >>> ga.bottomBlueBar
+    [H.bottom: (0, 0) --> (0, 50.0)]
+    >>> ga.baselineBlueBar
+    [H.baseline: (0, 0) --> (0, 50.0)]
+    >>> ga.topBlueBar
+    [H.top: (0, 658) --> (0, 608.0)]
+    >>> ga.dimensions
+    []
+    >>> ga.leftMargin
+    72
+    >>> ga.rightMargin
+    72
+    >>> ga.boundingBox
+    (72, 0, 612, 658)
+    >>> ga.minX, ga.minY, ga.maxX, ga.maxY
+    (72, 0, 612, 658)
 
     """
 
@@ -809,15 +837,17 @@ class GlyphAnalyzer:
         and maxY->down."""
         if self._blueBars is None:
             # FIXME: upsubscriptable-object.
-            gaH = self['H'] # Seperate from blueBars property, so no recursion problem.
+            g = self.font['H'] # Seperate from blueBars property, so no recursion problem.
+
+            gaH = GlyphAnalyzer(g)
 
             if gaH.bars: # Check if there were any bars found for 'H'
                 bbar = min(sorted(gaH.bars.keys()))
             else: # Otherwise take an arbitrary number for now.
                 bbar = self.font.info.unitsPerEm/20
-            self._bottomBlueBar = self.BLUEBAR_CLASS((0, self.minY), (0, self.minY+bbar), self.name, name='bottom')
-            self._baselineBlueBar = self.BLUEBAR_CLASS((0, 0), (0, bbar), self.name, name='baseline')
-            self._topBlueBar = self.BLUEBAR_CLASS((0, self.maxY), (0, self.maxY-bbar), self.name, name='top')
+            self._bottomBlueBar = BlueBar((0, self.minY), (0, self.minY+bbar), self.name, name='bottom')
+            self._baselineBlueBar = BlueBar((0, 0), (0, bbar), self.name, name='baseline')
+            self._topBlueBar = BlueBar((0, self.maxY), (0, self.maxY-bbar), self.name, name='top')
             self._blueBars = {self.minY: self._topBlueBar, 0: self._baselineBlueBar, self.maxY: self._topBlueBar}
 
         return self._blueBars
