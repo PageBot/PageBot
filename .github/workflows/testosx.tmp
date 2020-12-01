@@ -10,12 +10,13 @@ on:
 
 jobs:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/specifications-for-github-hosted-runners
-  test-ubuntu-latest:
-    runs-on: ubuntu-latest
+  test-macos:
+    runs-on: macos-latest
     steps:
     - name: Check python
       run: |
         python3 --version
+        python3 -c "import platform; print('macOS version:', platform.mac_ver()[0])"
     - name: Checkout
       uses: actions/checkout@v1
 
@@ -27,13 +28,17 @@ jobs:
     - name: Install
       run: |
         source venv/bin/activate
+        pip3 install --upgrade pip
         pip3 install -r ./requirements.txt
         pip3 install -r ./test-requirements.txt
+        git clone https://github.com/PageBot/PageBotOSX.git
+        pip3 install -r ./PageBotOSX/requirements.txt
+        pip3 install pagebotosx
     - name: Run tests
       run: |
         mkdir _export
         pip3 search pagebot
         source venv/bin/activate
         ./scripts/pylint.sh
-        ./scripts/tests-linux.sh
+        ./scripts/tests-osx.sh 
         pytest
