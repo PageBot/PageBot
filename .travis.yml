@@ -26,26 +26,26 @@ jobs:
       after_success:
         - codecov
     # https://docs.travis-ci.com/user/reference/osx
-    - os: osx
-      osx_image: xcode12.2
-      language: shell
-      env:
-          - HOMEBREW_NO_ANALYTICS=1
-          - HOMEBREW_NO_INSTALL_CLEANUP=1
-      addons:
-          homebrew:
-              update: true
-              packages: python3.9
-      before_install:
-        - pip3 install --upgrade pip
-        - pip3 install pylint pytest
-      install:
-        - ./scripts/osx.sh
-      script:
-        - mkdir _export
-        - ./scripts/pylint.sh
-        - ./scripts/tests-osx.sh
-        - pytest
+    #    - os: osx
+    #  osx_image: xcode12.2
+    #  language: shell
+    #  env:
+    #      - HOMEBREW_NO_ANALYTICS=1
+    #      - HOMEBREW_NO_INSTALL_CLEANUP=1
+    #  addons:
+    #      homebrew:
+    #          update: true
+    #          packages: python3.9
+    #  before_install:
+    #    - pip3 install --upgrade pip
+    #    - pip3 install pylint pytest
+    #  install:
+    #    - ./scripts/osx.sh
+    #  script:
+    #    - mkdir _export
+    #    - ./scripts/pylint.sh
+    #    - ./scripts/tests-osx.sh
+    #    - pytest
 branches:
   only:
     - master
