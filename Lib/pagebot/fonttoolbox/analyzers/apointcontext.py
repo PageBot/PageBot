@@ -88,8 +88,35 @@ class APointContext:
     PARALLEL_TOLERANCE = 2 # Difference tolerance angle in degrees to take point contexts as parallel
 
     def __init__(self, points, index=None, contourIndex=None, clockwise=None, glyphName=None):
-        """Points list is supposed to contain Point instances, not point lists.
-        We need the extra storage, e.g. for point type that Point holds."""
+        """Points context for Point instances, three before, one in the middle,
+        and three after. We need the extra storage, e.g. for point type that
+        Point holds.
+
+        >>> b1 = APoint((0, 0))
+        >>> b2 = APoint((0, 100))
+        >>> b3 = APoint((40, 200))
+        >>> p1 = APoint((100, 200))
+        >>> a1 = APoint((200, 200))
+        >>> a2 = APoint((140, 100))
+        >>> a3 = APoint((40, 80))
+        >>> pc = APointContext((b1, b2, b3, p1, a1, a2, a3))
+        >>> pc[0]
+        100
+        >>> pc[1]
+        200
+        >>> # TODO: find some positive results.
+        >>> pc.isInflection()
+        False
+        >>> pc.isDiagonal()
+        False
+        >>> pc.isParallel(pc)
+        True
+        >>> #pc.getProjectedPoint(a3)
+        >>> pc.nextOnCurvePoint
+        APoint(200,200,On)
+        >>> pc.prevOnCurvePoint
+        APoint(40,200,On)
+        """
         assert len(points) == 7
         self.p_3, self.p_2, self.p_1, self.p, self.p1, self.p2, self.p3 = points
         self.contourIndex = contourIndex
@@ -101,12 +128,7 @@ class APointContext:
 
     def __getitem__(self, index):
         """
-        >>> o = APoint((0, 0))
-        >>> pc1 = APointContext((o, o, o, APoint((100, 200)), o, o, o))
-        >>> pc1[0]
-        100
-        >>> pc1[1]
-        200
+        Gets the main, middle point within the point context.
         """
         return self.p[index]
 
@@ -166,6 +188,10 @@ class APointContext:
         """
         return self.p >= p.p
 
+    '''
+    # These seem to be based on APoint instead of APointContext. Does it make
+    # sense to do math operations on point contexts?
+
     def __sub__(self, p):
         """Subtract the points. Result is a point3D tuple.
 
@@ -211,6 +237,7 @@ class APointContext:
         """
         assert isinstance(v, (int, float))
         return self.p[0] / v, self.p[1] / v, self.p[2] / v
+    '''
 
 
     def _get_x(self):
