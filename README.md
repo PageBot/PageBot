@@ -1,7 +1,7 @@
 # What is PageBot?
 
 PageBot® is a scriptable page layout, vector graphics and typography environment that enables designers to create high quality
-documents in various print-ready and web-based formats using Python. It is available as a Python library with
+documents in various print-ready and web-based formats. It is available as a Python library with
 multi-platform support based on [Flat](http://xxyxyz.org/flat) and as a Mac OS
 X extension that uses [DrawBot](http://www.drawbot.com).
 
