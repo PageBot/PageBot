@@ -124,17 +124,17 @@ class Horizontal(APointContextList):
     >>> a2 = APoint((240, 100))
     >>> a3 = APoint((140, 80))
     >>> pc2 = APointContext((b1, b2, b3, p1, a1, a2, a3))
-    >>> v = Vertical()
-    >>> v.append(pc1)
-    >>> v.append(pc2)
-    >>> v.x, v.y
-    (100, None)
-    >>> v.minYPoint
+    >>> h = Horizontal()
+    >>> h.append(pc1)
+    >>> h.append(pc2)
+    >>> h.x, h.y
+    (None, 200)
+    >>> h.minXPoint
     pc(100,200) horizontal
-    >>> v.maxYPoint
-    pc(100,200) horizontal
-    >>> v.alternates
-    [pc(200,200) horizontal]
+    >>> h.maxXPoint
+    pc(200,200) horizontal
+    >>> h.alternates
+    []
 
     """
 
@@ -172,7 +172,7 @@ class Horizontal(APointContextList):
     def _get_alternates(self):
         """Answers the list of points that are not left or right extremes."""
         alternates = []
-        leftRight = (self.minX, self.maxX)
+        leftRight = (self.minXPoint, self.maxXPoint)
         for pc in self:
             if not pc in leftRight:
                 alternates.append(pc)
