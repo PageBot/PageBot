@@ -1,0 +1,7 @@
+# vim: set filetype=python:
+# Doctests for context functions on Linux.
+
+>>> from pagebot.document import Document
+>>> d = Document(name='Test', w=600, h=800)
+>>> d.context
+<DrawBotContext>

@@ -36,7 +36,6 @@ jobs:
         source venv/bin/activate
         ./scripts/pylint.sh
         ./scripts/tests-linux.sh
-        #coverage run -m pytest
         pytest --cov=./ --cov-report=xml
     - name: Codecov Upload
       uses: codecov/codecov-action@v1
