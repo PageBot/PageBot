@@ -119,7 +119,8 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> context.newPage(100, 100)
-        >>> context.drawing.__class__.__name__
+        >>> drawing = context.getDrawing()
+        >>> drawing.__class__.__name__
         'document'
         """
         super().__init__()
@@ -149,7 +150,8 @@ class FlatContext(BaseContext):
 
         >>> context = FlatContext()
         >>> context.newPage(100, 100)
-        >>> int(context.drawing.width), int(context.drawing.height)
+        >>> drawing = context.getDrawing()
+        >>> int(drawing.width), int(drawing.height)
         (100, 100)
         """
 
