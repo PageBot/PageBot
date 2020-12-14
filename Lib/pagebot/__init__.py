@@ -26,8 +26,8 @@ STATUS = 'beta'
 __doc__ = """PageBot module"""
 __version__ = '%s-%s' % (VERSION, STATUS)
 
-contextTypes = ('Flat', 'Html', 'svg')
-contextTypesOSX = ('DrawBot',)
+contextTypes = ('flat', 'html', 'svg')
+contextTypesOSX = ('drawbot',)
 
 def getContext(contextType=None, resourcesPath=None):
     """Returns a single context."""
@@ -35,9 +35,9 @@ def getContext(contextType=None, resourcesPath=None):
     # Sets the default for both supported platforms.
     if contextType is None:
         if platform == 'linux':
-            contextType = 'Flat'
+            contextType = 'flat'
         elif platform == 'darwin':
-            contextType = 'DrawBot'
+            contextType = 'drawbot'
         else:
             raise NotImplementedError
 
@@ -48,7 +48,7 @@ def getContexts(types):
     list.
 
 
-    >>> getContexts(['Flat', 'Html'])
+    >>> getContexts(['Flat', 'HTML'])
     [<FlatContext>, <HtmlContext>]
     """
     contexts = []

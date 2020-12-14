@@ -25,7 +25,7 @@ from pagebot.contexts.svgcontext.svgcontext import SvgContext
 hasDrawBot = False
 DrawBotContext = None
 DEFAULT_CONTEXT = None
-DEFAULT_CONTEXT_TYPE = 'Flat'
+DEFAULT_CONTEXT_TYPE = 'flat'
 CONTEXT_TYPE = None
 
 if platform == 'darwin':
@@ -61,9 +61,11 @@ def getContext(contextType=None):
 
     if contextType is None:
         if platform == 'darwin':
-            contextType = 'DrawBot'
+            contextType = 'drawbot'
         else:
-            contextType = 'Flat'
+            contextType = 'flat'
+
+    contextType = contextType.lower()
 
     if CONTEXT_TYPE and contextType != CONTEXT_TYPE:
         # Switching contexts, so resetting the buffered global object.
@@ -72,17 +74,17 @@ def getContext(contextType=None):
 
     if DEFAULT_CONTEXT is None:
         if platform == 'darwin':
-            if contextType == 'DrawBot' and hasDrawBot:# and DrawBotContext is not None:
+            if contextType == 'drawbot' and hasDrawBot:# and DrawBotContext is not None:
                 DEFAULT_CONTEXT = getDrawBotContext()
             elif contextType == 'DrawBot' and not hasDrawBot:
                 print('Cannot find the pagebotosx module.')
                 print('Using Flat instead of DrawBot.')
                 DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'Flat':
+            elif contextType == 'flat':
                 DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'Sketch':
+            elif contextType == 'sketch':
                 DEFAULT_CONTEXT = getSketchContext()
-            elif contextType == 'Html':
+            elif contextType == 'html':
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
@@ -92,9 +94,9 @@ def getContext(contextType=None):
                 print('DrawBot is not available on platform %s.' % platform)
                 print('Using Flat instead of DrawBot.')
                 DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'Flat':
+            elif contextType == 'flat':
                 DEFAULT_CONTEXT = getFlatContext()
-            elif contextType == 'Html':
+            elif contextType == 'html':
                 DEFAULT_CONTEXT = getHtmlContext()
             elif contextType == 'svg':
                 DEFAULT_CONTEXT = getSvgContext()
