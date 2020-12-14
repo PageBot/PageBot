@@ -13,13 +13,15 @@
 #
 #     svgbuilder.py
 #
-#     https://svgwrite.readthedocs.io/en/master/
-#     sudo pip install svgwrite
+#     https://svgwrite.readthedocs.io
 #
+
+# Allowed to fail, other context types might be supported.
 try:
     import svgwrite
     svgBuilder = svgwrite
-    # Id to make builder hook name. Views will try to call e.build_svg()
+
+    # Identifier to make builder hook name. Views will try to call e.build_svg()
     svgBuilder.PB_ID = 'svg'
 
 except ImportError:

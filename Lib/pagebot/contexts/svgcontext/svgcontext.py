@@ -123,6 +123,33 @@ class SvgContext(BaseContext):
         self._bezierpath = self._drawing.path()
         return self.bezierpath
 
+    def moveTo(self, p):
+        """Move to point `p` in the open path. Create a new self._bezierpath if none
+        is open.
+        """
+
+    def lineTo(self, p):
+        """Line to point p in the open path. Create a new self._bezierpath if none
+        is open.
+        """
+
+    def curveTo(self, bcp1, bcp2, p):
+        """Curve to point p i nthe open path. Create a new path if none is
+        open.
+        """
+
+    def qCurveTo(self, *points):
+        """
+        """
+
+    def arc(self, center, radius, startAngle, endAngle, clockwise):
+        """
+        """
+
+    def arcTo(self, xy1, xy2, radius):
+        """
+        """
+
     def rect(self, x, y, w, h):
         """Draw a rectangle in the canvas.
 

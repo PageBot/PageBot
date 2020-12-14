@@ -332,7 +332,7 @@ class BaseContext(AbstractContext):
     '''
     def quadTo(self, bcp, p):
         # TODO: Convert to Bezier with 0.6 rule
-        # What's difference with qCurveTo()?
+        # Same output as qCurveTo()?
         return self.b.quadTo(bcp, p)
     '''
 
