@@ -131,7 +131,7 @@ class FlatContext(BaseContext):
         # Current open shape.
         self.shape = None
         self.fileType = DEFAULT_FILETYPE
-        self.drawing = None
+        self._drawing = None
         self._numberOfPages = 0
         self._flatFonts = {} # Caching of {font.path:flatFont}
         self.setTransform3D()
@@ -153,7 +153,7 @@ class FlatContext(BaseContext):
         (100, 100)
         """
 
-        if self.drawing:
+        if self._drawing:
             self.clear()
 
         #self.originTop = originTop
@@ -173,9 +173,9 @@ class FlatContext(BaseContext):
         # Converts units to point values. Stores width and height information
         # in Flat document.
         wpt, hpt = upt(w, h)
-        self.drawing = self.b.document(wpt, hpt, units=self.UNITS)
-        #self.drawing.size(wpt, hpt, units=self.UNITS)
-        #self.drawing.pages = []
+        self._drawing = self.b.document(wpt, hpt, units=self.UNITS)
+        #self._drawing.size(wpt, hpt, units=self.UNITS)
+        #self._drawing.pages = []
 
     def saveDrawing(self, path, multiPage=None):
         """Save the current document to file(s)
@@ -223,30 +223,30 @@ class FlatContext(BaseContext):
         self.fileType = path.split('.')[-1].lower()
 
         if self.fileType == FILETYPE_PNG:
-            if len(self.drawing.pages) == 1 or not multiPage:
-                im = self.drawing.pages[0].image(kind=RGB)
+            if len(self._drawing.pages) == 1 or not multiPage:
+                im = self._drawing.pages[0].image(kind=RGB)
                 im.png(path)
             else:
-                for n, p in enumerate(self.drawing.pages):
+                for n, p in enumerate(self._drawing.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
                     p.image(kind=RGB).png(pagePath)
 
         elif self.fileType == FILETYPE_JPG:
-            if len(self.drawing.pages) == 1 or not multiPage:
-                self.drawing.pages[0].image(kind=RGB).jpeg(path)
+            if len(self._drawing.pages) == 1 or not multiPage:
+                self._drawing.pages[0].image(kind=RGB).jpeg(path)
             else:
-                for n, p in enumerate(self.drawing.pages):
+                for n, p in enumerate(self._drawing.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
                     p.image(kind=RGB).jpeg(pagePath)
         elif self.fileType == FILETYPE_SVG:
-            if len(self.drawing.pages) == 1 or not multiPage:
-                self.drawing.pages[0].svg(path)
+            if len(self._drawing.pages) == 1 or not multiPage:
+                self._drawing.pages[0].svg(path)
             else:
-                for n, p in enumerate(self.drawing.pages):
+                for n, p in enumerate(self._drawing.pages):
                     pagePath = path.replace('.'+FILETYPE_SVG, '%03d.%s' % (n, FILETYPE_SVG))
                     p.svg(pagePath)
         elif self.fileType == FILETYPE_PDF:
-            self.drawing.pdf(path) # Cannot render rgba.
+            self._drawing.pdf(path) # Cannot render rgba.
         elif self.fileType == FILETYPE_GIF:
             msg = '[FlatContext] Gif not yet implemented for "%s"' % path.split('/')[-1]
             print(msg)
@@ -331,14 +331,15 @@ class FlatContext(BaseContext):
     saveImage = saveDrawing
 
     def endDrawing(self, doc=None):
-        self.drawing = None
+        self._drawing = None
 
     def clear(self):
         self.endDrawing()
         self._numberOfPages = 0
 
     def getDrawing(self):
-        return self.drawing
+        """Returns the drawing object in the current state."""
+        return self._drawing
 
     def _getValidSize(self, w, h):
         """Answer a valid size for FlatContext document and pages."""
@@ -375,7 +376,7 @@ class FlatContext(BaseContext):
         # create a new one.
 
     def newPage(self, w=None, h=None, doc=None):
-        """Other page sizes than default in self.drawing, are ignored in Flat.
+        """Other page sizes than default in self._drawing, are ignored in Flat.
 
         NOTE: this generates a flat.page, not to be confused with PageBot page.
         FIXME: test units, page auto-sizes to parent doc.
@@ -394,13 +395,13 @@ class FlatContext(BaseContext):
         """
         w, h = self._getValidSize(w, h)
 
-        if not self.drawing:
+        if not self._drawing:
             self.newDrawing(w=w, h=h)
 
-        assert self.drawing
+        assert self._drawing
 
         self._numberOfPages += 1
-        self.drawing.addpage()
+        self._drawing.addpage()
 
     def getTmpPage(self, w, h):
         drawing = self.b.document(w, h, units=self.UNITS)
@@ -411,23 +412,23 @@ class FlatContext(BaseContext):
         W = 800
         H = 600
 
-        if self.drawing is None:
+        if self._drawing is None:
             self.newDrawing(w=W, h=H)
         if self._numberOfPages == 0:
             self.newPage(w=W, h=H)
 
-        assert self.drawing
-        assert self.drawing.pages
-        return self.drawing.pages[-1]
+        assert self._drawing
+        assert self._drawing.pages
+        return self._drawing.pages[-1]
 
     page = property(_get_page)
 
     def _get_height(self):
-        return self.drawing.height
+        return self._drawing.height
     height = property(_get_height)
 
     def _get_width(self):
-        return self.drawing.width
+        return self._drawing.width
     width = property(_get_width)
 
     def getTransformed(self, x, y, z=0):

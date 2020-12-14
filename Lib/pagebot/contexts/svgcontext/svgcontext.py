@@ -66,7 +66,7 @@ class SvgContext(BaseContext):
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
         self.newDrawing()
-        self._path = None # Hold current open SVG path
+        self._bezierpath = None # Hold current open SVG path
 
     # Drawing.
 
@@ -99,6 +99,7 @@ class SvgContext(BaseContext):
     saveImage = saveDrawing # Compatible API with DrawBot
 
     def getDrawing(self):
+        """Returns the drawing object in the current state."""
         return self._drawing
 
     def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
@@ -112,7 +113,15 @@ class SvgContext(BaseContext):
         #    h = h or doc.h
 
     def newPath(self):
-        return None
+        """
+        >>> context = SvgContext()
+        >>> path = context.newPath()
+        >>> from svgwrite.path import Path
+        >>> isinstance(path, Path)
+        True
+        """
+        self._bezierpath = self._drawing.path()
+        return self.bezierpath
 
     def rect(self, x, y, w, h):
         """Draw a rectangle in the canvas.
