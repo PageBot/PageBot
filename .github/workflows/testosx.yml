@@ -1,4 +1,4 @@
-name: PageBot Test Bench
+name: PageBot OSX Test Bench
 
 on:
   push:
