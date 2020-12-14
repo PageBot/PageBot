@@ -23,10 +23,12 @@ class XmlBuilder(BaseBuilder):
 
     @classmethod
     def class2SpaceString(cls, cssClass):
-        # Format the class to comma separated output. Takes any construction of
-        # strings and lists.
-        # cssClass can be ['name', 'name'] or 'name name' or 'name, name' or
-        # ['name', ('name', 'name')]
+        """Format the class to comma separated output. Takes any construction
+        of strings and lists.
+
+        cssClass can be ['name', 'name'] or 'name name' or 'name, name' or
+        ['name', ('name', 'name')]
+        """
         if not isinstance(cssClass, (list, tuple)):
             cssClass = [cssClass]
         s = []

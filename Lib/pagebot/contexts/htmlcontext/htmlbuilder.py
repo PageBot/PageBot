@@ -21,7 +21,7 @@ try:
 except ImportError:
     print('Cannot import sass')
 
-from pagebot.contexts.markup.xmlbuilder import XmlBuilder
+from pagebot.contexts.htmlcontext.xmlbuilder import XmlBuilder
 from pagebot.toolbox.dating import now
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.transformer import (dataAttribute2Html5Attribute,
@@ -625,11 +625,11 @@ table {
         self._htmlOut = []
 
     def clearCss(self):
-        """
-        We can safely clear the CSS, because the local CSS is not intended to
-        collect all for the entire site. THis is just for local additions in the
-        page. This is likely to be done by Page elements, starting to render a new page.
-        The content of previous pages then should be cleared."""
+        """We can safely clear the CSS, because the local CSS is not intended
+        to collect all for the entire site. THis is just for local additions in
+        the page. This is likely to be done by Page elements, starting to
+        render a new page. The content of previous pages then should be
+        cleared."""
         self._cssOut = []
 
     def docType(self, s=None):
@@ -859,9 +859,8 @@ table {
         self.newLine() # Optional newline is self.compact is False.
 
     def h3_(self, s, **args):
-        """
-        The `h1_` to `h6_` tags define headers, combining the opening and closing tag
-        where the s attribute is the block content.
+        """The `h1_` to `h6_` tags define headers, combining the opening and
+        closing tag where the s attribute is the block content.
 
         >>> b = HtmlBuilder()
         >>> b.compact = True
@@ -1140,9 +1139,8 @@ table {
         self._closeTag_noWhitespace('code')
 
     def strong(self, **args):
-        """The strong tag is the standard XHTML strong.  Note that nowadays it
-        is better to implement this typographic behavior through span and
-        CSS.
+        """The strong tag is the standard XHTML strong. It is preferred to
+        implement this typographic behavior through span and CSS.
 
         TODO: Add the other attributes to the b tag such as: id, class, title,
         style, dir, lang, onclick, ondblclick, onmousedown, onmouseup,
@@ -1174,9 +1172,10 @@ table {
         self._closeTag_noWhitespace('em')
 
     def b(self, **args):
-        """
-        The b tag is the standard XHTML bold.  Note that nowadays it is better to implement this
-        typographic behavior through span and CSS.<para/>
+        """The b tag is the standard XHTML bold.  Note that nowadays it is
+        better to implement this typographic behavior through span and
+        CSS.<para/>
+
         <www href="http://www.w3schools.com/tags/tag_font_style.asp" target="external"/>
 
         >>> b = HtmlBuilder()
@@ -1193,9 +1192,9 @@ table {
         self._closeTag_noWhitespace('b')
 
     def u(self, **args):
-        """
-        The u tag is the standard XHTML underline.  Note that nowadays it is better to implement
-        this typographic behavior through span and CSS.<para/>
+        """The u tag is the standard XHTML underline. It is preferred to
+        implement this typographic behavior through span and CSS.
+
         <todo>Add the other attributes to the u tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
@@ -1207,9 +1206,9 @@ table {
         self._closeTag_noWhitespace('u')
 
     def i(self, **args):
-        """
-        The i tag is the standard XHTML italic. Note that nowadays it is better to implement
-        this typographic behavior through span and CSS.<para/>
+        """The i tag is the standard XHTML italic. Note that nowadays it is better to implement
+        this typographic behavior through span and CSS.
+
         <todo>Add the other attributes to the p tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
@@ -1239,13 +1238,14 @@ table {
     # _strike = _s
 
     def q(self, **args):
-        """
+        """The q tag defines the start of a short quotation. Note that nowadays
+        it is better to implement this typographic behavior through span and
+        CSS.<para/>
 
-        The q tag defines the start of a short quotation. Note that nowadays it is better to implement
-        this typographic behavior through span and CSS.<para/>
         <todo>Add the other attributes to the p tag such as: id, class, title, style, dir, lang,
         onclick, ondblclick, onmousedown, onmouseup, onmouseover, onmousemove, onmouseout, onkeypress, onkeydown,
         onkeyup</todo>
+
         <www href="http://www.w3schools.com/tags/tag_q.asp" target="external"/>
 
         """
@@ -1754,8 +1754,9 @@ table {
     #     F O R M things
     #
 
-    def form(self, cssClass=None, name=None, enctype="multipart/form-data", action=None, role=None, method=None,
-             onsubmit=None, onreset=None, target=None, style=None, cssId=None):
+    def form(self, cssClass=None, name=None, enctype="multipart/form-data",
+            action=None, role=None, method=None, onsubmit=None, onreset=None,
+            target=None, style=None, cssId=None):
         """The form element creates a form for user input. A form can contain
         elements such as textfields, checkboxes and radio-buttons. Forms are
         used to pass user data to a specified URL.
@@ -1952,7 +1953,6 @@ table {
     def comment(self, s):
         if s:
             self.write('<!-- %s -->' % object2SpacedString(s))
-
 
 if __name__ == '__main__':
     import doctest

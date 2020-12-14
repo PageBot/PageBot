@@ -14,12 +14,12 @@
 #
 #     sitebuilder.py
 #
-from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
+from pagebot.contexts.htmlcontext.htmlbuilder import HtmlBuilder
 
 class SiteBuilder(HtmlBuilder):
-    """Generic output builder container, used of collecting html, css, js,
-    include paths and other data needed to export the website, e.g. by the
-    GitView or MampView."""
+    """Generic output builder container, used of collecting HTML, CSS,
+    Javascript, include paths and other data needed to export the website, e.g.
+    by the GitView or MampView."""
 
-    def frameDuration(self, frameDurection):
+    def frameDuration(self, frameDuration):
         pass

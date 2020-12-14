@@ -110,7 +110,7 @@ class Ruler(Element):
     def build_html(self, view, origin=None, **kwargs):
         """Build the Ruler in the current context
 
-        >>> from pagebot.contexts.markup.htmlcontext import HtmlContext
+        >>> from pagebot.contexts.htmlcontext.htmlcontext import HtmlContext
         >>> from pagebot.document import Document
         >>> from pagebot import getContext
         >>> c = getContext('Html')

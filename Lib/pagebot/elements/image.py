@@ -34,7 +34,7 @@ class Image(Element):
     >>> from pagebot.filepaths import getResourcesPath
     >>> imageFilePath = '/images/peppertom.png'
     >>> imagePath = getResourcesPath() + imageFilePath
-    >>> from pagebot import getContext #pagebot.contexts.markup.htmlcontext import HtmlContext
+    >>> from pagebot import getContext #pagebot.contexts.htmlcontext.htmlcontext import HtmlContext
     >>> from pagebot.constants import A4
     >>> from pagebot.document import Document
     >>> from pagebot.conditions import *

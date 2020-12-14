@@ -18,7 +18,7 @@ import os
 from pagebot.constants import BITMAP_TYPES
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.markup.htmlbuilder import HtmlBuilder
+from pagebot.contexts.htmlcontext.htmlbuilder import HtmlBuilder
 from pagebot.toolbox.color import noColor
 from pagebot.toolbox.units import upt
 from pagebot.toolbox.transformer import path2Extension, path2ScaledImagePath, path2Dir

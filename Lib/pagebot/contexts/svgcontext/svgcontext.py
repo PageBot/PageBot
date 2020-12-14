@@ -17,7 +17,7 @@
 #
 
 import shutil
-from pagebot.contexts.markup.svgbuilder import svgBuilder
+from pagebot.contexts.svgcontext.svgbuilder import svgBuilder
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG

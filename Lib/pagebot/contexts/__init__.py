@@ -19,8 +19,8 @@ import traceback
 from sys import platform
 from pagebot.contexts.flatcontext.flatcontext import FlatContext
 from pagebot.contexts.sketchcontext.sketchcontext import SketchContext
-from pagebot.contexts.markup.htmlcontext import HtmlContext
-from pagebot.contexts.markup.svgcontext import SvgContext
+from pagebot.contexts.htmlcontext.htmlcontext import HtmlContext
+from pagebot.contexts.svgcontext.svgcontext import SvgContext
 
 hasDrawBot = False
 DrawBotContext = None
