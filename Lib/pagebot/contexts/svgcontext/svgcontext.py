@@ -357,6 +357,21 @@ class SvgContext(BaseContext):
     def fromBabelString(self, bs):
         pass
 
+    # Transformations.
+
+    # TODO: implement actual transformations. Use own Transform3D (like
+    # Flatcontext) or svgwrite.mixins.Transform?
+    # im = svgwrite.drawing.Drawing()
+    # g = svgwrite.container.Group(transform='translate(50,50)')
+    # im.add(g)
+    # g.add(im.line( start = (-10,-10),\
+    #                 end   = (20,20),\
+    #                 stroke= 'black'))
+    # im.saveas('example.svg')
+
+    def transform(self, matrix, center=(0, 0)):
+        """NOTE: not used, implemented as a transform3D object for now."""
+
     def translate(self, dx, dy):
         """Translate the origin by (dx, dy)."""
         self._ox += dx
@@ -366,16 +381,30 @@ class SvgContext(BaseContext):
         """Rotate by angle."""
         self._rotate = angle
 
+    def scale(self, sx=1, sy=None, center=(0, 0)):
+        self._sx = self._sx * sx
+        sy = sy or sx
+        self._sy = self._sy * sy
+        self._scaleCenter = center
+        self._strokeWidth = self._strokeWidth * sx
+
     def textSize(self, s):
         # FIXME: this is wrong.
         return pt(100, 20)
 
+    def skew(self, angle1, angle2=0, center=(0, 0)):
+        pass
+
     #   A N I M A T I O N
+
+    #   https://svgwrite.readthedocs.io/en/latest/classes/animate.html
 
     def frameDuration(self, secondsPerFrame):
         """Set the frame duration for animated gifs to a number of seconds per
         frame."""
         self._frameDuration = secondsPerFrame
+
+    # Paths.
 
     def getFlattenedPath(self, path=None):
         pass
@@ -385,6 +414,11 @@ class SvgContext(BaseContext):
 
     def getGlyphPath(self, glyph, p=None, path=None):
         pass
+
+
+    def drawPath(self, path=None, p=None, sx=1, sy=None):
+        pass
+    #
 
     def shadow(self, eShadow, e=None):
         pass

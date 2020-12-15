@@ -1355,25 +1355,21 @@ class FlatContext(BaseContext):
     def strokeWidth(self, w):
         self._strokeWidth = upt(w)
 
-    # Transform.
+    # Transformations.
 
     def transform(self, matrix, center=(0, 0)):
-        """
-        NOTE: not used, implemented as a transform3D object for now.
-        """
+        """NOTE: not used, implemented as a transform3D object for now."""
 
     def translate(self, dx, dy):
-        """Translates the origin by (dx, dy).
-        """
+        """Translates the origin by (dx, dy)."""
         self._ox += dx
         self._oy += dy
         self.transform3D = self.transform3D.translate(dx, dy, 0)
 
     def rotate(self, angle, center=None):
         """Rotates by angle.
-        TODO: use transform matrix.
-        FIXME: implement off-center rotation.
 
+        TODO: test off-center rotation.
         >>> context = FlatContext()
         >>> w = 800
         >>> h = 600

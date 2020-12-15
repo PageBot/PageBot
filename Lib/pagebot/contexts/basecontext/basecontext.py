@@ -678,7 +678,7 @@ class BaseContext(AbstractContext):
     def lineDash(self, value):
         """LineDash is None or a list of dash lengths."""
 
-    # Transform.
+    # Transformations.
 
     def transform(self, matrix, center=(0, 0)):
         """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
