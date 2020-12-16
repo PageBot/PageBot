@@ -85,6 +85,10 @@ class BaseContext(AbstractContext):
         self._pages = []
         self.style = None
         self.units = Pt.UNIT
+        self.hasPIL = False
+
+        if HAS_PIL:
+            self.hasPIL = True
 
     def __repr__(self):
         return '<%s>' % self.name
@@ -185,6 +189,7 @@ class BaseContext(AbstractContext):
         TODO: check if index is still necessary.
         """
         assert exists(path)
+        assert self.hasPIL
         im = Image.open(path)
         path, ext = self.getResizedPathName(path, w, h)
 

@@ -997,7 +997,7 @@ class FlatContext(BaseContext):
         doScale = w is not None or h is not None
 
         if doScale:
-            if HAS_PIL:
+            if self.hasPIL:
                 path = self.scaleImage(path, w, h)
 
                 # Now open the image in Flat.
