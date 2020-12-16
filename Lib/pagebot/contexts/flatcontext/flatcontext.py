@@ -23,7 +23,7 @@ from flat import rgb
 
 from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
         FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
-        DEFAULT_FILETYPE, RGB, CENTER, RIGHT)
+        DEFAULT_FILETYPE, RGB, CENTER, RIGHT, EXPORT)
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.basecontext.babelrun import BabelLineInfo, BabelRunInfo
@@ -37,14 +37,6 @@ from pagebot.mathematics.transform3d import Transform3D
 from pagebot.toolbox.color import color, Color, noColor, blackColor
 from pagebot.toolbox.units import pt, em, upt, point2D, units
 
-
-HAS_PIL = True
-
-try:
-    from PIL import Image
-except:
-    print('FlatContext: Warning, missing PIL')
-    HAS_PIL = False
 
 class FlatBabelData:
     """Class to store cached information in BabelString._cs."""
@@ -257,6 +249,16 @@ class FlatContext(BaseContext):
 
     # Compatibility with DrawBot API.
     saveImage = saveDrawing
+
+    def export(self, fileName, folderName=None, extension=None):
+        """Saves file to filename with default folder name and extension."""
+        if not folderName:
+            folderName = EXPORT
+        if not extension:
+            extension = 'pdf'
+
+        path = '%s/%s.%s' % (folderName, fileName, extension)
+        self.saveImage(path)
 
     # Styles
 

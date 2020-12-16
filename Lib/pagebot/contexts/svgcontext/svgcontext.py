@@ -20,7 +20,8 @@ import shutil
 from pagebot.contexts.svgcontext.svgbuilder import svgBuilder
 from pagebot.contexts.basecontext.basecontext import BaseContext
 from pagebot.contexts.basecontext.babelstring import BabelString
-from pagebot.constants import DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, FILETYPE_SVG
+from pagebot.constants import (DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE,
+        FILETYPE_SVG, EXPORT)
 from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.toolbox.color import noColor, color
 from pagebot.toolbox.dating import seconds
@@ -82,6 +83,9 @@ class SvgContext(BaseContext):
     def endDrawing(self):
         pass
 
+
+    # Save / export.
+
     def saveDrawing(self, path, multiPage=None):
         """Select other than standard DrawBot export builders here. Save the
         current image as path, rendering depending on the extension of the path
@@ -101,6 +105,16 @@ class SvgContext(BaseContext):
         shutil.move(self._filePath, path)
 
     saveImage = saveDrawing # Compatible API with DrawBot
+
+    def export(self, fileName, folderName=None, extension=None):
+        """Saves file to filename with default folder name and extension."""
+        if not folderName:
+            folderName = EXPORT
+        if not extension:
+            extension = 'svg'
+
+        path = '%s/%s.%s' % (folderName, fileName, extension)
+        self.saveImage(path)
 
     def getDrawing(self):
         """Returns the drawing object in the current state."""

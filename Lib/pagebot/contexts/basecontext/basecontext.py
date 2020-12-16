@@ -16,10 +16,11 @@
 #
 
 import os
+from os.path import exists
 from math import radians, sin, cos
-import xml.etree.ElementTree as ET
 import PIL
 from PyPDF2 import PdfFileReader
+import xml.etree.ElementTree as ET
 
 from pagebot.constants import (LEFT, RIGHT, CENTER, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_WIDTH, FILETYPE_SVG,
@@ -28,11 +29,19 @@ from pagebot.contexts.basecontext.abstractcontext import AbstractContext
 from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.errors import PageBotFileFormatError
 from pagebot.fonttoolbox.objects.font import findFont
+from pagebot.style import makeStyle
 from pagebot.toolbox.color import (color, noColor, Color, inheritColor,
         blackColor)
 from pagebot.toolbox.transformer import path2Extension
 from pagebot.toolbox.units import upt, pt, point2D, Angle, Pt
-from pagebot.style import makeStyle
+
+HAS_PIL = True
+
+try:
+    from PIL import Image
+except:
+    print('FlatContext: Warning, missing PIL')
+    HAS_PIL = False
 
 class BaseContext(AbstractContext):
     """Base API for all contexts. Extends the DrawBot interface.
@@ -156,8 +165,15 @@ class BaseContext(AbstractContext):
         wpt, hpt = upt(w, h)
         self.b.newPage(wpt, hpt)
 
+    # Saving / export.
+
     def saveImage(self, path, *args, **options):
-        return self.b.saveImage(path, *args, **options)
+        pass
+
+    def export(self, fileName, folderName=None, extension=None):
+        pass
+
+    # Image scaling.
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
