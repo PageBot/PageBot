@@ -232,7 +232,6 @@ class FlatContext(BaseContext):
                 for n, p in enumerate(self._drawing.pages):
                     pagePath = path.replace('.'+FILETYPE_PNG, '%03d.%s' % (n, FILETYPE_PNG))
                     p.image(kind=RGB).png(pagePath)
-
         elif self.fileType == FILETYPE_JPG:
             if len(self._drawing.pages) == 1 or not multiPage:
                 self._drawing.pages[0].image(kind=RGB).jpeg(path)

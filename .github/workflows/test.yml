@@ -32,7 +32,7 @@ jobs:
     - name: Run tests
       run: |
         mkdir _export
-        pip3 search pagebot
+        #pip3 search pagebot
         source venv/bin/activate
         ./scripts/pylint.sh
         ./scripts/tests-linux.sh
