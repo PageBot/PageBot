@@ -161,13 +161,55 @@ class BaseContext(AbstractContext):
 
     def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
             exportExtension=None, force=False):
-        """TODO: Should scale an image at `path` and save it to another file
-        with Pillow."""
-        # FIXME: scale with PIL
-        #context = getContext()
-        #return context.scaleImage(path, w, h, index=index,
-        #    showImageLoresMarker=showImageLoresMarker, exportExtension=exportExtension,
-        #    force=force)
+        """Scales image and stores it to _scaled/image-name.ext.
+
+        TODO: show optional low resolution marker? Or remove it?
+        TODO: add optional extensions.
+        TODO: move to shared base.
+        TODO: check if index is still necessary.
+        """
+        assert exists(path)
+        im = Image.open(path)
+        path, ext = self.getResizedPathName(path, w, h)
+
+        if ext == 'jpg':
+            ext = 'jpeg'
+
+        if force or not exists(path):
+            try:
+                im = im.resize((w, h), Image.ANTIALIAS)
+            except OverflowError as e:
+                print('%s: Caught an OverflowError:' % self.name, e)
+                print('Image path is %s' % path)
+            im.save(path, ext)
+
+        return path
+
+    # Older implementation, shows image and optional message.
+    '''
+    cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
+
+    # If default _scaled directory does not exist, then create it.
+    if not exists(cachePath):
+        os.makedirs(cachePath)
+    cachedFilePath = cachePath + fileName
+
+    if force or not os.path.exists(cachedFilePath):
+        # Clean the drawing stack.
+        self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
+
+        if showImageLoresMarker:
+            bs = self.newString('LO-RES',
+                    style=dict(font=DEFAULT_FALLBACK_FONT_PATH,
+                        fontSize=pt(64), fill=color(0, 1, 1),
+                        textFill=color(1, 0, 0)))
+            tw, th = bs.textSize
+            self.text(bs, (w/2-tw/2, h/2-th/4))
+        self.saveImage(cachedFilePath)
+
+        # Clean the drawing stack again.
+    return cachedFilePath
+    '''
 
 
     def printImage(self, pdf=None):

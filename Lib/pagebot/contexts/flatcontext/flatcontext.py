@@ -255,6 +255,9 @@ class FlatContext(BaseContext):
             msg = '[FlatContext] File format "%s" is not implemented' % path.split('/')[-1]
             raise NotImplementedError(msg)
 
+    # Compatibility with DrawBot API.
+    saveImage = saveDrawing
+
     # Styles
 
     def setStyles(self, styles):
@@ -268,68 +271,6 @@ class FlatContext(BaseContext):
         pass
 
     # Public callbacks.
-
-    '''
-    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
-            exportExtension=None, force=False):
-        # TODO
-
-        cachePath, fileName = self.path2ScaledImagePath(path, w, h, index, exportExtension)
-
-        # If default _scaled directory does not exist, then create it.
-        if not exists(cachePath):
-            os.makedirs(cachePath)
-        cachedFilePath = cachePath + fileName
-
-        if force or not os.path.exists(cachedFilePath):
-            # Clean the drawing stack.
-            self.image(path, (0, 0), w=w, h=h, pageNumber=index or 0)
-
-            if showImageLoresMarker:
-                bs = self.newString('LO-RES',
-                        style=dict(font=DEFAULT_FALLBACK_FONT_PATH,
-                            fontSize=pt(64), fill=color(0, 1, 1),
-                            textFill=color(1, 0, 0)))
-                tw, th = bs.textSize
-                self.text(bs, (w/2-tw/2, h/2-th/4))
-            self.saveImage(cachedFilePath)
-
-            # Clean the drawing stack again.
-        return cachedFilePath
-        return path
-    '''
-
-    def scaleImage(self, path, w, h, index=None, showImageLoresMarker=False,
-            exportExtension=None, force=False):
-        """Scales image and stores it to _scaled/image-name.jpg.
-
-        NOTE: using PIL for resizing, much faster than Flat.
-        TODO: show optional lores marker? Or remove it?
-        TODO: add optional extensions.
-        TODO: move to shared base.
-        TODO: check if index is still necessary.
-        """
-
-        assert exists(path)
-
-        im = Image.open(path)
-        path, ext = self.getResizedPathName(path, w, h)
-
-        if ext == 'jpg':
-            ext = 'jpeg'
-
-        if force or not exists(path):
-            try:
-                im = im.resize((w, h), Image.ANTIALIAS)
-            except OverflowError as e:
-                print('%s: Caught an OverflowError:' % self.name, e)
-                print('Image path is %s' % path)
-            im.save(path, ext)
-
-        return path
-
-    # Compatible API with DrawBot.
-    saveImage = saveDrawing
 
     def endDrawing(self, doc=None):
         self._drawing = None
@@ -373,8 +314,8 @@ class FlatContext(BaseContext):
         (100mm, 200cm)
         """
         #self.w, self.h = self._getValidSize(w, h)
-        # TODO: see if Flat document can be resized, else we should probably
-        # create a new one.
+        # TODO: see if Flat document can be resized, else we should create a
+        # new one and copy its contents.
 
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self._drawing, are ignored in Flat.

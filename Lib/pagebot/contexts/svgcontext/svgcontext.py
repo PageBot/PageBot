@@ -92,6 +92,10 @@ class SvgContext(BaseContext):
         >>> context.saveImage('_export/MyFile.svg')
 
         """
+        # Only save to SVG for now. Maybe use Flat context to save PDF / bitmap?
+        parts = path.split('.')
+        ext = parts[-1]
+        assert ext.lower() == 'svg'
         self._drawing.save()
         self.checkExportPath(path)
         shutil.move(self._filePath, path)
