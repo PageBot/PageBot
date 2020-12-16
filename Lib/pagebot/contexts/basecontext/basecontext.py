@@ -1091,7 +1091,7 @@ class BaseContext(AbstractContext):
         elif self.hasPIL:
             # Using Pillow for other image formats.
             # TODO: check compatible formats first.
-            image = PIL.Image.open(path)
+            image = Image.open(path)
             return pt(image.size)
         else:
             return None
