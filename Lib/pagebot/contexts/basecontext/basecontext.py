@@ -18,9 +18,8 @@
 import os
 from os.path import exists
 from math import radians, sin, cos
-import PIL
-from PyPDF2 import PdfFileReader
 import xml.etree.ElementTree as ET
+from PyPDF2 import PdfFileReader
 
 from pagebot.constants import (LEFT, RIGHT, CENTER, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_WIDTH, FILETYPE_SVG,
@@ -1077,21 +1076,25 @@ class BaseContext(AbstractContext):
         (400pt, 200pt)
         """
         extension = path2Extension(path)
+
         if extension == FILETYPE_PDF:
             im = PdfFileReader(open(path, 'rb'))
             r = im.getPage(0).mediaBox # RectangleObject([0, 0, w, h])
             w = float(r.getWidth())
             h = float(r.getHeight())
             return pt(w, h)
-
-        if extension == FILETYPE_SVG:
+        elif extension == FILETYPE_SVG:
             svgTree = ET.parse(path)
             # FIXME: Answer the real size from the XML tree
             return pt(1000, 1000)
 
-        # Using Pillow for other image formats
-        image = PIL.Image.open(path)
-        return pt(image.size)
+        elif self.hasPIL:
+            # Using Pillow for other image formats.
+            # TODO: check compatible formats first.
+            image = PIL.Image.open(path)
+            return pt(image.size)
+        else:
+            return None
 
     def imagePixelColor(self, path, p):
         return self.b.imagePixelColor(path, p)
