@@ -42,6 +42,7 @@ class SvgContext(BaseContext):
     # Used by the generic BaseContext.newString( )
     STRING_CLASS = BabelString
     EXPORT_TYPES = (FILETYPE_SVG,)
+    VALID_EXTENSIONS = ('svg', 'svgz')
 
     def __init__(self):
         """Constructor of SvgContext.
@@ -112,6 +113,8 @@ class SvgContext(BaseContext):
             folderName = EXPORT
         if not extension:
             extension = 'svg'
+
+        assert extension in self.VALID_EXTENSIONS
 
         path = '%s/%s.%s' % (folderName, fileName, extension)
         self.saveImage(path)
