@@ -91,7 +91,6 @@ class SvgContext(BaseContext):
         self.pages.append(drawing)
         self._numberOfPages += 1
 
-
     def newDrawing(self, w=None, h=None, doc=None):
         """The @doc is the optional Document instance of the calling function. Clear
         output canvas, start new export file.
@@ -102,7 +101,9 @@ class SvgContext(BaseContext):
         self._w = upt(w)
         self._h = upt(h)
         size = (self._w, self._h)
-        self._drawing = self.b.Drawing(self._filePath, size=size, profile='tiny')
+        drawing =  self.b.Drawing(self._filePath, size=size, profile='tiny')
+        self._drawing = drawing
+        return drawing
 
     def endDrawing(self):
         pass
