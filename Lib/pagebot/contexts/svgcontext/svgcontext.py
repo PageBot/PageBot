@@ -67,13 +67,30 @@ class SvgContext(BaseContext):
         self._rotate = 0
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
-        self.newDrawing()
         self._numberOfPages = 1
         self._bezierpath = None # Hold current open SVG path
         self._w = None
         self._h = None
 
     # Drawing.
+
+    def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
+        """Create a new SVG page.
+
+        TODO: test with document as argument.
+
+        >>> context = SvgContext()
+        >>> context.newPage(100, 100)
+        """
+        # Copies document dimensions if available.
+        if doc is not None:
+            w = w or doc.w
+            h = h or doc.h
+
+        drawing = self.newDrawing(w=w, h=h)
+        self.pages.append(drawing)
+        self._numberOfPages += 1
+
 
     def newDrawing(self, w=None, h=None, doc=None):
         """The @doc is the optional Document instance of the calling function. Clear
@@ -84,7 +101,7 @@ class SvgContext(BaseContext):
         """
         self._w = upt(w)
         self._h = upt(h)
-        size = (w, h)
+        size = (self._w, self._h)
         self._drawing = self.b.Drawing(self._filePath, size=size, profile='tiny')
 
     def endDrawing(self):
@@ -137,24 +154,6 @@ class SvgContext(BaseContext):
     def getDrawing(self):
         """Returns the drawing object in the current state."""
         return self._drawing
-
-    def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
-        """Create a new SVG page.
-
-        TODO: test with document as argument.
-
-        >>> context = SvgContext()
-        >>> context.newPage(100, 100)
-        """
-        self._numberOfPages += 1
-
-        # Copies document dimensions if available.
-        if doc is not None:
-            w = w or doc.w
-            h = h or doc.h
-
-        # drawing = newDrawing(...)
-        # self.pages.append(drawing)
 
     def pageCount(self):
         return self._numberOfPages

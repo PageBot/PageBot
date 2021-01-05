@@ -323,7 +323,7 @@ class FlatContext(BaseContext):
     '''
 
     def newPage(self, w=None, h=None, doc=None):
-        """Other page sizes than default in self._drawing, are ignored in Flat.
+        """Other page sizes than default in self._drawing are ignored in Flat.
 
         NOTE: this generates a flat.page, not to be confused with PageBot page.
         FIXME: test units, page auto-sizes to parent doc.
