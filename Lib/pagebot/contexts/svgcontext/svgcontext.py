@@ -68,6 +68,7 @@ class SvgContext(BaseContext):
         self._gState = [] # Stack of graphic states.
         self.save() # Save current set of values on gState stack.
         self.newDrawing()
+        self._numberOfPages = 1
         self._bezierpath = None # Hold current open SVG path
         self._w = None
         self._h = None
@@ -145,9 +146,18 @@ class SvgContext(BaseContext):
         >>> context = SvgContext()
         >>> context.newPage(100, 100)
         """
-        #if doc is not None:
-        #    w = w or doc.w
-        #    h = h or doc.h
+        self._numberOfPages += 1
+
+        # Copies document dimensions if available.
+        if doc is not None:
+            w = w or doc.w
+            h = h or doc.h
+
+        # drawing = newDrawing(...)
+        # self.pages.append(drawing)
+
+    def pageCount(self):
+        return self._numberOfPages
 
     def newPath(self):
         """

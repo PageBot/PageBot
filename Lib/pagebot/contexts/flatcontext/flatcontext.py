@@ -128,6 +128,7 @@ class FlatContext(BaseContext):
         self._numberOfPages = 0
         self._flatFonts = {} # Caching of {font.path:flatFont}
         self.setTransform3D()
+        self._numberOfPages = 0
 
     def setTransform3D(self):
         """Initializes the transforrmation matrix to be used for translation,
@@ -159,7 +160,6 @@ class FlatContext(BaseContext):
         elif size is not None:
             w, h = size
 
-
         # Dimensions not allowed to be None or Flat document won't render.
         assert w is not None
         assert h is not None
@@ -170,6 +170,7 @@ class FlatContext(BaseContext):
         self._drawing = self.b.document(wpt, hpt, units=self.UNITS)
         #self._drawing.size(wpt, hpt, units=self.UNITS)
         #self._drawing.pages = []
+        self._numberOfPages = 1
 
     def saveDrawing(self, path, multiPage=None):
         """Save the current document to file(s)
@@ -270,7 +271,7 @@ class FlatContext(BaseContext):
     # Magic variables.
 
     def pageCount(self):
-        pass
+        return self._numberOfPages
 
     # Public callbacks.
 

@@ -53,6 +53,7 @@ class HtmlContext(BaseContext):
         super().__init__()
         self.b = HtmlBuilder()
         self._fill = noColor
+        self._numberOfPages = 1
 
     # Drawing.
 
@@ -75,11 +76,26 @@ class HtmlContext(BaseContext):
     def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
         pass
 
+    def pageCount(self):
+        return self._numberOfPages
+
     def newPath(self):
         return None
 
     def frameDuration(self, value):
         pass
+
+    def _get_width(self):
+        """Answers the width of the current page."""
+        raise NotImplementedError
+
+    width = property(_get_width)
+
+    def _get_height(self):
+        """Answers the height of the current page."""
+        raise NotImplementedError
+
+    height = property(_get_height)
 
     #   T E X T
 

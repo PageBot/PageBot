@@ -95,6 +95,7 @@ class SketchContext(BaseContext):
         self.fileType = FILETYPE_SKETCH
         self.shape = None # Current open shape
         self.w = self.h = None # Optional default context size, overwriting the Sketch document.
+        self._numberOfPages = 1
 
     def installedFonts(self, patterns=None):
         # TODO: share with Flat context.
@@ -102,6 +103,18 @@ class SketchContext(BaseContext):
 
     def setStyles(self, styles):
         pass
+
+    def _get_width(self):
+        """Answers the width of the current page."""
+        raise NotImplementedError
+
+    width = property(_get_width)
+
+    def _get_height(self):
+        """Answers the height of the current page."""
+        raise NotImplementedError
+
+    height = property(_get_height)
 
     def newPath(self):
         pass
@@ -482,6 +495,9 @@ class SketchContext(BaseContext):
 
     def newPage(self, w, h):
         pass
+
+    def pageCount(self):
+        return self._numberOfPages
 
     def saveDrawing(self, path, multiPage=True):
         pass
