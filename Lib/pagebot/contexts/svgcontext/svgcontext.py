@@ -48,6 +48,7 @@ class SvgContext(BaseContext):
         """Constructor of SvgContext.
 
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.saveDrawing('_export/SvgContext.%s' % FILETYPE_SVG)
 
         """
@@ -80,7 +81,7 @@ class SvgContext(BaseContext):
         TODO: test with document as argument.
 
         >>> context = SvgContext()
-        >>> context.newPage(100, 100)
+        >>> context.newPage(1000, 1000)
         """
         # Copies document dimensions if available.
         if doc is not None:
@@ -96,7 +97,7 @@ class SvgContext(BaseContext):
         output canvas, start new export file.
 
         >>> context = SvgContext()
-        >>> context.newDrawing()
+        >>> drawing = context.newDrawing(1000, 1000)
         """
         self._w = upt(w)
         self._h = upt(h)
@@ -127,6 +128,7 @@ class SvgContext(BaseContext):
         directories.
 
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.saveImage('_export/MyFile.svg')
 
         """
@@ -164,6 +166,7 @@ class SvgContext(BaseContext):
         TODO: wrap in a compatible SvgBezierPath object.
 
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> path = context.newPath()
         >>> from svgwrite.path import Path
         >>> isinstance(path, Path)
@@ -211,6 +214,7 @@ class SvgContext(BaseContext):
         >>> from pagebot.toolbox.color import Color
         >>> path = '_export/SvgContext_rect.svg'
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.fill((color(r=1, g=0, b=0.5)))
         >>> context.rect(pt(0), pt(100), pt(600), pt(200))
         >>> context.stroke((0.4, 0.6, 0.1), pt(20))
@@ -231,6 +235,7 @@ class SvgContext(BaseContext):
         >>> from pagebot.toolbox.color import color, blackColor
         >>> path = '_export/SvgContext_oval.svg'
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.oval(pt(0), pt(100), pt(600), pt(200))
         >>> context.stroke(blackColor, pt(20))
@@ -251,6 +256,7 @@ class SvgContext(BaseContext):
         >>> from pagebot.toolbox.color import color, blackColor
         >>> path = '_export/SvgContext_circle.svg'
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.fill(color(r=1, g=0, b=0.5))
         >>> context.circle(pt(0), pt(100), pt(300))
         >>> context.stroke(blackColor, pt(20))
@@ -269,6 +275,7 @@ class SvgContext(BaseContext):
 
         >>> path = '_export/SvgContext_line.svg'
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.stroke((1, 0, 0.5), 30)
         >>> context.line((0, 100), (300, 300))
         >>> context.stroke((0.6, 0.1, 0.5), 20)
@@ -310,6 +317,7 @@ class SvgContext(BaseContext):
         """Save the current graphic state.
 
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.font('PageBot-Regular')
         >>> context._font
         'PageBot-Regular'
@@ -371,6 +379,7 @@ class SvgContext(BaseContext):
 
         >>> path = '_export/SvgContext_text.svg'
         >>> context = SvgContext()
+        >>> context.newPage(1000, 1000)
         >>> context.fontSize(pt(100))
         >>> context.font('PageBot-Bold') # TODO: Match with font path.
         >>> context.fill(color(r=1, g=0, b=0.5))
