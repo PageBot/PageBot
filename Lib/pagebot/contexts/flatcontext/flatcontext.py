@@ -369,15 +369,15 @@ class FlatContext(BaseContext):
 
     page = property(_get_page)
 
-    def _get_height(self):
-        return self._drawing.height
-
-    height = property(_get_height)
-
     def _get_width(self):
         return self._drawing.width
 
     width = property(_get_width)
+
+    def _get_height(self):
+        return self._drawing.height
+
+    height = property(_get_height)
 
     def getTransformed(self, x, y, z=0):
         """Takes a point and puts it through the transformation matrix,
@@ -970,12 +970,7 @@ class FlatContext(BaseContext):
         if p is None:
             p = 0, 0
 
-        #xTest, yTest = p
         x, y = self.translatePoint(p)
-        #xTest, yTest = self.getTransformed(xTest, yTest)
-        #print(x, y)
-        #print(xTest, yTest)
-        #self.save()
 
         doScale = w is not None or h is not None
 

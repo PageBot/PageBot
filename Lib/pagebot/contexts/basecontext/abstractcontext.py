@@ -89,9 +89,14 @@ class AbstractContext:
             return PAGE_SIZES
         return PAGE_SIZES.get(paperSize)
 
-    #def size(self, width, height=None):
-    def setSize(self, w=None, h=None):
+    '''
+    def setSize(self, w, h=None):
+        """Sets the width and height of the current page. Standardize on
+        PageBot `(w, h)` for consistent naming, instead of DrawBot (width,
+        height)."""
         raise NotImplementedError
+
+    '''
 
     def pageCount(self):
         """Answer the current page count."""
@@ -113,12 +118,6 @@ class AbstractContext:
         raise NotImplementedError
 
     pages = property(_get_pages)
-
-    def size(self, w, h=None):
-        """Sets the width and height of the current page. Standardize on
-        PageBot `(w, h)` for consistent naming, instead of DrawBot (width,
-        height)."""
-        raise NotImplementedError
 
     def saveImage(self, path, *args, **options):
         """Save or export the canvas to a specified format. The `path`

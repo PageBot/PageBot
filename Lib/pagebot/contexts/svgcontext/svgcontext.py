@@ -69,6 +69,8 @@ class SvgContext(BaseContext):
         self.save() # Save current set of values on gState stack.
         self.newDrawing()
         self._bezierpath = None # Hold current open SVG path
+        self._w = None
+        self._h = None
 
     # Drawing.
 
@@ -79,11 +81,23 @@ class SvgContext(BaseContext):
         >>> context = SvgContext()
         >>> context.newDrawing()
         """
-        self._drawing = self.b.Drawing(self._filePath, profile='tiny')
+        self._w = upt(w)
+        self._h = upt(h)
+        size = (w, h)
+        self._drawing = self.b.Drawing(self._filePath, size=size, profile='tiny')
 
     def endDrawing(self):
         pass
 
+    def _get_width(self):
+        return self._w
+
+    width = property(_get_width)
+
+    def _get_height(self):
+        return self._h
+
+    height = property(_get_height)
 
     # Save / export.
 
@@ -383,6 +397,7 @@ class SvgContext(BaseContext):
         pass
 
     def textSize(self, bs, w=None, h=None):
+        # https://stackoverflow.com/questions/24337531/how-to-determine-text-width-and-height-when-using-svgwrite-for-python
         pass
 
     def fromBabelString(self, bs):

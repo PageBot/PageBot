@@ -709,16 +709,6 @@ class BaseContext(AbstractContext):
 
     # Transformations.
 
-    def transform(self, matrix, center=(0, 0)):
-        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
-        over vector (dx, dy)"""
-        self.b.transform(matrix, center=center)
-
-    def translate(self, x=0, y=0):
-        """Translate the origin to this point."""
-        xpt, ypt = point2D(upt(x, y))
-        self.b.translate(xpt, ypt)
-
     def translatePoint(self, p):
         """Simpler function to translate a point based on origin coordinates
         (`self._ox` and `self._oy`).
@@ -734,6 +724,16 @@ class BaseContext(AbstractContext):
         also need to subtract the box height.'''
         y = self.height - (self._oy + y)
         return upt(x, y)
+
+    def transform(self, matrix, center=(0, 0)):
+        """Transform canvas over matrix t, e.g. (1, 0, 0, 1, dx, dy) to shift
+        over vector (dx, dy)"""
+        self.b.transform(matrix, center=center)
+
+    def translate(self, x=0, y=0):
+        """Translate the origin to this point."""
+        xpt, ypt = point2D(upt(x, y))
+        self.b.translate(xpt, ypt)
 
     def rotate(self, angle, center=None):
         """Rotate the canvas by angle. If angle is not a units.Angle instance,
