@@ -55,13 +55,19 @@ class AbstractContext:
 
     # Magic variables.
 
-    def width(self):
+    def _get_width(self):
         """Answers the width of the current page."""
         raise NotImplementedError
 
-    def height(self):
+    width = property(_get_width)
+
+    def _get_height(self):
         """Answers the height of the current page."""
         raise NotImplementedError
+
+    height = property(_get_height)
+
+    # Size.
 
     def sizes(self, paperSize=None):
         """Returns the (w, h) of a specified canvas size. If no canvas size is
@@ -83,6 +89,10 @@ class AbstractContext:
             return PAGE_SIZES
         return PAGE_SIZES.get(paperSize)
 
+    #def size(self, width, height=None):
+    def setSize(self, w=None, h=None):
+        raise NotImplementedError
+
     def pageCount(self):
         """Answer the current page count."""
         raise NotImplementedError
@@ -101,6 +111,7 @@ class AbstractContext:
         (pages are stored in the Document instance, not in the context),
         other than for the DrawBot context to make it compatible."""
         raise NotImplementedError
+
     pages = property(_get_pages)
 
     def size(self, w, h=None):

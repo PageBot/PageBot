@@ -28,8 +28,7 @@ class BaseView(Element):
     isView = True
 
     # Default, redefined by inheriting classes that need another context.
-    SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext', 'HtmlContext')
-    #SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext')
+    SUPPORTED_CONTEXTS = ('DrawBotContext', 'FlatContext', 'HtmlContext', 'SvgContext')
 
     def __init__(self, w=None, h=None, contect=None, parent=None, context=None,
             verbose=False, **kwargs):
@@ -52,8 +51,8 @@ class BaseView(Element):
 
         self.context = context # Set the self._context property.
 
-        if context is not None:
-            self.context.setSize(self.w, self.h)
+        #if context is not None:
+        #    self.context.setSize(self.w, self.h)
 
         # Optionally implemented by inheriting view classes to preset parameters.
         self.setControls()

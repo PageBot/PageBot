@@ -126,6 +126,8 @@ class SvgContext(BaseContext):
     def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
         """Create a new SVG page.
 
+        TODO: test with document as argument.
+
         >>> context = SvgContext()
         >>> context.newPage(100, 100)
         """
@@ -135,6 +137,8 @@ class SvgContext(BaseContext):
 
     def newPath(self):
         """
+        TODO: wrap in a compatible SvgBezierPath object.
+
         >>> context = SvgContext()
         >>> path = context.newPath()
         >>> from svgwrite.path import Path
@@ -148,16 +152,22 @@ class SvgContext(BaseContext):
         """Move to point `p` in the open path. Create a new self._bezierpath if none
         is open.
         """
+        p = self.translatePoint(p)
+        super().moveTo(p)
 
     def lineTo(self, p):
         """Line to point p in the open path. Create a new self._bezierpath if none
         is open.
         """
+        print('lineTo')
 
     def curveTo(self, bcp1, bcp2, p):
         """Curve to point p i nthe open path. Create a new path if none is
-        open.
-        """
+        open."""
+        bcp1 = self.translatePoint(bcp1)
+        bcp2 = self.translatePoint(bcp2)
+        p = self.translatePoint(p)
+        super().curveTo(bcp1, bcp2, p)
 
     def qCurveTo(self, *points):
         """
@@ -438,7 +448,7 @@ class SvgContext(BaseContext):
 
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
-        pass
+        print(self._bezierpath)
     #
 
     def shadow(self, eShadow, e=None):

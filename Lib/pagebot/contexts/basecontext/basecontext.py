@@ -130,44 +130,6 @@ class BaseContext(AbstractContext):
     language = property(_get_language, _set_language)
     '''
 
-    # Magic variables.
-
-    def width(self):
-        return self.b.width()
-
-    def height(self):
-        return self.b.height()
-
-    def sizes(self, paperSize=None):
-        return self.b.sizes(paperSize=paperSize)
-
-    def pageCount(self):
-        return self.b.pageCount()
-
-    # Public callbacks.
-
-    def size(self, width, height=None):
-        return self.b.size(width, height=height)
-
-    def setSize(self, w=None, h=None):
-        # TODO: also add to abstract.
-        pass
-
-    def newPage(self, w=None, h=None, doc=None, **kwargs):
-        """Creates a new drawbot page.
-
-        >>> from pagebot.toolbox.units import px
-        >>> from pagebot import getContext
-        >>> context = getContext()
-        >>> context.newPage(pt(100), pt(100))
-       >>> context.newPage(100, 100)
-        """
-        if doc is not None:
-            w = w or doc.w
-            h = h or doc.h
-        wpt, hpt = upt(w, h)
-        self.b.newPage(wpt, hpt)
-
     # Saving / export.
 
     def saveImage(self, path, *args, **options):
@@ -408,7 +370,6 @@ class BaseContext(AbstractContext):
 
     def closePath(self):
         """Closes the open path if it exists, otherwise ignore it.
-        PageBot function.
 
         >>> from pagebot import getContext
         >>> context = getContext()
@@ -740,6 +701,12 @@ class BaseContext(AbstractContext):
     def lineDash(self, value):
         """LineDash is None or a list of dash lengths."""
 
+    # Scale.
+
+    def getScaledWH(self, w, h):
+        """Scales width and height according to previously set scale."""
+        return w * self._sx, h * self._sy
+
     # Transformations.
 
     def transform(self, matrix, center=(0, 0)):
@@ -751,6 +718,22 @@ class BaseContext(AbstractContext):
         """Translate the origin to this point."""
         xpt, ypt = point2D(upt(x, y))
         self.b.translate(xpt, ypt)
+
+    def translatePoint(self, p):
+        """Simpler function to translate a point based on origin coordinates
+        (`self._ox` and `self._oy`).
+
+        TODO: merge with getTransformed.
+        """
+        x, y = point2D(upt(p))
+        x = self._ox + x
+
+        '''Because the origin is at the bottom, like in DrawBot and as opposed
+        to Flat, we need to subtract all vertical coordinates from the page
+        height before an object gets placed. In case of (bounding) boxes, we
+        also need to subtract the box height.'''
+        y = self.height - (self._oy + y)
+        return upt(x, y)
 
     def rotate(self, angle, center=None):
         """Rotate the canvas by angle. If angle is not a units.Angle instance,

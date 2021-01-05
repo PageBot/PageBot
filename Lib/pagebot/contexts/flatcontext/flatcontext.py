@@ -293,6 +293,7 @@ class FlatContext(BaseContext):
             h = pt(1000)
         return units(w), units(h)
 
+    '''
     def setSize(self, w=None, h=None):
         """Set the initial page size of the context, in case something is drawn
         before a document or page is created.
@@ -318,6 +319,7 @@ class FlatContext(BaseContext):
         #self.w, self.h = self._getValidSize(w, h)
         # TODO: see if Flat document can be resized, else we should create a
         # new one and copy its contents.
+    '''
 
     def newPage(self, w=None, h=None, doc=None):
         """Other page sizes than default in self._drawing, are ignored in Flat.
@@ -369,10 +371,12 @@ class FlatContext(BaseContext):
 
     def _get_height(self):
         return self._drawing.height
+
     height = property(_get_height)
 
     def _get_width(self):
         return self._drawing.width
+
     width = property(_get_width)
 
     def getTransformed(self, x, y, z=0):
@@ -420,27 +424,6 @@ class FlatContext(BaseContext):
 
         y1 = self.height - y1
         return upt(x1, y1)
-
-    def translatePoint(self, p):
-        """
-        Simpler function to translate a point based on origin coordinates
-        (`self._ox` and `self._oy`).
-
-        TODO: merge with getTransformed.
-        """
-        x, y = point2D(upt(p))
-        x = self._ox + x
-
-        '''Because the origin is at the bottom, like in DrawBot and as opposed
-        to Flat, we need to subtract all vertical coordinates from the page
-        height before an object gets placed. In case of (bounding) boxes, we
-        also need to subtract the box height.'''
-        y = self.height - (self._oy + y)
-        return upt(x, y)
-
-    def getScaledWH(self, w, h):
-        """Scales width and height according to previously set scale."""
-        return w * self._sx, h * self._sy
 
     #   S T A T E
 
