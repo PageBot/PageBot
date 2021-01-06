@@ -59,7 +59,6 @@ class MampView(SiteView):
         >>> view = doc.view
         """
         doInit = True
-
         rootPath = getMampPath() # Get the root path in this context where Mamp stores files.
         siteName = (self.doc.name or self.doc.title or 'UntitledSite').replace(' ','_') # Make safe site name
 

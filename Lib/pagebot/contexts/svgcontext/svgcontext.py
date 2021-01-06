@@ -72,6 +72,7 @@ class SvgContext(BaseContext):
         self._bezierpath = None # Hold current open SVG path
         self._w = None
         self._h = None
+        self.drawing = []
 
     # Drawing.
 
@@ -83,24 +84,28 @@ class SvgContext(BaseContext):
         >>> context = SvgContext()
         >>> context.newPage(1000, 1000)
         """
+        self._w = upt(w)
+        self._h = upt(h)
+
         # Copies document dimensions if available.
         if doc is not None:
             w = w or doc.w
             h = h or doc.h
 
-        drawing = self.newDrawing(w=w, h=h)
-        self.pages.append(drawing)
+        svgDrawing = self.newSvgDrawing(w=w, h=h)
+        self.drawing.append(svgDrawing)
         self._numberOfPages += 1
 
     def newDrawing(self, w=None, h=None, doc=None):
+        pass
+
+    def newSvgDrawing(self, w=None, h=None, doc=None):
         """The @doc is the optional Document instance of the calling function. Clear
         output canvas, start new export file.
 
         >>> context = SvgContext()
         >>> drawing = context.newDrawing(1000, 1000)
         """
-        self._w = upt(w)
-        self._h = upt(h)
         size = (self._w, self._h)
         drawing =  self.b.Drawing(self._filePath, size=size, profile='tiny')
         self._drawing = drawing

@@ -501,9 +501,6 @@ class AbstractContext:
     def imagePixelColor(self, path, p):
         raise NotImplementedError
 
-    def numberOfPages(self, path):
-        raise NotImplementedError
-
     # Mov.
 
     def frameDuration(self, secondsPerFrame):

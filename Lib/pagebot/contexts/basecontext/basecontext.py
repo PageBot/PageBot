@@ -1020,6 +1020,9 @@ class BaseContext(AbstractContext):
         return self.b.image(path, p, alpha=alpha, pageNumber=pageNumber, w=w,
                 h=h, scaleType=scaleType)
 
+    '''
+    Should be same as pageCount().
+
     def numberOfPages(self, path):
         """Answer the number of pages, if the image paths points to a PDF.
         https://www.journaldev.com/33281/pypdf2-python-library-for-pdf-files
@@ -1040,6 +1043,7 @@ class BaseContext(AbstractContext):
                 information = pdf.getDocumentInfo()
                 return pdf.getNumPages()
         return None
+    '''
 
     def imageSize(self, path, index=0):
         """Answer the images size of path.
