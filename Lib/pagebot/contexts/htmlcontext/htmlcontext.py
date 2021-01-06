@@ -73,7 +73,7 @@ class HtmlContext(BaseContext):
     def getDrawing(self):
         pass
 
-    def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
+    def newPage(self, w=None, h=None, doc=None, **kwargs):
         pass
 
     def pageCount(self):

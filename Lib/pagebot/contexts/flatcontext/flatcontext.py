@@ -322,7 +322,7 @@ class FlatContext(BaseContext):
         # new one and copy its contents.
     '''
 
-    def newPage(self, w=None, h=None, doc=None):
+    def newPage(self, w=None, h=None, doc=None, **kwargs):
         """Other page sizes than default in self._drawing are ignored in Flat.
 
         NOTE: this generates a flat.page, not to be confused with PageBot page.

@@ -493,7 +493,7 @@ class SketchContext(BaseContext):
     def newDrawing(self, w=None, h=None):
         pass
 
-    def newPage(self, w, h):
+    def newPage(self, w=None, h=None, doc=None, **kwargs):
         pass
 
     def pageCount(self):

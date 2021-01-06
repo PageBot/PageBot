@@ -75,7 +75,7 @@ class SvgContext(BaseContext):
 
     # Drawing.
 
-    def newPage(self, w=None, h=None, doc=None, page=None, **kwargs):
+    def newPage(self, w=None, h=None, doc=None, **kwargs):
         """Create a new SVG page.
 
         TODO: test with document as argument.

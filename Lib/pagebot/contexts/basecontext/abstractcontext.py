@@ -104,7 +104,7 @@ class AbstractContext:
 
     # Public callbacks.
 
-    def newPage(self, w=None, h=None, page=None, **kwargs):
+    def newPage(self, w=None, h=None, doc=None, **kwargs):
         """Optional width and height if defined. Standardize on PageBot `(w,
         h)` for consistent naming, instead of DrawBot (width, height).
         Otherwise the optional PageBot `page` instance can be used by the
