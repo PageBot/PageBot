@@ -136,6 +136,12 @@ class FlatContext(BaseContext):
         self.transform3D = Transform3D()
 
     #   Drawing.
+    #
+    #   Like in DrawBot, newDrawing creates a new page, while new page creates
+    #   a drawing if it doesn't exist yet. Drawing size is taken from the element
+    #   level document, from size tuple, from w and h, or is set to 1000 x 1000px
+    #   in that order. Changing of drawing size over multiple pages still needs to
+    #   be supported.
 
     def getDrawingSize(self, w=None, h=None, size=None, doc=None):
         """We assume origin is at the bottom, just like in DrawBot."""
@@ -189,7 +195,6 @@ class FlatContext(BaseContext):
         """Other page sizes than default in self._drawing are ignored in Flat.
 
         NOTE: this generates a flat.page, not to be confused with PageBot page.
-        FIXME: test units, page auto-sizes to parent doc.
         TODO: when size changes, keep track of multiple Flat documents.
         Alternatively, we can try to resize, but not sure what happens with the
         dimensions of previous pages (needs testing).

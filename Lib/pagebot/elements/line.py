@@ -63,7 +63,7 @@ class Line(Element):
         >>> from pagebot.toolbox.units import pt
         >>> from pagebot import getContext
         >>> from pagebot.document import Document
-        >>> c = getContext('Flat')
+        >>> c = getContext()
         >>> w, h = pt(300, 400)
         >>> doc = Document(w=w, h=h, padding=30, context=c)
         >>> c.newDrawing(doc=doc)

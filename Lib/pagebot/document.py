@@ -1533,6 +1533,9 @@ class Document:
         >>> score = doc.solve()
         >>> doc.view # PageView is default.
         <PageView>
+        >>> context.name in ('DrawBotContext', 'FlatContext')
+        True
+        >>> context.newPage(100, 100)
         >>> doc.export('_export/TestExportDoc.pdf')
         """
         self.build(path=path, multiPage=multiPage, **kwargs)
