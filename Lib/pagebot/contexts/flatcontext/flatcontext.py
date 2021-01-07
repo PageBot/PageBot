@@ -137,7 +137,36 @@ class FlatContext(BaseContext):
 
     #   Drawing.
 
-    def newDrawing(self, w=None, h=None, size=None, doc=None):
+    def getDrawingSize(self, w=None, h=None, size=None, doc=None):
+        """We assume origin is at the bottom, just like in DrawBot."""
+
+        if doc is not None:
+            w = doc.w
+            h = doc.h
+        elif size is not None:
+            w, h = size
+
+        w, h = self._getValidSize(w, h)
+
+        # Dimensions not allowed to be None or Flat document won't render.
+        assert w is not None
+        assert h is not None
+
+        # Converts units to point values. Stores width and height information
+        # in Flat document.
+        return upt(w, h)
+
+    def _getValidSize(self, w, h):
+        """Answer a valid size for FlatContext document and pages. Make
+        default page size, similar to DrawBot."""
+        if w is None or w < 0:
+            w = pt(1000)
+        if h is None or h < 0:
+            h = pt(1000)
+
+        return units(w), units(h)
+
+    def newDrawing(self, w=None, h=None, size=None, doc=None, doPage=True):
         """Creates a new Flat canvas to draw on. Flipped `y`-axis by default to
         conform to DrawBot's drawing methods.
 
@@ -151,26 +180,42 @@ class FlatContext(BaseContext):
         if self._drawing:
             self.clear()
 
-        #self.originTop = originTop
-        #self.originTop = False
-
-        if doc is not None:
-            w = doc.w
-            h = doc.h
-        elif size is not None:
-            w, h = size
-
-        # Dimensions not allowed to be None or Flat document won't render.
-        assert w is not None
-        assert h is not None
-
-        # Converts units to point values. Stores width and height information
-        # in Flat document.
-        wpt, hpt = upt(w, h)
+        wpt, hpt = self.getDrawingSize(w=w, h=h, size=size, doc=doc)
         self._drawing = self.b.document(wpt, hpt, units=self.UNITS)
-        #self._drawing.size(wpt, hpt, units=self.UNITS)
-        #self._drawing.pages = []
-        self._numberOfPages = 1
+        if doPage:
+            self.newPage(w=w, h=h)
+
+    def newPage(self, w=None, h=None, doc=None, **kwargs):
+        """Other page sizes than default in self._drawing are ignored in Flat.
+
+        NOTE: this generates a flat.page, not to be confused with PageBot page.
+        FIXME: test units, page auto-sizes to parent doc.
+        TODO: when size changes, keep track of multiple Flat documents.
+        Alternatively, we can try to resize, but not sure what happens with the
+        dimensions of previous pages (needs testing).
+
+        self._drawing.size(wpt, hpt, units=self.UNITS)
+
+        documents::
+
+            if w != self.w:
+                <add document to stack>
+            if h != self.h
+                <add document to stack>
+
+        >>> from pagebot.toolbox.units import pt
+        >>> context = FlatContext()
+        >>> w = h = pt(100)
+        >>> context.newPage(w, h)
+        """
+        w, h = self.getDrawingSize(w=w, h=h, doc=doc)
+
+        if not self._drawing:
+            self.newDrawing(w=w, h=h, doPage=False)
+
+        assert self._drawing
+        self._numberOfPages += 1
+        self._drawing.addpage()
 
     def saveDrawing(self, path, multiPage=None):
         """Save the current document to file(s)
@@ -286,14 +331,6 @@ class FlatContext(BaseContext):
         """Returns the drawing object in the current state."""
         return self._drawing
 
-    def _getValidSize(self, w, h):
-        """Answer a valid size for FlatContext document and pages."""
-        if w is None or w < 0:
-            w = pt(1000) # Make default page size, similar to DrawBot.
-        if h is None or h < 0:
-            h = pt(1000)
-        return units(w), units(h)
-
     '''
     def setSize(self, w=None, h=None):
         """Set the initial page size of the context, in case something is drawn
@@ -321,34 +358,6 @@ class FlatContext(BaseContext):
         # TODO: see if Flat document can be resized, else we should create a
         # new one and copy its contents.
     '''
-
-    def newPage(self, w=None, h=None, doc=None, **kwargs):
-        """Other page sizes than default in self._drawing are ignored in Flat.
-
-        NOTE: this generates a flat.page, not to be confused with PageBot page.
-        FIXME: test units, page auto-sizes to parent doc.
-        TODO: when size changes, we need to keep track of multiple Flat
-        documents::
-
-            if w != self.w:
-                <add document to stack>
-            if h != self.h
-                <add document to stack>
-
-        >>> from pagebot.toolbox.units import pt
-        >>> context = FlatContext()
-        >>> w = h = pt(100)
-        >>> context.newPage(w, h)
-        """
-        w, h = self._getValidSize(w, h)
-
-        if not self._drawing:
-            self.newDrawing(w=w, h=h)
-
-        assert self._drawing
-
-        self._numberOfPages += 1
-        self._drawing.addpage()
 
     def getTmpPage(self, w, h):
         drawing = self.b.document(w, h, units=self.UNITS)
@@ -520,7 +529,7 @@ class FlatContext(BaseContext):
                 path.closePath()
             elif command == 'component':
                 (x, y), componentGlyph = t
-                #if not self.originTop:
+                # Flipping `y`-axis by default to conform to OS X / DrawBot origin at bottom.
                 y = -y
                 self.getGlyphPath(componentGlyph, (px+x, py+y), path)
 
