@@ -29,6 +29,8 @@ from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.contexts.basecontext.babelrun import BabelLineInfo, BabelRunInfo
 from pagebot.contexts.flatcontext.flatbuilder import flatBuilder
 from pagebot.contexts.flatcontext.flatbezierpath import FlatBezierPath
+from pagebot.contexts.flatcontext.flatrundata import FlatRunData
+from pagebot.contexts.flatcontext.flatbabeldata import FlatBabelData
 from pagebot.filepaths import ROOT_FONT_PATHS
 from pagebot.fonttoolbox.fontpaths import getFontPathOfFont
 from pagebot.fonttoolbox.objects.font import findFont, Font
@@ -36,33 +38,6 @@ from pagebot.mathematics import to255
 from pagebot.mathematics.transform3d import Transform3D
 from pagebot.toolbox.color import color, Color, noColor, blackColor
 from pagebot.toolbox.units import pt, em, upt, units
-
-
-class FlatBabelData:
-    """Class to store cached information in BabelString._cs."""
-
-    def __init__(self, doc, page, paragraphs, runs):
-        self.doc = doc # Flat.document instance
-        self.page = page # Flat.page instance
-        self.paragraphs = paragraphs
-        self.txt = flat.text(paragraphs)
-        self.pt = page.place(self.txt) # Flat.placedText instance
-        self.runs = runs # List of FlatRunData instances
-
-    def __repr__(self):
-        spans = [span.string for p in self.paragraphs for span in p.spans]
-        # Show plain string accumulate string, compatible to DrawBotFormattedString
-        return ' '.join(spans)
-
-class FlatRunData:
-    """Class to store cached information in FlatBabelData.runs."""
-
-    def __init__(self, st, pars):
-        self.st = st # Current strike for this run.
-        self.pars = pars # Current list of paragraphs that share the same strike.
-
-    def __repr__(self):
-        return '<%s>' % self.__class__.__name__
 
 class FlatContext(BaseContext):
     """The FlatContext implements the Flat functionality within the PageBot
