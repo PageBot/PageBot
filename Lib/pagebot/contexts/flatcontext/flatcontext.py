@@ -18,8 +18,7 @@ import math
 from sys import platform
 from os import listdir, makedirs
 from os.path import exists
-import flat
-from flat import rgb
+#from flat import rgb
 
 from pagebot.constants import (DEFAULT_FONT, DEFAULT_FONT_SIZE, FILETYPE_PDF,
         FILETYPE_JPG, FILETYPE_SVG, FILETYPE_PNG, FILETYPE_GIF, LEFT,
@@ -869,7 +868,7 @@ class FlatContext(BaseContext):
 
         #pt = fPage.place(txt)
         # Stored typically as BabelString.cs in FlatContext mode.
-        return FlatBabelData(doc=fDoc, page=fPage, paragraphs=fParagraphs, runs=fRuns)
+        return FlatBabelData(builder=self.b, doc=fDoc, page=fPage, paragraphs=fParagraphs, runs=fRuns)
 
     #   F O N T
 
@@ -1009,7 +1008,7 @@ class FlatContext(BaseContext):
 
         TODO: Make better match for all file types, transparency and spot
         color."""
-        return rgb(*to255(c.rgb))
+        return self.b.rgb(*to255(c.rgb))
 
     def _getShape(self):
         """Renders Pagebot FlatBuilder shape to a Flat shape."""
