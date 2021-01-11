@@ -16,7 +16,7 @@
 
 
 class FlatRunData:
-"""Class to store cached information in FlatBabelData.runs."""
+    """Class to store cached information in FlatBabelData.runs."""
 
     def __init__(self, st, pars):
         # Strike for this run.
