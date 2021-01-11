@@ -55,69 +55,6 @@ class FlatBezierPath(BaseBezierPath):
     def __repr__(self):
         return '<FlatBezierPath>'
 
-    # FontTools PointToSegmentPen routines.
-
-    def beginPath(self, identifier=None):
-        """Begin using the path as a so called point pen and start a new subpath."""
-        self._pointToSegmentPen = PointToSegmentPen(self)
-        self._pointToSegmentPen.beginPath()
-
-    def addPoint(self, point, segmentType=None, smooth=False, name=None,
-            identifier=None, **kwargs):
-        """Use the path as a point pen and add a point to the current subpath.
-        `beginPath` must have been called prior to adding points with
-        `addPoint` calls."""
-        if not hasattr(self, "_pointToSegmentPen"):
-            msg = "path.beginPath() must be called before the path can be used as a point pen."
-            raise PageBotError(msg)
-        self._pointToSegmentPen.addPoint(
-            point,
-            segmentType=segmentType,
-            smooth=smooth,
-            name=name,
-            identifier=identifier,
-            **kwargs
-        )
-
-    def endPath(self):
-        """Ends the current subpath. Calling this method has two distinct
-        meanings depending on the context:
-
-        When the Bézier path is used as a segment pen (using `moveTo`,
-        `lineTo`, etc.), the current subpath will be finished as an open
-        contour.
-
-        When the Bézier path is used as a point pen (using `beginPath`,
-        `addPoint` and `endPath`), the path will process all the points added
-        with `addPoint`, finishing the current subpath."""
-        if hasattr(self, "_pointToSegmentPen"):
-            # its been uses in a point pen world
-            pointToSegmentPen = self._pointToSegmentPen
-            del self._pointToSegmentPen
-            pointToSegmentPen.endPath()
-        else:
-            msg = "path.beginPath() must be called before the path can be used as a point pen."
-            raise PageBotError(msg)
-
-    def draw(self, pen):
-        """Draws the contours with **pen**."""
-        pointPen = PointToSegmentPen(pen)
-        self.drawToPointPen(pointPen)
-
-    def drawToPointPen(self, pointPen):
-        """Draws the Bézier path into a point pen."""
-        contours = self.contours
-
-        for contour in contours:
-            contour.drawToPointPen(pointPen)
-
-    def drawToPen(self, pen):
-        """Draws the Bézier path into a pen."""
-        contours = self.contours
-
-        for contour in contours:
-            contour.drawToPen(pen)
-
     # Curve.
 
     def _moveTo(self, p):

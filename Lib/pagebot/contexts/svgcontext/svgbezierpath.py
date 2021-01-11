@@ -36,3 +36,41 @@ class SvgBezierPath(BaseBezierPath):
 
     def __repr__(self):
         return '<SvgBezierPath>'
+
+    # Curve.
+
+    def _moveTo(self, p):
+        self.commands.append(self.b.moveto(p[0], p[1]))
+        point = self.getPoint(p)
+        self.addSegment(MOVETO, [point])
+
+    def _lineTo(self, p):
+        self.commands.append(self.b.lineto(p[0], p[1]))
+        point = self.getPoint(p)
+        self.addSegment(LINETO, [point])
+
+    def _curveToOne(self, cp1, cp2, p):
+        """
+        * cp1: control point 1, off curve.
+        * cp2: control point 2, off curve.
+        * p: on curve point.
+        """
+        self.commands.append(self.b.curveto(cp1[0], cp1[1], cp2[0], cp2[1],
+            p[0], p[1]))
+        cpoint1 = self.getPoint(cp1, onCurve=False)
+        cpoint2 = self.getPoint(cp2, onCurve=False)
+        point = self.getPoint(p)
+        points = [cpoint1, cpoint2, point]
+        self.addSegment(CURVETO, points)
+
+    # TODO
+
+    def addComponent(self, glyphName, transformation):
+        pass
+
+    def arc(self, center, radius, startAngle, endAngle, clockwise):
+        pass
+
+    def arcTo(self, point1, point2, radius):
+        pass
+

@@ -18,6 +18,8 @@
 import math
 import booleanOperations
 from fontTools.pens.basePen import BasePen
+from fontTools.pens.pointPen import PointToSegmentPen
+from fontTools.pens.boundsPen import BoundsPen
 from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebeziercontour import BaseBezierContour
 from pagebot.contexts.basecontext.basebezierpoint import BaseBezierPoint
@@ -135,18 +137,29 @@ class BaseBezierPath(BasePen):
         point = BaseBezierPoint(x, y, onCurve=onCurve)
         return point
 
-    # Drawing.
+    # FontTools PointToSegmentPen routines.
 
     def beginPath(self, identifier=None):
-        """Begins the path as a point pen and starts a new subpath."""
-        raise NotImplementedError
+        """Begin using the path as a point pen and start a new subpath."""
+        self._pointToSegmentPen = PointToSegmentPen(self)
+        self._pointToSegmentPen.beginPath()
 
     def addPoint(self, point, segmentType=None, smooth=False, name=None,
             identifier=None, **kwargs):
-        """Uses the path as a point pen and add a point to the current subpath.
+        """Use the path as a point pen and add a point to the current subpath.
         `beginPath` must have been called prior to adding points with
         `addPoint` calls."""
-        raise NotImplementedError
+        if not hasattr(self, "_pointToSegmentPen"):
+            msg = "path.beginPath() must be called before the path can be used as a point pen."
+            raise PageBotError(msg)
+        self._pointToSegmentPen.addPoint(
+            point,
+            segmentType=segmentType,
+            smooth=smooth,
+            name=name,
+            identifier=identifier,
+            **kwargs
+        )
 
     def endPath(self):
         """Ends the current subpath. Calling this method has two distinct
@@ -159,7 +172,40 @@ class BaseBezierPath(BasePen):
         When the Bézier path is used as a point pen (using `beginPath`,
         `addPoint` and `endPath`), the path will process all the points added
         with `addPoint`, finishing the current subpath."""
-        raise NotImplementedError
+        if hasattr(self, "_pointToSegmentPen"):
+            pointToSegmentPen = self._pointToSegmentPen
+            del self._pointToSegmentPen
+            pointToSegmentPen.endPath()
+        else:
+            msg = "path.beginPath() must be called before the path can be used as a point pen."
+            raise PageBotError(msg)
+
+    def draw(self, pen):
+        """Draws the contours with **pen**."""
+        pointPen = PointToSegmentPen(pen)
+        self.drawToPointPen(pointPen)
+
+    def bounds(self):
+        """Returns the bounding box of the path."""
+        pen = BoundsPen(self)
+        self.draw(pen)
+        return pen.bounds
+
+    def drawToPointPen(self, pointPen):
+        """Draws the Bézier path into a point pen."""
+        contours = self.contours
+
+        for contour in contours:
+            contour.drawToPointPen(pointPen)
+
+    def drawToPen(self, pen):
+        """Draws the Bézier path into a pen."""
+        contours = self.contours
+
+        for contour in contours:
+            contour.drawToPen(pen)
+
+    # Drawing.
 
     def addComponent(self, glyphName, transformation):
         """
@@ -171,14 +217,6 @@ class BaseBezierPath(BasePen):
         A `glyphSet` is required during initialization of the BezierPath
         object.
         """
-        raise NotImplementedError
-
-    def drawToPen(self, pen):
-        """Draws the Bézier path into a pen."""
-        raise NotImplementedError
-
-    def drawToPointPen(self, pointPen):
-        """Draws the Bézier path into a point pen."""
         raise NotImplementedError
 
     # Shapes.
