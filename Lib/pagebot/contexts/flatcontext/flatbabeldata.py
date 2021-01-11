@@ -14,6 +14,7 @@
 #
 #     flatbabeldata.py
 #
+import flat
 
 class FlatBabelData:
     """Class to store cached information in BabelString._cs."""

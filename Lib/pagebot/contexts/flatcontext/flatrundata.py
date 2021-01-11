@@ -14,6 +14,8 @@
 #
 #     flatrundata.py
 
+import flat
+
 
 class FlatRunData:
     """Class to store cached information in FlatBabelData.runs."""
