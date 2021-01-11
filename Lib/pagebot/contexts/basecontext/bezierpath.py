@@ -35,7 +35,7 @@ class BezierPath:
     """Implements a wrapper around BaseBezierPath which has the same interface
     as the DrawBot Bézier path, adding knowledge of units and the context.
 
-    NOTE: to be deprecated, reimplemented ad BezierCurve element.
+    NOTE: to be deprecated, reimplemented as BezierCurve element.
 
     >>> from pagebot import getContext
     >>> from pagebot.fonttoolbox.objects.font import findFonts

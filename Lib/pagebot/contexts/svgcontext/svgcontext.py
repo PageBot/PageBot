@@ -17,11 +17,12 @@
 #
 
 import shutil
-from pagebot.contexts.svgcontext.svgbuilder import svgBuilder
-from pagebot.contexts.basecontext.basecontext import BaseContext
-from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.constants import (DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE,
         FILETYPE_SVG, EXPORT)
+from pagebot.contexts.svgcontext.svgbuilder import svgBuilder
+from pagebot.contexts.basecontext.basecontext import BaseContext
+from pagebot.contexts.svgcontext.svgbezierpath import SvgBezierPath
+from pagebot.contexts.basecontext.babelstring import BabelString
 from pagebot.fonttoolbox.fontpaths import getDefaultFontPath
 from pagebot.toolbox.color import noColor, color
 from pagebot.toolbox.dating import seconds
@@ -177,6 +178,7 @@ class SvgContext(BaseContext):
         >>> isinstance(path, Path)
         True
         """
+        # self._bezierpath = SvgBezierPath()
         self._bezierpath = self._drawing.path()
         return self.bezierpath
 

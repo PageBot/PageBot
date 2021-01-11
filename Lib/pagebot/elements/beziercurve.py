@@ -20,7 +20,7 @@ from pagebot.elements.element import Element
 from pagebot.toolbox.color import noColor
 
 class BezierCurve(Element):
-    """Implements a BaseBezierPath as an element.
+    """Implements a (Base)BezierPath as an element.
 
     TODO: isOpenLine?
     TODO: what about contours (supported by BaseBezierPath)?
