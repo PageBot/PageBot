@@ -8,12 +8,10 @@ sphinx
 sphinx_rtd_theme
 svgwrite==1.3.1
 tornado==6.0.3
-#flask
 Pillow>=7.2.0
 PyPDF2==1.26.0
 uharfbuzz==0.14.0
 python-lorem==1.1.2
 #flat==0.3.1
 git+https://github.com/PageBot/flat.git
-git+https://github.com/PageBot/PySketch.git
 .
