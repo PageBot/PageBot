@@ -20,11 +20,10 @@ from pagebot.constants import DEFAULT_FONT
 from pagebot.contexts import getContext as getPlatformContext
 from pagebot.fonttoolbox.objects.font import findFont
 
-VERSION = '1.0'
-STATUS = 'beta'
+VERSION = '1.0.2'
 
 __doc__ = """PageBot module"""
-__version__ = '%s-%s' % (VERSION, STATUS)
+__version__ = '%s' % VERSION
 
 contextTypes = ('flat', 'html', 'svg')
 contextTypesOSX = ('drawbot',)
