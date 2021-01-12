@@ -178,7 +178,7 @@ class SvgContext(BaseContext):
         >>> isinstance(path, Path)
         True
         """
-        self._bezierpath = SvgBezierPath()
+        self._bezierpath = SvgBezierPath(self.b)
         return self._bezierpath
 
     def moveTo(self, p):
