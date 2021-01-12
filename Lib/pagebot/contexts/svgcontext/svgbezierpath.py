@@ -74,3 +74,20 @@ class SvgBezierPath(BaseBezierPath):
     def arcTo(self, point1, point2, radius):
         pass
 
+    def copy(self):
+        """Copy the Bézier path."""
+        return None
+
+    def reverse(self):
+        """Reverse the path direction."""
+
+    def appendPath(self, path):
+        pass
+
+    def pointInside(self, xy):
+        """Checks if a point `x`, `y` is inside a path."""
+
+    def controlPointBounds(self):
+        """Returns the bounding box of the path including the offcurve
+        points."""
+

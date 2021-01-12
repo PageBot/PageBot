@@ -15,9 +15,6 @@
 #     flatbezierpath.py
 #
 
-from fontTools.pens.pointPen import PointToSegmentPen
-from fontTools.pens.boundsPen import BoundsPen
-from pagebot.errors import PageBotError
 from pagebot.contexts.basecontext.basebezierpath import BaseBezierPath
 from pagebot.constants import MOVETO, LINETO, CURVETO, CLOSEPATH
 
@@ -202,12 +199,6 @@ class FlatBezierPath(BaseBezierPath):
 
     def pointInside(self, xy):
         """Checks if a point `x`, `y` is inside a path."""
-
-    def bounds(self):
-        """Returns the bounding box of the path."""
-        pen = BoundsPen(self)
-        self.draw(pen)
-        return pen.bounds
 
     def controlPointBounds(self):
         """Returns the bounding box of the path including the offcurve
