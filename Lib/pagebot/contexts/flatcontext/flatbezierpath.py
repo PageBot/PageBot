@@ -97,32 +97,8 @@ class FlatBezierPath(BaseBezierPath):
         # ...
         self.commands += path.commands
 
-    def text(self, txt, offset=None, font=None, fontSize=10, align=None):
-        """Draws a `txt` with a `font` and `fontSize` at an `offset` in the
-        Bézier path. If a font path is given the font will be installed and
-        used directly.
 
-        - Optionally an alignment can be set.
-        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
-        - The default alignment is `left`.
-        - Optionally `txt` can be a `FormattedString`.
-        """
-
-    def textBox(self, txt, box, font=None, fontSize=10, align=None,
-            hyphenation=None):
-        """Draws a `txt` with a `font` and `fontSize` in a `box` in the Bézier
-        path. If a font path is given the font will be installed and used
-        directly.
-
-        - Optionally an alignment can be set.
-        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
-        - The default alignment is `left`.
-        - Optionally `hyphenation` can be provided.
-        - Optionally `txt` can be a `FormattedString`.
-        - Optionally `box` can be a `BezierPath`.
-        """
-
-    # Path operations.
+    # To be implemented.
 
     def getBezierPath(self):
         """Returns the BezierPath."""
@@ -151,8 +127,6 @@ class FlatBezierPath(BaseBezierPath):
         """Append a path."""
         return None
 
-    # TODO
-
     def addComponent(self, glyphName, transformation):
         pass
 
@@ -161,6 +135,32 @@ class FlatBezierPath(BaseBezierPath):
 
     def arcTo(self, point1, point2, radius):
         pass
+
+    def text(self, txt, offset=None, font=None, fontSize=10, align=None):
+        """Draws a `txt` with a `font` and `fontSize` at an `offset` in the
+        Bézier path. If a font path is given the font will be installed and
+        used directly.
+
+        - Optionally an alignment can be set.
+        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
+        - The default alignment is `left`.
+        - Optionally `txt` can be a `FormattedString`.
+        """
+
+    def textBox(self, txt, box, font=None, fontSize=10, align=None,
+            hyphenation=None):
+        """Draws a `txt` with a `font` and `fontSize` in a `box` in the Bézier
+        path. If a font path is given the font will be installed and used
+        directly.
+
+        - Optionally an alignment can be set.
+        - Possible `align` values are: `"left"`, `"center"` and `"right"`.
+        - The default alignment is `left`.
+        - Optionally `hyphenation` can be provided.
+        - Optionally `txt` can be a `FormattedString`.
+        - Optionally `box` can be a `BezierPath`.
+        """
+
 
 if __name__ == '__main__':
     import doctest

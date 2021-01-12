@@ -178,9 +178,8 @@ class SvgContext(BaseContext):
         >>> isinstance(path, Path)
         True
         """
-        # self._bezierpath = SvgBezierPath()
-        self._bezierpath = self._drawing.path()
-        return self.bezierpath
+         self._bezierpath = SvgBezierPath()
+        return self._bezierpath
 
     def moveTo(self, p):
         """Move to point `p` in the open path. Create a new self._bezierpath if none
@@ -489,6 +488,8 @@ class SvgContext(BaseContext):
 
 
     def drawPath(self, path=None, p=None, sx=1, sy=None):
+        # TODO: call drawing.path() inside SvgBezierPath.draw()
+        #bezierpath = self._drawing.path()
         print(self._bezierpath)
     #
 

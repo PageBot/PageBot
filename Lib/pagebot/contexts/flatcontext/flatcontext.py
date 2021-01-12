@@ -1012,6 +1012,7 @@ class FlatContext(BaseContext):
 
     def _getShape(self):
         """Renders Pagebot FlatBuilder shape to a Flat shape."""
+        # TODO: Move inside FlatBezierpath.
         #if self._fill is noColor and self._stroke is noColor:
         #    self._fill = whiteColor
         shape = self.b.shape()

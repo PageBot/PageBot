@@ -18,7 +18,6 @@
 import traceback
 from sys import platform
 from pagebot.contexts.flatcontext.flatcontext import FlatContext
-from pagebot.contexts.sketchcontext.sketchcontext import SketchContext
 from pagebot.contexts.htmlcontext.htmlcontext import HtmlContext
 from pagebot.contexts.svgcontext.svgcontext import SvgContext
 
@@ -41,6 +40,7 @@ if platform == 'darwin':
         except ImportError:
             print(traceback.format_exc())
 
+    from pagebotosx.contexts.sketchcontext.sketchcontext import SketchContext
 
 def getContext(contextType=None):
     """Determines which context is used:
@@ -91,8 +91,8 @@ def getContext(contextType=None):
 
         else:
             if contextType in ('DrawBot', 'Sketch'):
-                print('DrawBot is not available on platform %s.' % platform)
-                print('Using Flat instead of DrawBot.')
+                print('%s is not available on platform %s.' % (contextType, platform))
+                print('Using Flat instead of %s.' % contextType)
                 DEFAULT_CONTEXT = getFlatContext()
             elif contextType == 'flat':
                 DEFAULT_CONTEXT = getFlatContext()
@@ -119,6 +119,7 @@ def getSvgContext():
     return SvgContext()
 
 def getSketchContext():
+    assert platform == 'darwin'
     return SketchContext()
 
 if __name__ == '__main__':
