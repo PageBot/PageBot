@@ -22,6 +22,7 @@ from pagebot.contexts.htmlcontext.htmlcontext import HtmlContext
 from pagebot.contexts.svgcontext.svgcontext import SvgContext
 
 hasDrawBot = False
+hasSketchApp = False
 DrawBotContext = None
 DEFAULT_CONTEXT = None
 DEFAULT_CONTEXT_TYPE = 'flat'
@@ -34,13 +35,23 @@ if platform == 'darwin':
     except ImportError:
         hasDrawBot = False
 
+    try:
+        import pysketch
+        hasSketchApp = True
+    except ImportError:
+        hasSketchApp = False
+
     if hasDrawBot:
         try:
             from pagebotosx.contexts.drawbotcontext.drawbotcontext import DrawBotContext
         except ImportError:
             print(traceback.format_exc())
 
-    from pagebotosx.contexts.sketchcontext.sketchcontext import SketchContext
+    if hasSketchApp:
+        try:
+            from pagebotosx.contexts.sketchcontext.sketchcontext import SketchContext
+        except ImportError:
+            print(traceback.format_exc())
 
 def getContext(contextType=None):
     """Determines which context is used:
