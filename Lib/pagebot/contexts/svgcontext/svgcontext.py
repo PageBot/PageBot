@@ -175,7 +175,7 @@ class SvgContext(BaseContext):
         >>> context.newPage(1000, 1000)
         >>> path = context.newPath()
         >>> from svgwrite.path import Path
-        >>> isinstance(path, Path)
+        >>> isinstance(path, SvgBezierPath)
         True
         """
         self._bezierpath = SvgBezierPath(self.b)
