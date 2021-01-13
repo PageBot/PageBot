@@ -361,10 +361,6 @@ class BaseBezierPath(BasePen):
         """Checks if a point `x`, `y` is inside a path."""
         raise NotImplementedError
 
-    def bounds(self):
-        """Returns the bounding box of the path."""
-        raise NotImplementedError
-
     def controlPointBounds(self):
         """Returns the bounding box of the path including the offcurve
         points."""
