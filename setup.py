@@ -23,8 +23,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pagebot',
-    #use_scm_version=True,
-    version='1.0.2',
+    version='1.0.3',
     description='Scripted page layout framework for Python.',
     long_description=long_description,
     long_description_content_type='text/markdown',
