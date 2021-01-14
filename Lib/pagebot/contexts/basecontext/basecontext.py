@@ -19,7 +19,7 @@ import os
 from os.path import exists
 from math import radians, sin, cos
 import xml.etree.ElementTree as ET
-from PyPDF2 import PdfFileReader
+#from PyPDF2 import PdfFileReader
 
 from pagebot.constants import (LEFT, RIGHT, CENTER, DEFAULT_FRAME_DURATION,
         DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_WIDTH, FILETYPE_SVG,
@@ -1064,13 +1064,15 @@ class BaseContext(AbstractContext):
         """
         extension = path2Extension(path)
 
+        '''
         if extension == FILETYPE_PDF:
             im = PdfFileReader(open(path, 'rb'))
             r = im.getPage(0).mediaBox # RectangleObject([0, 0, w, h])
             w = float(r.getWidth())
             h = float(r.getHeight())
             return pt(w, h)
-        elif extension == FILETYPE_SVG:
+        '''
+        if extension == FILETYPE_SVG:
             svgTree = ET.parse(path)
             # FIXME: Answer the real size from the XML tree
             return pt(1000, 1000)
