@@ -1058,9 +1058,9 @@ class BaseContext(AbstractContext):
         >>> path = resourcesPath + '/images/cookbot1.jpg'
         >>> context.imageSize(path)
         (1376pt, 1350pt)
-        >>> path = resourcesPath + '/templates/test.pdf'
-        >>> context.imageSize(path)
-        (400pt, 200pt)
+        >>> #path = resourcesPath + '/templates/test.pdf'
+        >>> #context.imageSize(path)
+        #(400pt, 200pt)
         """
         extension = path2Extension(path)
 
